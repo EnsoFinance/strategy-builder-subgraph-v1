@@ -1,0 +1,236 @@
+type _Schema_
+  @fulltext(
+    name: "strategySearch"
+    language: en
+    algorithm: rank
+    include: [{ entity: "Strategy", fields: [{ name: "name" }, { name: "symbol" }] }]
+  )
+
+type Platform @entity {
+  id: ID!
+  strategiesCount: Int!
+  managersCount: Int!
+  allManagers: [String!]!
+  allStrategies: [String!]!
+  tokens: [String!]!
+}
+
+type Manager @entity {
+  id: ID!
+  strategiesCount: Int!
+  strategies: [Strategy!]!
+  startTime: BigInt!
+  tvl: BigDecimal!
+  totalNav: BigDecimal!
+  strategiesAverageNav: BigDecimal!
+  strategiesAverageNavChange: BigDecimal!
+  tvlChange: BigDecimal!
+  tvl24hChange: BigDecimal!
+  holdersCount: Int!
+  holders24hDiff: Int!
+  commonItems: [CommonItem!]!
+  managerDaysData: [ManagerDayData!]! @derivedFrom(field: "manager")
+  managerTrends: [ManagerTrends!]! @derivedFrom(field: "manager")
+}
+
+type Strategy @entity {
+  id: ID!
+  manager: Manager!
+  name: String!
+  symbol: String!
+  state: StrategyState
+  startTime: BigInt!
+  nav: BigDecimal!
+  tvl: BigDecimal!
+  tvlChange: BigDecimal!
+  tvl24hChange: BigDecimal!
+  navChange: BigDecimal!
+  nav24hChange: BigDecimal!
+  holdersCount: Int!
+  holders24hDiff: Int!
+  createdAtBlockNumber: BigInt!
+  items: [StrategyItemHolding!]!
+  lastRestructure: BigInt!
+  totalSupply: BigInt!
+  tokenHolders: [StrategyTokenHolding]! @derivedFrom(field: "strategy")
+  strategyDaysData: [StrategyDayData!]! @derivedFrom(field: "strategy")
+  rebalances: [Rebalance]! @derivedFrom(field: "strategy")
+  restructures: [Restructure]! @derivedFrom(field: "strategy")
+  trends: StrategyTrends! @derivedFrom(field: "strategy")
+}
+
+type StrategyTrends @entity {
+  id: ID!
+  strategy: Strategy!
+  trend1d: BigDecimal!
+  trend7d: BigDecimal!
+  trend30d: BigDecimal!
+  trendAll: BigDecimal!
+}
+
+type ManagerTrends @entity {
+  id: ID!
+  manager: Manager!
+  trend1d: BigDecimal!
+  trend7d: BigDecimal!
+  trend30d: BigDecimal!
+  trendAll: BigDecimal!
+}
+
+type StrategyState @entity {
+  id: ID!
+  threshold: BigInt!
+  social: Boolean!
+  fee: BigInt!
+  slippage: BigInt!
+  timelock: BigInt!
+}
+
+type StrategyTokenHolding @entity {
+  id: ID!
+  investor: String!
+  strategy: Strategy!
+  balance: BigDecimal!
+}
+
+type StrategyItemHolding @entity {
+  id: ID!
+  timestamp: BigInt!
+  token: Token!
+  strategy: Strategy
+  percentage: BigInt!
+  balance: BigDecimal!
+}
+
+type EthUsdFeed @entity {
+  id: ID!
+  latestAggregator: String!
+  latestAnswer: BigDecimal!
+}
+
+type CommonItem @entity {
+  id: ID! # token/manager
+  token: Token!
+  strategy: Strategy
+  percentage: BigDecimal!
+}
+
+type Token @entity {
+  # token address
+  id: ID!
+  # mirrored from the smart contract
+  name: String!
+  symbol: String!
+  decimals: BigInt!
+
+  # Category is defined within Enso by the TokenRegistry contract
+  category: Category!
+}
+
+type StrategyDayData @entity {
+  # strategy address + timestamp
+  id: ID!
+  strategy: Strategy!
+  timestamp: BigInt!
+  tvlLastTracked: BigDecimal!
+  navLastTracked: BigDecimal!
+  holdersCount: Int!
+}
+
+type ManagerDayData @entity {
+  # strategy address + timestamp
+  id: ID!
+  manager: Manager!
+  timestamp: BigInt!
+  tvlLastTracked: BigDecimal!
+  totalNavLastTracked: BigDecimal!
+  strategiesAverageNav: BigDecimal!
+  holdersCount: Int!
+}
+
+type StrategyHourData @entity {
+  # strategy address + timestamp
+  id: ID!
+  strategy: Strategy!
+  timestamp: BigInt!
+  tvlLastTracked: BigDecimal!
+  navLastTracked: BigDecimal!
+  holdersCount: Int!
+}
+
+type ManagerHourData @entity {
+  # strategy address + timestamp
+  id: ID!
+  manager: Manager!
+  timestamp: BigInt!
+  tvlLastTracked: BigDecimal!
+  totalNavLastTracked: BigDecimal!
+  strategiesAverageNav: BigDecimal!
+  holdersCount: Int!
+}
+
+type Rebalance @entity {
+  id: ID!
+  txHash: String!
+  strategy: Strategy!
+  timestamp: BigInt!
+  before: [StrategyItemHolding!]!
+  after: [StrategyItemHolding!]!
+}
+
+type Restructure @entity {
+  id: ID!
+  txHash: String!
+  status: RestructureStatus!
+  strategy: Strategy!
+  timestamp: BigInt!
+  before: [StrategyItemHolding!]!
+  after: [StrategyItemHolding!]!
+}
+
+type Tournament @entity {
+  id: ID!
+  startTime: BigInt!
+  endTime: BigInt!
+  strategiesCount: Int!
+  strategiesData: [TournamentStrategyData]! @derivedFrom(field: "tournament")
+}
+
+type TournamentStrategyData @entity {
+  id: ID! #strategy/torunamentId
+  manager: Manager!
+  strategy: Strategy!
+  roi: BigDecimal!
+  tournament: Tournament!
+}
+
+type Cron @entity {
+  id: ID!
+  cron: BigInt!
+}
+
+enum RestructureStatus {
+  STARTED
+  FINALIZED
+}
+
+enum Category {
+  DEFAULT_ORACLE
+  CHAINLINK_ORACLE
+  UNISWAP_TWAP_ORACLE
+  SUSHI_TWAP_ORACLE
+  STRATEGY
+  BLOCKED
+  AAVE
+  AAVE_DEBT
+  BALANCER
+  COMPOUND
+  CURVE
+  CURVE_GAUGE
+  SUSHI_LP
+  SUSHI_FARM
+  UNISWAP_V2_LP
+  UNISWAP_V3_LP
+  YEARN_V1
+  YEARN_V2
+}
