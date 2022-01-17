@@ -170,7 +170,8 @@ templates:
           handler: handleTransfer
         - event: Withdraw(uint256,uint256[])
           handler: handleWithdraw
-
+        - event: PerformanceFee(address,uint256)
+          handler: handlePerformanceFee
   - name: AggregatorV3
     kind: ethereum/contract
     network: 'mainnet'

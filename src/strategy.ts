@@ -1,5 +1,9 @@
 import { store } from '@graphprotocol/graph-ts'
-import { Withdraw, Transfer } from '../generated/templates/Strategy/Strategy'
+import {
+  Withdraw,
+  Transfer,
+  PerformanceFee,
+} from '../generated/templates/Strategy/Strategy'
 import { useManager } from './entities/Manager'
 import {
   burnStrategyTokens,
@@ -15,6 +19,7 @@ import {
 import { ZERO, ZERO_BI } from './helpers/constants'
 import { toBigDecimal } from './helpers/prices'
 import { ZERO_ADDRESS } from './addresses'
+import { ensureClaimedPerfFees } from './entities/ClaimedPerfFee'
 
 export function handleWithdraw(event: Withdraw): void {
   trackItemsQuantitiesChange(event.address, event.block.timestamp)
@@ -94,4 +99,14 @@ export function handleTransfer(event: Transfer): void {
     }
     holdingFrom.save()
   }
+}
+
+export function handlePerformanceFee(event: PerformanceFee): void {
+  let amount = event.params.amount.toBigDecimal()
+  let claimedPerfFee = ensureClaimedPerfFees(
+    event.address.toHexString(),
+    event.params.account.toHexString()
+  )
+  claimedPerfFee.amount = claimedPerfFee.amount.plus(amount)
+  claimedPerfFee.save()
 }

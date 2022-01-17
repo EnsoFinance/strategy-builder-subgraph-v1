@@ -3,7 +3,9 @@ type _Schema_
     name: "strategySearch"
     language: en
     algorithm: rank
-    include: [{ entity: "Strategy", fields: [{ name: "name" }, { name: "symbol" }] }]
+    include: [
+      { entity: "Strategy", fields: [{ name: "name" }, { name: "symbol" }] }
+    ]
   )
 
 type Platform @entity {
@@ -31,6 +33,7 @@ type Manager @entity {
   commonItems: [CommonItem!]!
   managerDaysData: [ManagerDayData!]! @derivedFrom(field: "manager")
   managerTrends: [ManagerTrends!]! @derivedFrom(field: "manager")
+  claimedPerfFee: [ClaimedPerfFee!]! @derivedFrom(field: "manager")
 }
 
 type Strategy @entity {
@@ -212,6 +215,13 @@ type Cron @entity {
 enum RestructureStatus {
   STARTED
   FINALIZED
+}
+
+type ClaimedPerfFee @entity {
+  id: ID!
+  manager: Manager!
+  strategy: Strategy!
+  amount: BigDecimal!
 }
 
 enum Category {
