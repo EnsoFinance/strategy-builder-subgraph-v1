@@ -12,17 +12,19 @@
     "prepare:remote": "./scripts/build-manifest.sh remote",
     "prepare:mainnet": "./scripts/build-manifest.sh mainnet",
     "codegen": "graph codegen",
-    "build": "yarn prepare:remote && graph codegen && graph build",
+    "build": "graph build",
+    "build:remote": "yarn prepare:remote && graph codegen && graph build",
     "build:kovan": "yarn prepare:kovan && graph codegen && graph build",
     "build:mainnet": "prepare:remote && graph codegen && graph build",
-    "deploy:local": "graph deploy --node http://172.17.0.1:8020/ --ipfs http://172.17.0.1:5001 enso/enso-v1",
-    "deploy:remote": "graph deploy --node http://3.136.83.61:8020 --ipfs http://3.136.83.61:5001 enso/enso-v1",
-    "deploy:kovan": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ enso/enso-v1"
+    "deploy:local": "graph deploy --node http://172.17.0.1:8020/ --ipfs http://172.17.0.1:5001 ensofinance/enso-v1",
+    "deploy:remote": "graph deploy --node http://3.136.83.61:8020 --ipfs http://3.136.83.61:5001 ensofinance/enso-v1",
+    "deploy:kovan": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ ensofinance/enso-v1"
   },
   "devDependencies": {
-    "@graphprotocol/graph-ts": "0.20.1",
     "@graphprotocol/graph-cli": "0.20.1",
+    "@graphprotocol/graph-ts": "0.20.1",
     "@openzeppelin/contracts": "~3.3.0",
-    "mustache": "^4.1.0"
+    "mustache": "^4.1.0",
+    "prettier": "^2.5.1"
   }
 }
