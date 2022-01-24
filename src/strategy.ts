@@ -3,23 +3,26 @@ import {
   Withdraw,
   Transfer,
   PerformanceFee,
+  UpdateManager
 } from '../generated/templates/Strategy/Strategy'
 import { useManager } from './entities/Manager'
 import {
   burnStrategyTokens,
   mintStrategyTokens,
-  useStrategy,
+  useStrategy
 } from './entities/Strategy'
 import { trackItemsQuantitiesChange } from './entities/StrategyItemHolding'
 import {
   createStrategyTokenHoldingId,
   ensureStrategyTokenHolding,
-  useStrategyTokenHolding,
+  useStrategyTokenHolding
 } from './entities/StrategyTokenHoldings'
 import { ZERO, ZERO_BI } from './helpers/constants'
 import { toBigDecimal } from './helpers/prices'
 import { ZERO_ADDRESS } from './addresses'
 import { ensureClaimedPerfFees } from './entities/ClaimedPerfFee'
+import { Manager } from '../generated/schema'
+import { removeElement } from './helpers/utils'
 
 export function handleWithdraw(event: Withdraw): void {
   trackItemsQuantitiesChange(event.address, event.block.timestamp)
@@ -109,4 +112,17 @@ export function handlePerformanceFee(event: PerformanceFee): void {
   )
   claimedPerfFee.amount = claimedPerfFee.amount.plus(amount)
   claimedPerfFee.save()
+}
+
+export function handlUpdateManager(event: UpdateManager): void {
+  let strategy = useStrategy(event.transaction.from.toHexString())
+
+  let oldManager = useManager(strategy.manager)
+  oldManager.strategies = removeElement(
+    oldManager.strategies,
+    event.transaction.from
+  )
+
+  strategy.manager = event.params.manager.toHexString()
+  strategy.save()
 }
