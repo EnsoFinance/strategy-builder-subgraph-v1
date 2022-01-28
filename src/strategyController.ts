@@ -4,11 +4,14 @@ import {
   Balanced,
   NewStructure,
   NewValue,
-  StrategyOpen,
+  StrategyOpen
 } from '../generated/StrategyController/StrategyController'
 import { NewStrategyItemsStruct } from '../generated/StrategyProxyFactory/StrategyProxyFactory'
 import { Rebalance, Restructure } from '../generated/schema'
-import { createRebalancedItemsHolding, createItemsHolding } from './entities/StrategyItemHolding'
+import {
+  createRebalancedItemsHolding,
+  createItemsHolding
+} from './entities/StrategyItemHolding'
 import { useStrategy } from './entities/Strategy'
 import { convertToUsd, toBigDecimal } from './helpers/prices'
 import { useRestructure } from './entities/Restructure'
@@ -39,15 +42,16 @@ export function handleRebalance(event: Balanced): void {
   rebalance.txHash = event.transaction.hash.toHexString()
   rebalance.before = holdings
 
-  let newItemsState = createRebalancedItemsHolding(holdings, event.params.strategy, timestamp)
-  rebalance.after = newItemsState
+  trackItemsQuantitiesChange(event.params.strategy, event.block.timestamp)
 
-  strategy.items = newItemsState
+  rebalance.after = strategy.items
+
   strategy.tvl = convertToUsd(toBigDecimal(event.params.total))
 
   strategy.save()
   rebalance.save()
 }
+
 export function handleRestructure(event: NewStructure): void {
   let txhash = event.transaction.hash
   let timestamp = event.block.timestamp
@@ -60,7 +64,8 @@ export function handleRestructure(event: NewStructure): void {
     let strategy = useStrategy(strategyId)
 
     let lastRestructure = strategy.lastRestructure
-    let restructureId = strategy.id + '/restructure/' + lastRestructure.toString()
+    let restructureId =
+      strategy.id + '/restructure/' + lastRestructure.toString()
     let restructure = useRestructure(restructureId)
     strategy.items = restructure.after
     strategy.save()

@@ -21,7 +21,6 @@ import { ZERO, ZERO_BI } from './helpers/constants'
 import { toBigDecimal } from './helpers/prices'
 import { ZERO_ADDRESS } from './addresses'
 import { ensureClaimedPerfFees } from './entities/ClaimedPerfFee'
-import { Manager } from '../generated/schema'
 import { removeElement } from './helpers/utils'
 
 export function handleWithdraw(event: Withdraw): void {
