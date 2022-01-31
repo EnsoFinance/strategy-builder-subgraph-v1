@@ -103,6 +103,8 @@ type StrategyItemHolding @entity {
   strategy: Strategy
   percentage: BigInt!
   balance: BigDecimal!
+  adapters: [Bytes!]!
+  path: [Bytes!]!
 }
 
 type EthUsdFeed @entity {
