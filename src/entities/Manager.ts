@@ -38,24 +38,24 @@ export function ensureManager(address: Address, timestamp: BigInt): Manager {
   manager = new Manager(address.toHex())
   manager.strategiesCount = 0
   manager.strategies = []
-  manager.startTime = timestamp
-  manager.strategiesAverageNav = ZERO
-  manager.strategiesAverageNavChange = ZERO
+  manager.createdAtTimestamp = timestamp
   manager.tvlChange = ZERO
   manager.tvl24hChange = ZERO
   manager.holdersCount = 0
   manager.holders24hDiff = 0
   manager.tvl = ZERO
-  manager.totalNav = ZERO
   manager.commonItems = []
 
   return manager
 }
 
-export function trackTvlChange(managerId: string, previousDayOpenTime: BigInt): void {
+export function trackTvlChange(
+  managerId: string,
+  previousDayOpenTime: BigInt
+): void {
   let manager = useManager(managerId)
 
-  let creationTimestamp = manager.startTime
+  let creationTimestamp = manager.createdAtTimestamp
   let managerDayDataId = createDayDataId(manager.id, creationTimestamp)
   let managerDayData = useManagerDayData(managerDayDataId)
   let initialValue = managerDayData.tvlLastTracked
@@ -85,24 +85,6 @@ export function trackTvlChange(managerId: string, previousDayOpenTime: BigInt): 
     }
   }
 
-  manager.save()
-}
-
-export function trackAverageNavChange(managerId: string): void {
-  let manager = useManager(managerId)
-
-  let creationTimestamp = manager.startTime
-  let managerDayDataId = createDayDataId(manager.id, creationTimestamp)
-  let managerDayData = useManagerDayData(managerDayDataId)
-  let initialValue = managerDayData.strategiesAverageNav
-  let currentValue = manager.strategiesAverageNav
-  let netNav = currentValue.minus(initialValue)
-
-  if (initialValue.equals(ZERO)) {
-    initialValue = ONE
-  }
-
-  manager.strategiesAverageNavChange = netNav.div(initialValue).times(HUNDRED)
   manager.save()
 }
 

@@ -21,11 +21,8 @@ type Manager @entity {
   id: ID!
   strategiesCount: Int!
   strategies: [Strategy!]!
-  startTime: BigInt!
+  createdAtTimestamp: BigInt!
   tvl: BigDecimal!
-  totalNav: BigDecimal!
-  strategiesAverageNav: BigDecimal!
-  strategiesAverageNavChange: BigDecimal!
   tvlChange: BigDecimal!
   tvl24hChange: BigDecimal!
   holdersCount: Int!
@@ -42,7 +39,7 @@ type Strategy @entity {
   name: String!
   symbol: String!
   state: StrategyState
-  startTime: BigInt!
+  createdAtTimestamp: BigInt!
   nav: BigDecimal!
   tvl: BigDecimal!
   tvlChange: BigDecimal!
@@ -148,8 +145,6 @@ type ManagerDayData @entity {
   manager: Manager!
   timestamp: BigInt!
   tvlLastTracked: BigDecimal!
-  totalNavLastTracked: BigDecimal!
-  strategiesAverageNav: BigDecimal!
   holdersCount: Int!
 }
 
@@ -169,8 +164,6 @@ type ManagerHourData @entity {
   manager: Manager!
   timestamp: BigInt!
   tvlLastTracked: BigDecimal!
-  totalNavLastTracked: BigDecimal!
-  strategiesAverageNav: BigDecimal!
   holdersCount: Int!
 }
 
@@ -191,22 +184,6 @@ type Restructure @entity {
   timestamp: BigInt!
   before: [StrategyItemHolding!]!
   after: [StrategyItemHolding!]!
-}
-
-type Tournament @entity {
-  id: ID!
-  startTime: BigInt!
-  endTime: BigInt!
-  strategiesCount: Int!
-  strategiesData: [TournamentStrategyData]! @derivedFrom(field: "tournament")
-}
-
-type TournamentStrategyData @entity {
-  id: ID! #strategy/torunamentId
-  manager: Manager!
-  strategy: Strategy!
-  roi: BigDecimal!
-  tournament: Tournament!
 }
 
 type Cron @entity {

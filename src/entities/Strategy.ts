@@ -1,5 +1,9 @@
 import { Address, log, BigInt } from '@graphprotocol/graph-ts'
-import { Strategy, StrategyDayData, StrategyTrends } from '../../generated/schema'
+import {
+  Strategy,
+  StrategyDayData,
+  StrategyTrends
+} from '../../generated/schema'
 import { useStrategyDayData, createDayDataId } from './DayData'
 import { NewStrategy } from '../../generated/StrategyProxyFactory/StrategyProxyFactory'
 import { useItemHolding } from './StrategyItemHolding'
@@ -16,7 +20,10 @@ export function useStrategy(id: string): Strategy {
   return strategy
 }
 
-export function createStrategy(strategyAddress: Address, event: NewStrategy): Strategy {
+export function createStrategy(
+  strategyAddress: Address,
+  event: NewStrategy
+): Strategy {
   let strategyId = strategyAddress.toHex()
 
   createStrategyState(strategyAddress)
@@ -26,7 +33,7 @@ export function createStrategy(strategyAddress: Address, event: NewStrategy): St
   strategy.name = event.params.name
   strategy.state = strategyId
   strategy.symbol = event.params.symbol
-  strategy.startTime = event.block.timestamp
+  strategy.createdAtTimestamp = event.block.timestamp
   strategy.lastRestructure = event.block.timestamp
   strategy.tvl = ZERO
   strategy.tvlChange = ZERO
@@ -50,11 +57,14 @@ export function createStrategy(strategyAddress: Address, event: NewStrategy): St
   return strategy
 }
 
-export function trackTvlChange(strategy: Strategy, previousDayOpenTime: BigInt): void {
+export function trackTvlChange(
+  strategy: Strategy,
+  previousDayOpenTime: BigInt
+): void {
   // track TVL since inception
 
-  let creationTimestamp = strategy.startTime
-  let strategyDayDataId = createDayDataId(strategy.id, creationTimestamp)
+  let createdAtTimestamp = strategy.createdAtTimestamp
+  let strategyDayDataId = createDayDataId(strategy.id, createdAtTimestamp)
   let strategyDayData = useStrategyDayData(strategyDayDataId)
   let initialValue = strategyDayData.tvlLastTracked
   let currentValue = strategy.tvl
@@ -68,9 +78,11 @@ export function trackTvlChange(strategy: Strategy, previousDayOpenTime: BigInt):
   strategy.tvlChange = tvlChange
 
   // track TVL 24h change
-  if (previousDayOpenTime >= creationTimestamp) {
+  if (previousDayOpenTime >= createdAtTimestamp) {
     let strategyDayDataId = createDayDataId(strategy.id, previousDayOpenTime)
-    let strategyDayData = StrategyDayData.load(strategyDayDataId) as StrategyDayData
+    let strategyDayData = StrategyDayData.load(
+      strategyDayDataId
+    ) as StrategyDayData
     if (strategyDayData !== null) {
       let previousValue = strategyDayData.tvlLastTracked
       let netProfit = currentValue.minus(previousValue)
@@ -86,10 +98,13 @@ export function trackTvlChange(strategy: Strategy, previousDayOpenTime: BigInt):
   strategy.save()
 }
 
-export function trackNavChange(strategy: Strategy, previousDayOpenTime: BigInt): void {
+export function trackNavChange(
+  strategy: Strategy,
+  previousDayOpenTime: BigInt
+): void {
   // track nav change since inception
-  let creationTimestamp = strategy.startTime
-  let strategyDayDataId = createDayDataId(strategy.id, creationTimestamp)
+  let createdAtTimestamp = strategy.createdAtTimestamp
+  let strategyDayDataId = createDayDataId(strategy.id, createdAtTimestamp)
   let strategyDayData = useStrategyDayData(strategyDayDataId)
   let initialValue = strategyDayData.navLastTracked
   let currentValue = strategy.nav
@@ -102,9 +117,11 @@ export function trackNavChange(strategy: Strategy, previousDayOpenTime: BigInt):
   strategy.navChange = netNav.div(initialValue).times(HUNDRED)
 
   // track nav 24h nav change
-  if (previousDayOpenTime >= creationTimestamp) {
+  if (previousDayOpenTime >= createdAtTimestamp) {
     let strategyDayDataId = createDayDataId(strategy.id, previousDayOpenTime)
-    let strategyDayData = StrategyDayData.load(strategyDayDataId) as StrategyDayData
+    let strategyDayData = StrategyDayData.load(
+      strategyDayDataId
+    ) as StrategyDayData
     if (strategyDayData !== null) {
       let previousValue = strategyDayData.navLastTracked
       let netNav = currentValue.minus(previousValue)
@@ -132,12 +149,18 @@ export function getStrategyTokens(strategy: Strategy): Address[] {
   return items.map<Address>((token) => Address.fromString(token))
 }
 
-export function mintStrategyTokens(strategy: Strategy, transferAmount: BigInt): void {
+export function mintStrategyTokens(
+  strategy: Strategy,
+  transferAmount: BigInt
+): void {
   strategy.totalSupply = strategy.totalSupply.plus(transferAmount)
   strategy.save()
 }
 
-export function burnStrategyTokens(strategy: Strategy, transferAmount: BigInt): void {
+export function burnStrategyTokens(
+  strategy: Strategy,
+  transferAmount: BigInt
+): void {
   strategy.totalSupply = strategy.totalSupply.minus(transferAmount)
   strategy.save()
 }

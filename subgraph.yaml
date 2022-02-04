@@ -99,30 +99,6 @@ dataSources:
       file: ./src/tokenRegistry.ts
 
   - kind: ethereum/contract
-    name: Tournament
-    network: 'mainnet'
-    source:
-      address: '0x2daCA37177fE6B1a035AF9ced3F9f6A55B434F60'
-      abi: Tournament
-      startBlock: 13411999
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      abis:
-        - name: Tournament
-          file: ./abis/Tournament.json
-      eventHandlers:
-        - event: NewTournament(uint256,uint256,uint256)
-          handler: handleNewTournament
-        - event: Registered(uint256,address,address)
-          handler: handleRegister
-        - event: Unregistered(uint256,address,address)
-          handler: handleUnregister
-      entities: []
-      file: ./src/tournaments.ts
-
-  - kind: ethereum/contract
     name: FeedRegistry
     network: 'mainnet'
     source:
