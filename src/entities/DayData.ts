@@ -4,7 +4,6 @@ import { getTotalEstimates } from '../helpers/prices'
 import { useFactory } from './Factory'
 import { useStrategy } from './Strategy'
 import { useManager, trackTvlChange } from './Manager'
-import { useStrategyTrends } from './Trends'
 import {
   trackTvlChange as trackStrategyTvlChange,
   trackNavChange as trackStrategyNavChange
@@ -67,6 +66,7 @@ export function trackDayData(strategyId: string, timestamp: BigInt): void {
   let strategy = useStrategy(strategyId)
   let dayOpenTime = getDayOpenTime(timestamp)
 
+  //TO DO use total supply calculated from transfers
   let totalSupply = getTotalSupply(Address.fromString(strategy.id))
 
   let newStrategyTvl = getTotalEstimates(Address.fromString(strategyId))
@@ -87,7 +87,7 @@ export function trackDayData(strategyId: string, timestamp: BigInt): void {
   managerDayData.timestamp = dayOpenTime
   managerDayData.holdersCount = manager.holdersCount
 
-  // Retreive previous day holders for diff
+  // Rexive previous day holders for diff
   let previousDayOpenTime = getPreviousDayOpenTime(dayOpenTime)
   if (previousDayOpenTime >= manager.createdAtTimestamp) {
     let managerDayDataId = createDayDataId(manager.id, previousDayOpenTime)
@@ -131,16 +131,4 @@ export function trackDayData(strategyId: string, timestamp: BigInt): void {
   trackStrategyNavChange(strategy, previousDayOpenTime)
 
   trackTvlChange(manager.id, previousDayOpenTime)
-
-  let strategyTrends = useStrategyTrends(strategy.id + '/trends')
-  let holdersCount = strategy.holdersCount == 0 ? 1 : strategy.holdersCount
-  let holders24hDiff =
-    strategy.holders24hDiff == 0 ? 1 : strategy.holders24hDiff
-  let holders24hChange = holders24hDiff / holdersCount
-  let trend1d = BigDecimal.fromString(holders24hChange.toString()).times(
-    strategy.tvl24hChange
-  )
-
-  strategyTrends.trend1d = trend1d
-  strategyTrends.save()
 }

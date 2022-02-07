@@ -139,26 +139,31 @@ type StrategyDayData @entity {
   holdersCount: Int!
 }
 
-type ManagerDayData @entity {
-  # strategy address + timestamp
-  id: ID!
-  manager: Manager!
-  timestamp: BigInt!
-  tvlLastTracked: BigDecimal!
-  holdersCount: Int!
-}
-
-type StrategyHourData @entity {
-  # strategy address + timestamp
+type StrategyChanges @entity {
   id: ID!
   strategy: Strategy!
-  timestamp: BigInt!
-  tvlLastTracked: BigDecimal!
-  navLastTracked: BigDecimal!
-  holdersCount: Int!
+  tvl24h: BigInt!
+  tvl1w: BigDecimal!
+  tvl1m: BigDecimal!
+  tvlInception: BigDecimal!
+  price24h: BigInt!
+  price1w: BigDecimal!
+  price1m: BigDecimal!
+  priceInception: BigDecimal!
+  holders: Int!
 }
 
-type ManagerHourData @entity {
+type ManagerChanges @entity {
+  id: ID!
+  manager: Manager!
+  tvl24h: BigInt!
+  tvl1w: BigDecimal!
+  tvl1m: BigDecimal!
+  tvlInception: BigDecimal!
+  holders: Int!
+}
+
+type ManagerDayData @entity {
   # strategy address + timestamp
   id: ID!
   manager: Manager!
