@@ -1,7 +1,7 @@
 version: '3'
 services:
   graph-node:
-    image: graphprotocol/graph-node:v0.24.0
+    image: graphprotocol/graph-node:v0.25.0
     ports:
       - '8000:8000'
       - '8001:8001'
@@ -17,7 +17,7 @@ services:
       postgres_pass: let-me-in
       postgres_db: graph-node
       ipfs: 'ipfs:5001'
-      ethereum: 'mainnet:http://172.17.0.1:8545/'
+      ethereum: 'mainnet:http://ensonet.herokuapp.com'
       GRAPH_LOG: info
       GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: 1
 
