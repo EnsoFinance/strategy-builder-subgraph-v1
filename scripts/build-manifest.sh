@@ -17,6 +17,7 @@ if [[ "$NETWORK" == "kovan" ]]; then
 fi
 
 if [[ "$NETWORK" == "remote" ]]; then
-    cat $DATA | jq '.localhost  + {"network":"mainnet","ChainlinkFeedRegistry":"0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf"}' | mustache  - templates/subgraph.template.yaml > subgraph.yaml 
-    cat $DATA | jq '.localhost  + {"ChainlinkFeedRegistry":"0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf"}' |  mustache  - templates/addresses.ts > src/addresses.ts
+    ENSONET_DEPLOYMENTS=$(curl http://ensonet.herokuapp.com/api/deployments)
+    echo $ENSONET_DEPLOYMENTS | jq '."v1-core"  + {"network":"mainnet","ChainlinkFeedRegistry":"0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf"}' | mustache  - templates/subgraph.template.yaml > subgraph.yaml 
+    echo $ENSONET_DEPLOYMENTS | jq '."v1-core"  + {"ChainlinkFeedRegistry":"0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf"}' |  mustache  - templates/addresses.ts > src/addresses.ts
 fi
