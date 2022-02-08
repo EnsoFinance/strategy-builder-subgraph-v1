@@ -4,8 +4,10 @@ setup:
       as: DATABASE
 build:
   docker:
+    web: Dockerfile.web
     graph: Dockerfile.graph
     ipfs: Dockerfile.ipfs
 release:
+  image: web
   command:
-    - yarn && yarn build:remote && yarn deploy:local
+    - npm run build:remote && npm run deploy:local
