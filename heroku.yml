@@ -4,5 +4,5 @@ setup:
       as: DATABASE
 build:
   docker:
-    graph: graphprotocol/graph-node:v0.25.0
-    ipfs: ipfs/go-ipfs:v0.4.23
+    graph: Dockerfile.graph
+    ipfs: Dockerfile.ipfs
