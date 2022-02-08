@@ -7,6 +7,5 @@ build:
     graph: Dockerfile.graph
     ipfs: Dockerfile.ipfs
 release:
-  image: graph
   command:
     - yarn && yarn build:remote && yarn deploy:local
