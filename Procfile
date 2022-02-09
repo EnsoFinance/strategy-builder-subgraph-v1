@@ -1,1 +1,1 @@
-release: yarn add graph && yarn deploy:remote
+release: yarn deploy:remote
