@@ -1,1 +1,1 @@
-release: yarn global add @graphprotocol/graph-cli @graphprotocol/graph-ts && yarn deploy:remote
+release: yarn global add @graphprotocol/graph-cli && yarn global add @graphprotocol/graph-ts && yarn deploy:remote
