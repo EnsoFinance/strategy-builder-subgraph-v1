@@ -1,4 +1,4 @@
-specVersion: 0.0.5
+specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
@@ -11,7 +11,7 @@ dataSources:
       startBlock: 13411999
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities: []
       abis:
@@ -43,7 +43,7 @@ dataSources:
       startBlock: 13411999
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       abis:
         - name: AggregatorV3
@@ -81,7 +81,7 @@ dataSources:
       startBlock: 13411999
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       abis:
         - name: TokenRegistry
@@ -107,7 +107,7 @@ dataSources:
       startBlock: 13411999
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       abis:
         - name: Tournament
@@ -131,7 +131,7 @@ dataSources:
       startBlock: 13411999
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       abis:
         - name: FeedRegistry
@@ -150,7 +150,7 @@ templates:
       abi: Strategy
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       file: ./src/strategy.ts
       entities: []
@@ -179,7 +179,7 @@ templates:
       abi: AggregatorV3
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.4
+      apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities: []
       file: ./src/chainlinkAggregator.ts
