@@ -1,1 +1,1 @@
-release: yarn global add @graphprotocol/graph-cli && export PATH="$PATH:$(yarn global bin)" && yarn deploy:remote
+release: yarn global add @graphprotocol/graph-cli @graphprotocol/graph-ts && yarn deploy:remote
