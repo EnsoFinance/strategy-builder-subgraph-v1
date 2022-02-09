@@ -1,1 +1,1 @@
-release: yarn global add graph && yarn deploy:remote
+release: export PATH="$PATH:$(yarn global bin)" && yarn global add graph && yarn deploy:remote
