@@ -11,7 +11,7 @@
     "prepare:kovan": "./scripts/build-manifest.sh kovan",
     "prepare:remote": "./scripts/build-manifest.sh remote",
     "prepare:mainnet": "./scripts/build-manifest.sh mainnet",
-    "build": "yarn prepare:remote && graph codegen && graph build",
+    "build": "yarn prepare:remote && graph codegen && graph build && yarn deploy:remote",
     "build:mainnet": "yarn prepare:mainnet && graph codegen && graph build",
     "build:kovan": "yarn prepare:kovan && graph codegen && graph build",
     "deploy:local": "graph deploy --node http://127.0.0.1:8020/ --ipfs http://127.0.0.1:5001 ensofinance/enso-v1",
