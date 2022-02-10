@@ -20,7 +20,6 @@ services:
       ethereum: 'mainnet:http://ensonet.herokuapp.com'
       GRAPH_LOG: info
       GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: 1
-      ETHEREUM_POLLING_INTERVAL: 10000
 
   ipfs:
     image: ipfs/go-ipfs:v0.4.23

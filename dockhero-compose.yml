@@ -20,15 +20,12 @@ services:
       ethereum: 'mainnet:http://ensonet.herokuapp.com'
       GRAPH_LOG: info
       GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: 1
-      GRAPH_ETHEREUM_JSON_RPC_TIMEOUT: 2000
-      ETHEREUM_POLLING_INTERVAL: 10000
 
   ipfs:
     image: ipfs/go-ipfs:v0.4.23
     ports:
       - '5001:5001'
-    volumes:
-      - ./data/ipfs:/data/ipfs
+
   postgres:
     image: postgres
     ports:
@@ -38,5 +35,3 @@ services:
       POSTGRES_USER: graph-node
       POSTGRES_PASSWORD: let-me-in
       POSTGRES_DB: graph-node
-    volumes:
-      - ./data/postgres:/var/lib/postgresql/data
