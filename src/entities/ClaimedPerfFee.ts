@@ -1,6 +1,6 @@
 import { log } from '@graphprotocol/graph-ts'
 import { ClaimedPerfFee } from '../../generated/schema'
-import { ZERO } from '../helpers/constants'
+import { ZERO_BD } from '../helpers/constants'
 
 export function createClaimedPerfFeeId(
   strategy: string,
@@ -30,7 +30,7 @@ export function ensureClaimedPerfFees(
   claimedPerfFee = new ClaimedPerfFee(id)
   claimedPerfFee.strategy = strategyId
   claimedPerfFee.manager = managerId
-  claimedPerfFee.amount = ZERO
+  claimedPerfFee.amount = ZERO_BD
 
   return claimedPerfFee
 }

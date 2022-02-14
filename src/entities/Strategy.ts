@@ -7,9 +7,11 @@ import {
 import { useStrategyDayData, createDayDataId } from './DayData'
 import { NewStrategy } from '../../generated/StrategyProxyFactory/StrategyProxyFactory'
 import { useItemHolding } from './StrategyItemHolding'
-import { ZERO, ONE, HUNDRED, ZERO_BI } from '../helpers/constants'
+import { ZERO_BD, ONE, HUNDRED } from '../helpers/constants'
 import { useFactory } from './Factory'
 import { createStrategyState } from './StrategyState'
+import { toBigDecimal } from '../helpers/prices'
+import { ensureStrategyChanges } from './StrategyChanges'
 
 export function useStrategy(id: string): Strategy {
   let strategy = Strategy.load(id) as Strategy
@@ -35,24 +37,21 @@ export function createStrategy(
   strategy.symbol = event.params.symbol
   strategy.createdAtTimestamp = event.block.timestamp
   strategy.lastRestructure = event.block.timestamp
-  strategy.tvl = ZERO
-  strategy.tvlChange = ZERO
-  strategy.tvl24hChange = ZERO
-  strategy.nav = ZERO
-  strategy.navChange = ZERO
-  strategy.nav24hChange = ZERO
+  strategy.tvl = ZERO_BD
+  strategy.nav = ZERO_BD
   strategy.holdersCount = 0
-  strategy.holders24hDiff = 0
-  strategy.totalSupply = ZERO_BI
+  strategy.totalSupply = ZERO_BD
   strategy.createdAtBlockNumber = event.block.number
 
   let strategyTrends = new StrategyTrends(strategyId + '/trends')
   strategyTrends.strategy = strategyId
-  strategyTrends.trend1d = ZERO
-  strategyTrends.trend7d = ZERO
-  strategyTrends.trend30d = ZERO
-  strategyTrends.trendAll = ZERO
+  strategyTrends.trend1d = ZERO_BD
+  strategyTrends.trend7d = ZERO_BD
+  strategyTrends.trend30d = ZERO_BD
+  strategyTrends.trendAll = ZERO_BD
   strategyTrends.save()
+
+  ensureStrategyChanges(strategyId)
 
   return strategy
 }
@@ -70,7 +69,7 @@ export function trackTvlChange(
   let currentValue = strategy.tvl
   let netProfit = currentValue.minus(initialValue)
 
-  if (initialValue.equals(ZERO)) {
+  if (initialValue.equals(ZERO_BD)) {
     initialValue = ONE
   }
 
@@ -87,7 +86,7 @@ export function trackTvlChange(
       let previousValue = strategyDayData.tvlLastTracked
       let netProfit = currentValue.minus(previousValue)
 
-      if (previousValue.equals(ZERO)) {
+      if (previousValue.equals(ZERO_BD)) {
         previousValue = ONE
       }
 
@@ -110,7 +109,7 @@ export function trackNavChange(
   let currentValue = strategy.nav
   let netNav = currentValue.minus(initialValue)
 
-  if (initialValue.equals(ZERO)) {
+  if (initialValue.equals(ZERO_BD)) {
     initialValue = ONE
   }
 
@@ -126,7 +125,7 @@ export function trackNavChange(
       let previousValue = strategyDayData.navLastTracked
       let netNav = currentValue.minus(previousValue)
 
-      if (previousValue.equals(ZERO)) {
+      if (previousValue.equals(ZERO_BD)) {
         previousValue = ONE
       }
 
@@ -153,7 +152,7 @@ export function mintStrategyTokens(
   strategy: Strategy,
   transferAmount: BigInt
 ): void {
-  strategy.totalSupply = strategy.totalSupply.plus(transferAmount)
+  strategy.totalSupply = strategy.totalSupply.plus(toBigDecimal(transferAmount))
   strategy.save()
 }
 
@@ -161,7 +160,9 @@ export function burnStrategyTokens(
   strategy: Strategy,
   transferAmount: BigInt
 ): void {
-  strategy.totalSupply = strategy.totalSupply.minus(transferAmount)
+  strategy.totalSupply = strategy.totalSupply.minus(
+    toBigDecimal(transferAmount)
+  )
   strategy.save()
 }
 

@@ -6,7 +6,7 @@ dataSources:
     name: StrategyProxyFactory
     network: 'mainnet'
     source:
-      address: '0xd84ad3FCa91c9E9272FeB23E29EF39A337bEa41f'
+      address: '0x37e46E96a08714171236b5F25157C639aa85d741'
       abi: StrategyProxyFactory
       startBlock: 13411999
     mapping:
@@ -38,7 +38,7 @@ dataSources:
     name: StrategyController
     network: 'mainnet'
     source:
-      address: '0xC9bE209D054a3d64D8c630E24D755667B608efD6'
+      address: '0xb6bD6Ff733b6824FB46bC423c20Df0A9CAab8F0e'
       abi: StrategyController
       startBlock: 13411999
     mapping:
@@ -76,7 +76,7 @@ dataSources:
     name: TokenRegistry
     network: 'mainnet'
     source:
-      address: '0xA7c59f010700930003b33aB25a7a0679C860f29c'
+      address: '0x927b167526bAbB9be047421db732C663a0b77B11'
       abi: TokenRegistry
       startBlock: 13411999
     mapping:

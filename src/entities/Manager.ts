@@ -1,10 +1,11 @@
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { Manager, ManagerDayData, ManagerTrends } from '../../generated/schema'
 import { createDayDataId, useManagerDayData } from './DayData'
-import { ZERO, ONE, HUNDRED, THOUSAND } from '../helpers/constants'
+import { ZERO_BD, ONE, HUNDRED, THOUSAND } from '../helpers/constants'
 import { arrayUnique } from '../helpers/utils'
 import { useStrategy, getStrategyTokens, isStrategy } from './Strategy'
 import { ensureCommonItem } from './CommonItem'
+import { ensureManagerChanges } from './ManagerChanges'
 
 export function useManager(id: string): Manager {
   let manager = Manager.load(id) as Manager
@@ -22,10 +23,10 @@ export function ensureManagerTrend(id: string): void {
   }
   managerTrends = new ManagerTrends(id + '/trends')
   managerTrends.manager = id
-  managerTrends.trend1d = ZERO
-  managerTrends.trend7d = ZERO
-  managerTrends.trend30d = ZERO
-  managerTrends.trendAll = ZERO
+  managerTrends.trend1d = ZERO_BD
+  managerTrends.trend7d = ZERO_BD
+  managerTrends.trend30d = ZERO_BD
+  managerTrends.trendAll = ZERO_BD
   managerTrends.save()
 }
 
@@ -39,12 +40,11 @@ export function ensureManager(address: Address, timestamp: BigInt): Manager {
   manager.strategiesCount = 0
   manager.strategies = []
   manager.createdAtTimestamp = timestamp
-  manager.tvlChange = ZERO
-  manager.tvl24hChange = ZERO
   manager.holdersCount = 0
-  manager.holders24hDiff = 0
-  manager.tvl = ZERO
+  manager.tvl = ZERO_BD
   manager.commonItems = []
+
+  ensureManagerChanges(address.toHex())
 
   return manager
 }
@@ -62,7 +62,7 @@ export function trackTvlChange(
   let currentValue = manager.tvl
   let netTvl = currentValue.minus(initialValue)
 
-  if (initialValue.equals(ZERO)) {
+  if (initialValue.equals(ZERO_BD)) {
     initialValue = ONE
   }
 
@@ -77,7 +77,7 @@ export function trackTvlChange(
       let previousValue = managerDayData.tvlLastTracked
       let net = currentValue.minus(previousValue)
 
-      if (previousValue.equals(ZERO)) {
+      if (previousValue.equals(ZERO_BD)) {
         previousValue = ONE
       }
 
@@ -106,7 +106,7 @@ export function getCommonItems(manager: Manager): string[] {
   for (let i = 0; i < uniqueItems.length; ++i) {
     let currItem = uniqueItems[i]
 
-    let numItems = ZERO
+    let numItems = ZERO_BD
 
     for (let i = 0; i < managerItems.length; ++i) {
       if (currItem.equals(managerItems[i])) {

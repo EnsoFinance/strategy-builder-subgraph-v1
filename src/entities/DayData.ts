@@ -1,16 +1,19 @@
-import { Address, log, BigInt, BigDecimal } from '@graphprotocol/graph-ts'
-import { StrategyDayData, ManagerDayData } from '../../generated/schema'
+import { Address, log, BigInt } from '@graphprotocol/graph-ts'
+import {
+  StrategyDayData,
+  ManagerDayData,
+  Strategy,
+  StrategyChanges
+} from '../../generated/schema'
 import { getTotalEstimates } from '../helpers/prices'
 import { useFactory } from './Factory'
 import { useStrategy } from './Strategy'
-import { useManager, trackTvlChange } from './Manager'
-import {
-  trackTvlChange as trackStrategyTvlChange,
-  trackNavChange as trackStrategyNavChange
-} from './Strategy'
-import { getDayOpenTime, getPreviousDayOpenTime } from '../helpers/times'
+import { trackStrategyChanges } from './StrategyChanges'
+import { useManager } from './Manager'
+import { getDayOpenTime } from '../helpers/times'
 import { getTotalSupply } from '../helpers/tokens'
-import { ZERO } from '../helpers/constants'
+import { HUNDRED, ONE, ZERO_BD } from '../helpers/constants'
+import { trackManagerChanges } from './ManagerChanges'
 
 export function createDayDataId(identifier: string, timestamp: BigInt): string {
   let dayStartTimestamp = getDayOpenTime(timestamp)
@@ -66,20 +69,26 @@ export function trackDayData(strategyId: string, timestamp: BigInt): void {
   let strategy = useStrategy(strategyId)
   let dayOpenTime = getDayOpenTime(timestamp)
 
-  //TO DO use total supply calculated from transfers
-  let totalSupply = getTotalSupply(Address.fromString(strategy.id))
+  // Track strategy and manager to latest values
+  let totalSupply = getTotalSupply(Address.fromString(strategy.id)) //TO DO use total supply calculated from transfers
 
-  let newStrategyTvl = getTotalEstimates(Address.fromString(strategyId))
-  let newNav = ZERO
+  let latestTvl = getTotalEstimates(Address.fromString(strategyId))
+  let latestNav = ZERO_BD
 
-  if (!totalSupply.equals(ZERO)) {
-    newNav = newStrategyTvl.div(totalSupply)
+  if (!totalSupply.equals(ZERO_BD)) {
+    latestNav = latestTvl.div(totalSupply)
   }
 
   let manager = useManager(strategy.manager)
-  manager.tvl = manager.tvl.minus(strategy.tvl).plus(newStrategyTvl)
+  manager.tvl = manager.tvl.minus(strategy.tvl).plus(latestTvl)
   manager.save()
 
+  strategy.totalSupply = totalSupply
+  strategy.tvl = latestTvl
+  strategy.nav = latestNav
+  strategy.save()
+
+  // Track strategy and manager day data
   let managerDayDataId = createDayDataId(manager.id, timestamp)
   let managerDayData = ensureManagerDayData(managerDayDataId)
   managerDayData.tvlLastTracked = manager.tvl
@@ -87,33 +96,8 @@ export function trackDayData(strategyId: string, timestamp: BigInt): void {
   managerDayData.timestamp = dayOpenTime
   managerDayData.holdersCount = manager.holdersCount
 
-  // Rexive previous day holders for diff
-  let previousDayOpenTime = getPreviousDayOpenTime(dayOpenTime)
-  if (previousDayOpenTime >= manager.createdAtTimestamp) {
-    let managerDayDataId = createDayDataId(manager.id, previousDayOpenTime)
-    let managerDayData = ManagerDayData.load(managerDayDataId) as ManagerDayData
-    if (managerDayData !== null) {
-      manager.holders24hDiff =
-        manager.holdersCount - managerDayData.holdersCount
-    }
-  }
-
   manager.save()
   managerDayData.save()
-
-  strategy.tvl = newStrategyTvl
-  strategy.nav = newNav
-
-  if (previousDayOpenTime >= strategy.createdAtTimestamp) {
-    let strategyDayDataId = createDayDataId(strategy.id, previousDayOpenTime)
-    let strategyDayData = StrategyDayData.load(
-      strategyDayDataId
-    ) as StrategyDayData
-    if (strategyDayData !== null) {
-      strategy.holders24hDiff =
-        strategy.holdersCount - strategyDayData.holdersCount
-    }
-  }
 
   strategy.save()
 
@@ -122,13 +106,11 @@ export function trackDayData(strategyId: string, timestamp: BigInt): void {
 
   strategyDayData.strategy = strategy.id
   strategyDayData.timestamp = dayOpenTime
-  strategyDayData.tvlLastTracked = newStrategyTvl
-  strategyDayData.navLastTracked = newNav
+  strategyDayData.tvlLastTracked = latestTvl
+  strategyDayData.navLastTracked = latestNav
   strategyDayData.holdersCount = strategy.holdersCount
   strategyDayData.save()
 
-  trackStrategyTvlChange(strategy, previousDayOpenTime)
-  trackStrategyNavChange(strategy, previousDayOpenTime)
-
-  trackTvlChange(manager.id, previousDayOpenTime)
+  trackStrategyChanges(strategy, timestamp)
+  trackManagerChanges(manager, timestamp)
 }

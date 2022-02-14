@@ -23,10 +23,7 @@ type Manager @entity {
   strategies: [Strategy!]!
   createdAtTimestamp: BigInt!
   tvl: BigDecimal!
-  tvlChange: BigDecimal!
-  tvl24hChange: BigDecimal!
   holdersCount: Int!
-  holders24hDiff: Int!
   commonItems: [CommonItem!]!
   managerDaysData: [ManagerDayData!]! @derivedFrom(field: "manager")
   managerTrends: [ManagerTrends!]! @derivedFrom(field: "manager")
@@ -40,20 +37,16 @@ type Strategy @entity {
   symbol: String!
   state: StrategyState
   createdAtTimestamp: BigInt!
-  nav: BigDecimal!
   tvl: BigDecimal!
-  tvlChange: BigDecimal!
-  tvl24hChange: BigDecimal!
-  navChange: BigDecimal!
-  nav24hChange: BigDecimal!
+  nav: BigDecimal!
   holdersCount: Int!
-  holders24hDiff: Int!
   createdAtBlockNumber: BigInt!
   items: [StrategyItemHolding!]!
   lastRestructure: BigInt!
-  totalSupply: BigInt!
+  totalSupply: BigDecimal!
   tokenHolders: [StrategyTokenHolding]! @derivedFrom(field: "strategy")
   strategyDaysData: [StrategyDayData!]! @derivedFrom(field: "strategy")
+  strategyChanges: [StrategyChanges!]! @derivedFrom(field: "strategy")
   rebalances: [Rebalance]! @derivedFrom(field: "strategy")
   restructures: [Restructure]! @derivedFrom(field: "strategy")
   trends: StrategyTrends! @derivedFrom(field: "strategy")
@@ -142,11 +135,11 @@ type StrategyDayData @entity {
 type StrategyChanges @entity {
   id: ID!
   strategy: Strategy!
-  tvl24h: BigInt!
+  tvl1d: BigDecimal!
   tvl1w: BigDecimal!
   tvl1m: BigDecimal!
   tvlInception: BigDecimal!
-  price24h: BigInt!
+  price1d: BigDecimal!
   price1w: BigDecimal!
   price1m: BigDecimal!
   priceInception: BigDecimal!
@@ -156,7 +149,7 @@ type StrategyChanges @entity {
 type ManagerChanges @entity {
   id: ID!
   manager: Manager!
-  tvl24h: BigInt!
+  tvl1d: BigDecimal!
   tvl1w: BigDecimal!
   tvl1m: BigDecimal!
   tvlInception: BigDecimal!
