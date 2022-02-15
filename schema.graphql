@@ -143,7 +143,7 @@ type StrategyChanges @entity {
   price1w: BigDecimal!
   price1m: BigDecimal!
   priceInception: BigDecimal!
-  holders: Int!
+  holders1d: Int!
 }
 
 type ManagerChanges @entity {
@@ -153,7 +153,7 @@ type ManagerChanges @entity {
   tvl1w: BigDecimal!
   tvl1m: BigDecimal!
   tvlInception: BigDecimal!
-  holders: Int!
+  holders1d: Int!
 }
 
 type ManagerDayData @entity {

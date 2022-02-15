@@ -19,7 +19,7 @@ export function ensureManagerChanges(address: string): ManagerChanges {
     managerChanges.tvl1w = ZERO_BD
     managerChanges.tvl1m = ZERO_BD
     managerChanges.tvlInception = ZERO_BD
-    managerChanges.holders = 0
+    managerChanges.holders1d = 0
     managerChanges.save()
   }
   return managerChanges
@@ -48,6 +48,8 @@ export function trackManagerChanges(manager: Manager, timestamp: BigInt): void {
   // 1d
   let prevDayData = ManagerDayData.load(prevDayDataId) as ManagerDayData
   if (prevDayData !== null) {
+    managerChanges.holders1d = manager.holdersCount - prevDayData.holdersCount
+
     managerChanges.tvl1d = calcPc(manager.tvl, prevDayData.tvlLastTracked)
   }
 

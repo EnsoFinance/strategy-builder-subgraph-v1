@@ -27,7 +27,7 @@ export function ensureStrategyChanges(address: string): StrategyChanges {
     strategyChange.price1w = ZERO_BD
     strategyChange.price1m = ZERO_BD
     strategyChange.priceInception = ZERO_BD
-    strategyChange.holders = 0
+    strategyChange.holders1d = 0
     strategyChange.save()
   }
 
@@ -63,7 +63,7 @@ export function trackStrategyChanges(
   //1d
   let prevDayData = StrategyDayData.load(prevDayDataId) as StrategyDayData
   if (prevDayData !== null) {
-    strategyChanges.holders = strategy.holdersCount - prevDayData.holdersCount
+    strategyChanges.holders1d = strategy.holdersCount - prevDayData.holdersCount
     strategyChanges.tvl1d = calcPc(strategy.tvl, prevDayData.tvlLastTracked)
     strategyChanges.price1d = calcPc(strategy.nav, prevDayData.navLastTracked)
   }

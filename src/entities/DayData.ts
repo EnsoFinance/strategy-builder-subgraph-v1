@@ -1,10 +1,5 @@
 import { Address, log, BigInt } from '@graphprotocol/graph-ts'
-import {
-  StrategyDayData,
-  ManagerDayData,
-  Strategy,
-  StrategyChanges
-} from '../../generated/schema'
+import { StrategyDayData, ManagerDayData } from '../../generated/schema'
 import { getTotalEstimates } from '../helpers/prices'
 import { useFactory } from './Factory'
 import { useStrategy } from './Strategy'
@@ -12,7 +7,7 @@ import { trackStrategyChanges } from './StrategyChanges'
 import { useManager } from './Manager'
 import { getDayOpenTime } from '../helpers/times'
 import { getTotalSupply } from '../helpers/tokens'
-import { HUNDRED, ONE, ZERO_BD } from '../helpers/constants'
+import { ZERO_BD } from '../helpers/constants'
 import { trackManagerChanges } from './ManagerChanges'
 
 export function createDayDataId(identifier: string, timestamp: BigInt): string {
@@ -69,7 +64,7 @@ export function trackDayData(strategyId: string, timestamp: BigInt): void {
   let strategy = useStrategy(strategyId)
   let dayOpenTime = getDayOpenTime(timestamp)
 
-  // Track strategy and manager to latest values
+  // Update strategy and manager to latest values
   let totalSupply = getTotalSupply(Address.fromString(strategy.id)) //TO DO use total supply calculated from transfers
 
   let latestTvl = getTotalEstimates(Address.fromString(strategyId))
