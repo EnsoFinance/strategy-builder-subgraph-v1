@@ -49,45 +49,6 @@ export function ensureManager(address: Address, timestamp: BigInt): Manager {
   return manager
 }
 
-export function trackTvlChange(
-  managerId: string,
-  previousDayOpenTime: BigInt
-): void {
-  let manager = useManager(managerId)
-
-  let creationTimestamp = manager.createdAtTimestamp
-  let managerDayDataId = createDayDataId(manager.id, creationTimestamp)
-  let managerDayData = useManagerDayData(managerDayDataId)
-  let initialValue = managerDayData.tvlLastTracked
-  let currentValue = manager.tvl
-  let netTvl = currentValue.minus(initialValue)
-
-  if (initialValue.equals(ZERO_BD)) {
-    initialValue = ONE
-  }
-
-  let tvlChange = netTvl.div(initialValue).times(HUNDRED)
-  manager.tvlChange = tvlChange
-
-  // track TVL 24h change
-  if (previousDayOpenTime >= creationTimestamp) {
-    let managerDayDataId = createDayDataId(manager.id, previousDayOpenTime)
-    let managerDayData = ManagerDayData.load(managerDayDataId) as ManagerDayData
-    if (managerDayData !== null) {
-      let previousValue = managerDayData.tvlLastTracked
-      let net = currentValue.minus(previousValue)
-
-      if (previousValue.equals(ZERO_BD)) {
-        previousValue = ONE
-      }
-
-      manager.tvl24hChange = net.div(previousValue).times(HUNDRED)
-    }
-  }
-
-  manager.save()
-}
-
 export function getCommonItems(manager: Manager): string[] {
   let commonItems: Array<string> = []
   let managerItems: Array<Address> = []

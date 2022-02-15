@@ -68,10 +68,10 @@ export function trackDayData(strategyId: string, timestamp: BigInt): void {
   let totalSupply = getTotalSupply(Address.fromString(strategy.id)) //TO DO use total supply calculated from transfers
 
   let latestTvl = getTotalEstimates(Address.fromString(strategyId))
-  let latestNav = ZERO_BD
+  let latestPrice = ZERO_BD
 
   if (!totalSupply.equals(ZERO_BD)) {
-    latestNav = latestTvl.div(totalSupply)
+    latestPrice = latestTvl.div(totalSupply)
   }
 
   let manager = useManager(strategy.manager)
@@ -80,7 +80,7 @@ export function trackDayData(strategyId: string, timestamp: BigInt): void {
 
   strategy.totalSupply = totalSupply
   strategy.tvl = latestTvl
-  strategy.nav = latestNav
+  strategy.price = latestPrice
   strategy.save()
 
   // Track strategy and manager day data
@@ -102,7 +102,7 @@ export function trackDayData(strategyId: string, timestamp: BigInt): void {
   strategyDayData.strategy = strategy.id
   strategyDayData.timestamp = dayOpenTime
   strategyDayData.tvlLastTracked = latestTvl
-  strategyDayData.navLastTracked = latestNav
+  strategyDayData.priceLastTracked = latestPrice
   strategyDayData.holdersCount = strategy.holdersCount
   strategyDayData.save()
 

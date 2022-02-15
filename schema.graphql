@@ -38,7 +38,7 @@ type Strategy @entity {
   state: StrategyState
   createdAtTimestamp: BigInt!
   tvl: BigDecimal!
-  nav: BigDecimal!
+  price: BigDecimal!
   holdersCount: Int!
   createdAtBlockNumber: BigInt!
   items: [StrategyItemHolding!]!
@@ -128,7 +128,7 @@ type StrategyDayData @entity {
   strategy: Strategy!
   timestamp: BigInt!
   tvlLastTracked: BigDecimal!
-  navLastTracked: BigDecimal!
+  priceLastTracked: BigDecimal!
   holdersCount: Int!
 }
 

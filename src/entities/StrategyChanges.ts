@@ -65,7 +65,10 @@ export function trackStrategyChanges(
   if (prevDayData !== null) {
     strategyChanges.holders1d = strategy.holdersCount - prevDayData.holdersCount
     strategyChanges.tvl1d = calcPc(strategy.tvl, prevDayData.tvlLastTracked)
-    strategyChanges.price1d = calcPc(strategy.nav, prevDayData.navLastTracked)
+    strategyChanges.price1d = calcPc(
+      strategy.price,
+      prevDayData.priceLastTracked
+    )
   }
 
   //1w
@@ -74,8 +77,8 @@ export function trackStrategyChanges(
     strategyChanges.tvl1w = calcPc(strategy.tvl, prevWeekDayData.tvlLastTracked)
 
     strategyChanges.price1w = calcPc(
-      strategy.nav,
-      prevWeekDayData.navLastTracked
+      strategy.price,
+      prevWeekDayData.priceLastTracked
     )
   }
 
@@ -88,8 +91,8 @@ export function trackStrategyChanges(
     )
 
     strategyChanges.price1m = calcPc(
-      strategy.nav,
-      prevMonthDayData.navLastTracked
+      strategy.price,
+      prevMonthDayData.priceLastTracked
     )
   }
 
@@ -104,8 +107,8 @@ export function trackStrategyChanges(
     )
 
     strategyChanges.price1w = calcPc(
-      strategy.nav,
-      inceptionDayData.navLastTracked
+      strategy.price,
+      inceptionDayData.priceLastTracked
     )
   }
 
