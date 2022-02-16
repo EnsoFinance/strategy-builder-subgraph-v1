@@ -1,1 +1,1 @@
-deploy: yarn && yarn build:remote && yarn deploy:remote
+release: yarn build:remote && yarn deploy:remote
