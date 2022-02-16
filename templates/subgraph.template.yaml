@@ -8,7 +8,7 @@ dataSources:
     source:
       address: '{{StrategyProxyFactory}}'
       abi: StrategyProxyFactory
-      startBlock: 14000000
+      startBlock: {{blockNumber}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -40,7 +40,7 @@ dataSources:
     source:
       address: '{{StrategyController}}'
       abi: StrategyController
-      startBlock: 14000000
+      startBlock: {{blockNumber}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -78,7 +78,7 @@ dataSources:
     source:
       address: '{{TokenRegistry}}'
       abi: TokenRegistry
-      startBlock: 14000000
+      startBlock: {{blockNumber}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -104,7 +104,7 @@ dataSources:
     source:
       address: '0x2daCA37177fE6B1a035AF9ced3F9f6A55B434F60'
       abi: Tournament
-      startBlock: 14000000
+      startBlock: {{blockNumber}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
@@ -128,7 +128,7 @@ dataSources:
     source:
       address: '{{ChainlinkFeedRegistry}}'
       abi: FeedRegistry
-      startBlock: 14000000
+      startBlock: {{blockNumber}}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.5
