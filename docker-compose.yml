@@ -17,7 +17,7 @@ services:
       postgres_pass: let-me-in
       postgres_db: graph-node
       ipfs: 'ipfs:5001'
-      ethereum: 'mainnet:http://172.17.0.1:8545/'
+      ethereum: 'mainnet:http://18.223.196.75:8545'
       GRAPH_LOG: info
       GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: 1
 
