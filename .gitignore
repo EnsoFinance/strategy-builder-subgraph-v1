@@ -3,3 +3,4 @@ build
 generated
 subgraph.yaml
 src/addresses.ts
+data
