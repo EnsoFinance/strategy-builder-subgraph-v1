@@ -8,10 +8,7 @@ import {
 } from '../generated/StrategyController/StrategyController'
 import { NewStrategyItemsStruct } from '../generated/StrategyProxyFactory/StrategyProxyFactory'
 import { Rebalance, Restructure } from '../generated/schema'
-import {
-  createRebalancedItemsHolding,
-  createItemsHolding
-} from './entities/StrategyItemHolding'
+import { createItemsHolding } from './entities/StrategyItemHolding'
 import { useStrategy } from './entities/Strategy'
 import { convertToUsd, toBigDecimal } from './helpers/prices'
 import { useRestructure } from './entities/Restructure'
@@ -46,7 +43,7 @@ export function handleRebalance(event: Balanced): void {
 
   rebalance.after = strategy.items
 
-  strategy.tvl = convertToUsd(toBigDecimal(event.params.total))
+  strategy.tvl = convertToUsd(toBigDecimal(event.params.totalAfter))
 
   strategy.save()
   rebalance.save()
@@ -127,7 +124,6 @@ export function handleNewValue(event: NewValue): void {
 
 export function handleStrategyOpen(event: StrategyOpen): void {
   let strategyState = useStrategyState(event.params.strategy)
-  strategyState.fee = event.params.performanceFee
   strategyState.social = true
   strategyState.save()
 }
