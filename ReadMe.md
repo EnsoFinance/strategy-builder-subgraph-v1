@@ -69,3 +69,10 @@ Deploy subgraph
 ```bash
 yarn deploy:remote
 ```
+
+## Run graph node locally
+
+```bash
+docker-compose up
+```
+
