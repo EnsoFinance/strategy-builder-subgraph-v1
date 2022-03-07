@@ -69,6 +69,8 @@ dataSources:
           handler: handleNewValue
         - event: StrategyOpen(indexed address)
           handler: handleStrategyOpen
+        - event: StrategySet(indexed address)
+          handler: handleStrategySet
       entities: []
       file: ./src/strategyController.ts
 

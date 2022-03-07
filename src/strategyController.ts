@@ -4,7 +4,8 @@ import {
   Balanced,
   NewStructure,
   NewValue,
-  StrategyOpen
+  StrategyOpen,
+  StrategySet
 } from '../generated/StrategyController/StrategyController'
 import { NewStrategyItemsStruct } from '../generated/StrategyProxyFactory/StrategyProxyFactory'
 import { Rebalance, Restructure } from '../generated/schema'
@@ -120,9 +121,18 @@ export function handleNewValue(event: NewValue): void {
   if (category == TimelockCategory.TIMELOCK) {
     strategyState.timelock = newValue
   }
+  if (category == TimelockCategory.PERFORMANCE) {
+    strategyState.fee = newValue
+  }
 }
 
 export function handleStrategyOpen(event: StrategyOpen): void {
+  let strategyState = useStrategyState(event.params.strategy)
+  strategyState.social = true
+  strategyState.save()
+}
+
+export function handleStrategySet(event: StrategySet): void {
   let strategyState = useStrategyState(event.params.strategy)
   strategyState.social = true
   strategyState.save()
