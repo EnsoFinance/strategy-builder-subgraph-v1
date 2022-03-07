@@ -115,8 +115,11 @@ export function handleNewValue(event: NewValue): void {
   if (category == TimelockCategory.THRESHOLD) {
     strategyState.threshold = newValue
   }
-  if (category == TimelockCategory.SLIPPAGE) {
-    strategyState.slippage = newValue
+  if (category == TimelockCategory.REBALANCE_SLIPPAGE) {
+    strategyState.rebalanceSlippage = newValue
+  }
+  if (category == TimelockCategory.RESTRUCTURE_SLIPPAGE) {
+    strategyState.restructureSlippage = newValue
   }
   if (category == TimelockCategory.TIMELOCK) {
     strategyState.timelock = newValue
@@ -124,6 +127,7 @@ export function handleNewValue(event: NewValue): void {
   if (category == TimelockCategory.PERFORMANCE) {
     strategyState.fee = newValue
   }
+  strategyState.save()
 }
 
 export function handleStrategyOpen(event: StrategyOpen): void {

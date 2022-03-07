@@ -82,10 +82,13 @@ type ManagerTrends @entity {
 
 type StrategyState @entity {
   id: ID!
+  restructure: BigInt!
   threshold: BigInt!
   social: Boolean!
+  fixed: Boolean!
   fee: BigInt!
-  slippage: BigInt!
+  rebalanceSlippage: BigInt!
+  restructureSlippage: BigInt!
   timelock: BigInt!
 }
 
