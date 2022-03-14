@@ -22,6 +22,7 @@ import { toBigDecimal } from './helpers/prices'
 import { ZERO_ADDRESS } from './addresses'
 import { ensureClaimedPerfFees } from './entities/ClaimedPerfFee'
 import { removeElement } from './helpers/utils'
+import { trackStrategyTokenHoldingData } from './entities/StrategyTokenHoldingData'
 
 export function handleWithdraw(event: Withdraw): void {
   trackItemsQuantitiesChange(event.address, event.block.timestamp)
@@ -55,6 +56,19 @@ export function handleTransfer(event: Transfer): void {
       toBigDecimal(transferAmount)
     )
 
+    trackStrategyTokenHoldingData(
+      strategy.id,
+      from,
+      event.block.timestamp,
+      holdingFrom.balance
+    )
+    trackStrategyTokenHoldingData(
+      strategy.id,
+      to,
+      event.block.timestamp,
+      holdingTo.balance
+    )
+
     if (holdingFrom.balance.equals(ZERO)) {
       store.remove('StrategyTokenHolding', holdingFromId)
       manager.holdersCount = manager.holdersCount - 1
@@ -63,6 +77,19 @@ export function handleTransfer(event: Transfer): void {
 
     holdingFrom.save()
     holdingTo.save()
+
+    trackStrategyTokenHoldingData(
+      strategy.id,
+      from,
+      event.block.timestamp,
+      holdingFrom.balance
+    )
+    trackStrategyTokenHoldingData(
+      strategy.id,
+      to,
+      event.block.timestamp,
+      holdingTo.balance
+    )
   }
 
   if (from == ZERO_ADDRESS) {
@@ -80,6 +107,13 @@ export function handleTransfer(event: Transfer): void {
     }
     holdingTo.balance = holdingTo.balance.plus(toBigDecimal(transferAmount))
     holdingTo.save()
+
+    trackStrategyTokenHoldingData(
+      strategy.id,
+      to,
+      event.block.timestamp,
+      holdingTo.balance
+    )
   }
 
   if (to == ZERO_ADDRESS) {
@@ -100,6 +134,13 @@ export function handleTransfer(event: Transfer): void {
       strategy.save()
     }
     holdingFrom.save()
+
+    trackStrategyTokenHoldingData(
+      strategy.id,
+      from,
+      event.block.timestamp,
+      holdingFrom.balance
+    )
   }
 }
 

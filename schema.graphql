@@ -99,6 +99,13 @@ type StrategyTokenHolding @entity {
   balance: BigDecimal!
 }
 
+type StrategyTokenHoldingData @entity {
+  id: ID!
+  investor: String!
+  strategy: Strategy!
+  balance: BigDecimal!
+}
+
 type StrategyItemHolding @entity {
   id: ID!
   timestamp: BigInt!
