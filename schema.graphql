@@ -26,6 +26,7 @@ type Manager @entity {
   holdersCount: Int!
   commonItems: [CommonItem!]!
   managerDaysData: [ManagerDayData!]! @derivedFrom(field: "manager")
+  managerChanges: [ManagerChanges!]! @derivedFrom(field: "manager")
   managerTrends: [ManagerTrends!]! @derivedFrom(field: "manager")
   claimedPerfFee: [ClaimedPerfFee!]! @derivedFrom(field: "manager")
 }
@@ -71,7 +72,7 @@ type ManagerTrends @entity {
 }
 
 type StrategyState @entity {
-  id: ID!
+  id: ID! # Strategy address
   threshold: BigInt!
   social: Boolean!
   fee: BigInt!
