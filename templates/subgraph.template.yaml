@@ -57,18 +57,20 @@ dataSources:
         - name: EnsoOracle
           file: ./abis/EnsoOracle.json
       eventHandlers:
-        - event: Deposit(indexed address,uint256,uint256)
+        - event: Deposit(indexed address,indexed address,uint256,uint256)
           handler: handleDeposit
-        - event: Withdraw(indexed address,uint256,uint256)
+        - event: Withdraw(indexed address,indexed address,uint256,uint256)
           handler: handleWithdraw
-        - event: Balanced(indexed address,uint256,address)
+        - event: Balanced(indexed address,uint256,uint256)
           handler: handleRebalance
         - event: NewStructure(indexed address,(address,int256,(address[],address[],bytes))[],indexed bool)
           handler: handleRestructure
         - event: NewValue(indexed address,uint8,uint256,indexed bool)
           handler: handleNewValue
-        - event: StrategyOpen(indexed address,uint256)
+        - event: StrategyOpen(indexed address)
           handler: handleStrategyOpen
+        - event: StrategySet(indexed address)
+          handler: handleStrategySet
       entities: []
       file: ./src/strategyController.ts
 
@@ -144,9 +146,9 @@ templates:
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleTransfer
-        - event: Withdraw(uint256,uint256[])
+        - event: Withdraw(indexed address,uint256,uint256[])
           handler: handleWithdraw
-        - event: PerformanceFee(address,uint256)
+        - event: PerformanceFee(indexed address,uint256)
           handler: handlePerformanceFee
   - name: AggregatorV3
     kind: ethereum/contract

@@ -4,14 +4,12 @@ import {
   Balanced,
   NewStructure,
   NewValue,
-  StrategyOpen
+  StrategyOpen,
+  StrategySet
 } from '../generated/StrategyController/StrategyController'
 import { NewStrategyItemsStruct } from '../generated/StrategyProxyFactory/StrategyProxyFactory'
 import { Rebalance, Restructure } from '../generated/schema'
-import {
-  createRebalancedItemsHolding,
-  createItemsHolding
-} from './entities/StrategyItemHolding'
+import { createItemsHolding } from './entities/StrategyItemHolding'
 import { useStrategy } from './entities/Strategy'
 import { convertToUsd, toBigDecimal } from './helpers/prices'
 import { useRestructure } from './entities/Restructure'
@@ -46,7 +44,7 @@ export function handleRebalance(event: Balanced): void {
 
   rebalance.after = strategy.items
 
-  strategy.tvl = convertToUsd(toBigDecimal(event.params.total))
+  strategy.tvl = convertToUsd(toBigDecimal(event.params.totalAfter))
 
   strategy.save()
   rebalance.save()
@@ -117,17 +115,29 @@ export function handleNewValue(event: NewValue): void {
   if (category == TimelockCategory.THRESHOLD) {
     strategyState.threshold = newValue
   }
-  if (category == TimelockCategory.SLIPPAGE) {
-    strategyState.slippage = newValue
+  if (category == TimelockCategory.REBALANCE_SLIPPAGE) {
+    strategyState.rebalanceSlippage = newValue
+  }
+  if (category == TimelockCategory.RESTRUCTURE_SLIPPAGE) {
+    strategyState.restructureSlippage = newValue
   }
   if (category == TimelockCategory.TIMELOCK) {
     strategyState.timelock = newValue
   }
+  if (category == TimelockCategory.PERFORMANCE) {
+    strategyState.fee = newValue
+  }
+  strategyState.save()
 }
 
 export function handleStrategyOpen(event: StrategyOpen): void {
   let strategyState = useStrategyState(event.params.strategy)
-  strategyState.fee = event.params.performanceFee
+  strategyState.social = true
+  strategyState.save()
+}
+
+export function handleStrategySet(event: StrategySet): void {
+  let strategyState = useStrategyState(event.params.strategy)
   strategyState.social = true
   strategyState.save()
 }

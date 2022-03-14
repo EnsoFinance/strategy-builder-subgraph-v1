@@ -1,1 +1,1 @@
-release: yarn prepare:remote && yarn build:graph && yarn deploy:remote
+release: yarn prepare remote && yarn build && yarn deploy:remote

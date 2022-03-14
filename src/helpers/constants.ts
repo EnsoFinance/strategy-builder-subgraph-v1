@@ -17,7 +17,8 @@ export let QUOTE_USD = Address.fromString(
 export enum TimelockCategory {
   RESTRUCTURE,
   THRESHOLD,
-  SLIPPAGE,
+  REBALANCE_SLIPPAGE,
+  RESTRUCTURE_SLIPPAGE,
   TIMELOCK,
   PERFORMANCE
 }

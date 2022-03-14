@@ -4,11 +4,14 @@ import { ZERO_BI } from '../helpers/constants'
 
 export function createStrategyState(address: Address): StrategyState {
   let strategyState = new StrategyState(address.toHex())
-  strategyState.slippage = ZERO_BI
+  strategyState.restructure = ZERO_BI
+  strategyState.rebalanceSlippage = ZERO_BI
+  strategyState.restructureSlippage = ZERO_BI
   strategyState.threshold = ZERO_BI
   strategyState.timelock = ZERO_BI
   strategyState.fee = ZERO_BI
   strategyState.social = false
+  strategyState.fixed = false
   strategyState.save()
 
   return strategyState
