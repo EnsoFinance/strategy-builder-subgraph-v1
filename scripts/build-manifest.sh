@@ -2,7 +2,7 @@
 
 NETWORK=$1
 
-if [ -z $NETWORK ]; then echo "Network not specified! (mainnet, kovan, local, ensonet, remote)"; exit 1; fi
+if [ -z $NETWORK ]; then echo "Network not specified! (mainnet, kovan, local, ensonet, remote)"; exit 0; fi
 
 DATA=deployments.json
 

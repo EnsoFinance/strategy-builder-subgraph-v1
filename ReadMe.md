@@ -30,7 +30,7 @@ http://subgraph.dev.enso.finance/subgraphs/name/ensofinance/enso-v1
 4. Build subgraph
 
     ```bash
-    yarn build
+    yarn build:graph
     ```
 
 5. Deploy subgraph
@@ -64,7 +64,7 @@ http://subgraph.dev.enso.finance/subgraphs/name/ensofinance/enso-v1
 3. Build subgraph
 
     ```bash
-    yarn build
+    yarn build:graph
     ```
 
 4. Deploy subgraph
