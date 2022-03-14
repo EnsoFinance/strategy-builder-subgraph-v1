@@ -10,8 +10,8 @@
   "scripts": {
     "prepare": "./scripts/build-manifest.sh",
     "build:graph": "graph codegen && graph build",
-    "deploy:local": "graph create --node http://127.0.0.1:8020 ensofinance/enso-v1 && graph deploy --node http://127.0.0.1:8020/ --ipfs http://127.0.0.1:5001 ensofinance/enso-v1",
-    "deploy:remote": "graph create --node http://$DOCKHERO_HOST:8020 ensofinance/enso-v2 && graph deploy --node http://$DOCKHERO_HOST:8020 --ipfs http://$DOCKHERO_HOST:5001 ensofinance/enso-v2",
+    "deploy:local": "graph remove --node http://127.0.0.1:8020 ensofinance/enso-v1 && graph create --node http://127.0.0.1:8020 ensofinance/enso-v1 && graph deploy --node http://127.0.0.1:8020/ --ipfs http://127.0.0.1:5001 ensofinance/enso-v1",
+    "deploy:remote": "graph remove --node http://$DOCKHERO_HOST:8020 ensofinance/enso-v2 && graph create --node http://$DOCKHERO_HOST:8020 ensofinance/enso-v2 && graph deploy --node http://$DOCKHERO_HOST:8020 --ipfs http://$DOCKHERO_HOST:5001 ensofinance/enso-v2",
     "deploy:kovan": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ ensofinance/enso-v1"
   },
   "devDependencies": {
