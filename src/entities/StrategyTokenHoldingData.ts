@@ -1,5 +1,5 @@
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
-import { StrategyTokenHolding } from '../../generated/schema'
+import { StrategyTokenHoldingData } from '../../generated/schema'
 
 export function createStrategyTokenHoldingDataId(
   strategy: string,
@@ -16,11 +16,11 @@ export function trackStrategyTokenHoldingData(
   balance: BigDecimal
 ): void {
   let id = createStrategyTokenHoldingDataId(strategyId, investorId, timestamp)
-  let holding = StrategyTokenHolding.load(id) as StrategyTokenHolding
+  let holding = StrategyTokenHoldingData.load(id) as StrategyTokenHoldingData
   if (holding) {
     return
   }
-  holding = new StrategyTokenHolding(id)
+  holding = new StrategyTokenHoldingData(id)
   holding.investor = investorId
   holding.strategy = strategyId
   holding.balance = balance
