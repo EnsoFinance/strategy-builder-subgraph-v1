@@ -19,9 +19,11 @@ import { getCommonItems, useManager } from './entities/Manager'
 import { useStrategyState } from './entities/StrategyState'
 import { TimelockCategory } from './helpers/constants'
 import { trackWithdrawEvent } from './entities/WithdrawEvent'
+import { trackDepositEvent } from './entities/DepositEvent'
 
 export function handleDeposit(event: Deposit): void {
   trackItemsQuantitiesChange(event.params.strategy, event.block.timestamp)
+  trackDepositEvent(event)
 }
 
 export function handleWithdraw(event: Withdraw): void {

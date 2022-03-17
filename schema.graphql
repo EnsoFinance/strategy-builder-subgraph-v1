@@ -206,6 +206,8 @@ type DepositEvent @entity {
   user: String!
   amount: BigDecimal!
   value: BigDecimal!
+  timestamp: BigInt!
+  txHash: String!
 }
 
 type WithdrawEvent @entity {
@@ -214,6 +216,8 @@ type WithdrawEvent @entity {
   user: String!
   amount: BigDecimal!
   value: BigDecimal!
+  timestamp: BigInt!
+  txHash: String!
 }
 
 enum RestructureStatus {
