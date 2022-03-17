@@ -200,6 +200,22 @@ type Cron @entity {
   cron: BigInt!
 }
 
+type DepositEvent @entity {
+  id: ID!
+  strategy: Strategy!
+  user: String!
+  amount: BigDecimal!
+  value: BigDecimal!
+}
+
+type WithdrawEvent @entity {
+  id: ID!
+  strategy: Strategy!
+  user: String!
+  amount: BigDecimal!
+  value: BigDecimal!
+}
+
 enum RestructureStatus {
   STARTED
   FINALIZED
