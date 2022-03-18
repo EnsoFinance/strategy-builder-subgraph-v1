@@ -150,6 +150,8 @@ templates:
           handler: handleWithdraw
         - event: PerformanceFee(indexed address,uint256)
           handler: handlePerformanceFee
+        - event: RewardsClaimed(indexed address,indexed address)
+          handler: handleRewardsClaimed
   - name: AggregatorV3
     kind: ethereum/contract
     network: '{{network}}'

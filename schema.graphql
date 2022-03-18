@@ -220,6 +220,15 @@ type WithdrawEvent @entity {
   txHash: String!
 }
 
+type ClaimedRewardEvent @entity {
+  id: ID!
+  strategy: Strategy!
+  adapter: String!
+  token: String!
+  timestamp: BigInt!
+  txHash: String!
+}
+
 enum RestructureStatus {
   STARTED
   FINALIZED

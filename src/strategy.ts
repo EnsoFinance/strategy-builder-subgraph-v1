@@ -3,7 +3,8 @@ import {
   Withdraw,
   Transfer,
   PerformanceFee,
-  UpdateManager
+  UpdateManager,
+  RewardsClaimed
 } from '../generated/templates/Strategy/Strategy'
 import { useManager } from './entities/Manager'
 import {
@@ -23,6 +24,7 @@ import { ZERO_ADDRESS } from './addresses'
 import { ensureClaimedPerfFees } from './entities/ClaimedPerfFee'
 import { removeElement } from './helpers/utils'
 import { trackStrategyTokenHoldingData } from './entities/StrategyTokenHoldingData'
+import { ensureClaimedRwards } from './entities/ClaimedRewards'
 
 export function handleWithdraw(event: Withdraw): void {
   trackItemsQuantitiesChange(event.address, event.block.timestamp)
@@ -165,4 +167,15 @@ export function handlUpdateManager(event: UpdateManager): void {
 
   strategy.manager = event.params.manager.toHexString()
   strategy.save()
+}
+
+export function handleRewardsClaimed(event: RewardsClaimed): void {
+  let claimedReward = ensureClaimedRwards(
+    event.transaction.hash.toHexString() + event.logIndex.toString()
+  )
+  claimedReward.adapter = event.params.adapter.toHexString()
+  claimedReward.token = event.params.token.toHexString()
+  claimedReward.txHash = event.transaction.hash.toHexString()
+  claimedReward.timestamp = event.block.timestamp
+  claimedReward.save()
 }
