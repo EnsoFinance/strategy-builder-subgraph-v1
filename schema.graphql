@@ -196,6 +196,14 @@ type Restructure @entity {
   after: [StrategyItemHolding!]!
 }
 
+type lastTimelock @entity {
+  id: ID!
+  txHash: String!
+  type: TimelockCategory!
+  strategy: Strategy!
+  timestamp: BigInt!
+}
+
 type Cron @entity {
   id: ID!
   cron: BigInt!
@@ -252,4 +260,14 @@ enum Category {
   UNISWAP_V3_LP
   YEARN_V1
   YEARN_V2
+}
+
+enum TimelockCategory {
+  RESTRUCTURE,
+  THRESHOLD,
+  REBALANCE_SLIPPAGE,
+  RESTRUCTURE_SLIPPAGE,
+  TIMELOCK,
+  PERFORMANCE
+}
 }
