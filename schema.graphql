@@ -45,6 +45,7 @@ type Strategy @entity {
   items: [StrategyItemHolding!]!
   lastRestructure: BigInt!
   totalSupply: BigDecimal!
+  locked: Boolean!
   tokenHolders: [StrategyTokenHolding]! @derivedFrom(field: "strategy")
   strategyDaysData: [StrategyDayData!]! @derivedFrom(field: "strategy")
   strategyChanges: [StrategyChanges!]! @derivedFrom(field: "strategy")
