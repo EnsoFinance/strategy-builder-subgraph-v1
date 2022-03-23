@@ -31,8 +31,8 @@ if [[ "$NETWORK" == "ensonet" ]]; then
 fi
 
 if [[ "$NETWORK" == "remote" ]]; then
-    REMOTE_BLOCK=$(curl -X POST -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","method":"eth_blockNumber","id":1}' http://18.223.196.75 | node_modules/node-jq/bin/jq ".result" | tr -d '"')
-    ENSONET_DEPLOYMENTS=$(curl http://18.223.196.75/api/deployments)
+    REMOTE_BLOCK=$(curl -X POST -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","method":"eth_blockNumber","id":1}' http://testnet.enso.finance | node_modules/node-jq/bin/jq ".result" | tr -d '"')
+    ENSONET_DEPLOYMENTS=$(curl http://testnet.enso.finance/api/deployments)
     echo $ENSONET_DEPLOYMENTS | node_modules/node-jq/bin/jq '."v1-core"  + {"network":"mainnet","ChainlinkFeedRegistry":"0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf","blockNumber":'$(($REMOTE_BLOCK))'}' | node_modules/.bin/mustache  - templates/subgraph.template.yaml > subgraph.yaml 
     echo $ENSONET_DEPLOYMENTS | node_modules/node-jq/bin/jq '."v1-core"  + {"ChainlinkFeedRegistry":"0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf"}' | node_modules/.bin/mustache  - templates/addresses.ts > src/addresses.ts
 fi
