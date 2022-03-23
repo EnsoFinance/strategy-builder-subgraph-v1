@@ -17,11 +17,12 @@ import {
   ensureStrategyTokenHolding,
   useStrategyTokenHolding
 } from './entities/StrategyTokenHoldings'
-import { ZERO, ZERO_BI } from './helpers/constants'
+import { ZERO_BD, ZERO_BI } from './helpers/constants'
 import { toBigDecimal } from './helpers/prices'
 import { ZERO_ADDRESS } from './addresses'
 import { ensureClaimedPerfFees } from './entities/ClaimedPerfFee'
 import { removeElement } from './helpers/utils'
+import { trackStrategyTokenHoldingData } from './entities/StrategyTokenHoldingData'
 
 export function handleWithdraw(event: Withdraw): void {
   trackItemsQuantitiesChange(event.address, event.block.timestamp)
@@ -43,7 +44,7 @@ export function handleTransfer(event: Transfer): void {
     let holdingTo = ensureStrategyTokenHolding(strategy.id, to)
     let manager = useManager(strategy.manager)
 
-    if (holdingTo.balance.equals(ZERO)) {
+    if (holdingTo.balance.equals(ZERO_BD)) {
       manager.holdersCount = manager.holdersCount + 1
       strategy.holdersCount = strategy.holdersCount + 1
       manager.save()
@@ -55,7 +56,20 @@ export function handleTransfer(event: Transfer): void {
       toBigDecimal(transferAmount)
     )
 
-    if (holdingFrom.balance.equals(ZERO)) {
+    trackStrategyTokenHoldingData(
+      strategy.id,
+      from,
+      event.block.timestamp,
+      holdingFrom.balance
+    )
+    trackStrategyTokenHoldingData(
+      strategy.id,
+      to,
+      event.block.timestamp,
+      holdingTo.balance
+    )
+
+    if (holdingFrom.balance.equals(ZERO_BD)) {
       store.remove('StrategyTokenHolding', holdingFromId)
       manager.holdersCount = manager.holdersCount - 1
       strategy.holdersCount = strategy.holdersCount - 1
@@ -63,6 +77,19 @@ export function handleTransfer(event: Transfer): void {
 
     holdingFrom.save()
     holdingTo.save()
+
+    trackStrategyTokenHoldingData(
+      strategy.id,
+      from,
+      event.block.timestamp,
+      holdingFrom.balance
+    )
+    trackStrategyTokenHoldingData(
+      strategy.id,
+      to,
+      event.block.timestamp,
+      holdingTo.balance
+    )
   }
 
   if (from == ZERO_ADDRESS) {
@@ -70,7 +97,7 @@ export function handleTransfer(event: Transfer): void {
 
     let holdingTo = ensureStrategyTokenHolding(strategy.id, to)
 
-    if (holdingTo.balance.equals(ZERO)) {
+    if (holdingTo.balance.equals(ZERO_BD)) {
       let manager = useManager(strategy.manager)
       manager.holdersCount = manager.holdersCount + 1
       strategy.holdersCount = strategy.holdersCount + 1
@@ -80,6 +107,13 @@ export function handleTransfer(event: Transfer): void {
     }
     holdingTo.balance = holdingTo.balance.plus(toBigDecimal(transferAmount))
     holdingTo.save()
+
+    trackStrategyTokenHoldingData(
+      strategy.id,
+      to,
+      event.block.timestamp,
+      holdingTo.balance
+    )
   }
 
   if (to == ZERO_ADDRESS) {
@@ -91,7 +125,7 @@ export function handleTransfer(event: Transfer): void {
     holdingFrom.balance = holdingFrom.balance.minus(
       toBigDecimal(transferAmount)
     )
-    if (holdingFrom.balance.equals(ZERO)) {
+    if (holdingFrom.balance.equals(ZERO_BD)) {
       store.remove('StrategyTokenHolding', holdingFromId)
       let manager = useManager(strategy.manager)
       manager.holdersCount = manager.holdersCount - 1
@@ -100,6 +134,13 @@ export function handleTransfer(event: Transfer): void {
       strategy.save()
     }
     holdingFrom.save()
+
+    trackStrategyTokenHoldingData(
+      strategy.id,
+      from,
+      event.block.timestamp,
+      holdingFrom.balance
+    )
   }
 }
 

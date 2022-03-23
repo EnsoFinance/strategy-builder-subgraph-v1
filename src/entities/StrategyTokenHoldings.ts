@@ -1,8 +1,11 @@
 import { log } from '@graphprotocol/graph-ts'
 import { StrategyTokenHolding } from '../../generated/schema'
-import { ZERO } from '../helpers/constants'
+import { ZERO_BD } from '../helpers/constants'
 
-export function createStrategyTokenHoldingId(strategy: string, investor: string): string {
+export function createStrategyTokenHoldingId(
+  strategy: string,
+  investor: string
+): string {
   return strategy + '/' + investor
 }
 
@@ -15,7 +18,10 @@ export function useStrategyTokenHolding(id: string): StrategyTokenHolding {
   return holding
 }
 
-export function ensureStrategyTokenHolding(strategyId: string, investorId: string): StrategyTokenHolding {
+export function ensureStrategyTokenHolding(
+  strategyId: string,
+  investorId: string
+): StrategyTokenHolding {
   let id = createStrategyTokenHoldingId(strategyId, investorId)
   let holding = StrategyTokenHolding.load(id) as StrategyTokenHolding
   if (holding) {
@@ -24,7 +30,7 @@ export function ensureStrategyTokenHolding(strategyId: string, investorId: strin
   holding = new StrategyTokenHolding(id)
   holding.investor = investorId
   holding.strategy = strategyId
-  holding.balance = ZERO
+  holding.balance = ZERO_BD
 
   return holding
 }
