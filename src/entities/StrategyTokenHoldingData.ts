@@ -1,6 +1,6 @@
 import { BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 import { StrategyTokenHoldingData } from '../../generated/schema'
-
+import { Transfer } from '../../generated/templates/Strategy/Strategy'
 export function createStrategyTokenHoldingDataId(
   strategy: string,
   investor: string,
@@ -12,10 +12,14 @@ export function createStrategyTokenHoldingDataId(
 export function trackStrategyTokenHoldingData(
   strategyId: string,
   investorId: string,
-  timestamp: BigInt,
+  event: Transfer,
   balance: BigDecimal
 ): void {
-  let id = createStrategyTokenHoldingDataId(strategyId, investorId, timestamp)
+  let id = createStrategyTokenHoldingDataId(
+    strategyId,
+    investorId,
+    event.block.timestamp
+  )
   let holding = StrategyTokenHoldingData.load(id) as StrategyTokenHoldingData
   if (holding) {
     return
@@ -24,5 +28,8 @@ export function trackStrategyTokenHoldingData(
   holding.investor = investorId
   holding.strategy = strategyId
   holding.balance = balance
+  holding.timestamp = event.block.timestamp
+  holding.blockNumber = event.block.number
+  holding.txHash = event.transaction.hash.toHexString()
   holding.save()
 }
