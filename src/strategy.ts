@@ -56,18 +56,8 @@ export function handleTransfer(event: Transfer): void {
       toBigDecimal(transferAmount)
     )
 
-    trackStrategyTokenHoldingData(
-      strategy.id,
-      from,
-      event.block.timestamp,
-      holdingFrom.balance
-    )
-    trackStrategyTokenHoldingData(
-      strategy.id,
-      to,
-      event.block.timestamp,
-      holdingTo.balance
-    )
+    trackStrategyTokenHoldingData(strategy.id, from, event, holdingFrom.balance)
+    trackStrategyTokenHoldingData(strategy.id, to, event, holdingTo.balance)
 
     if (holdingFrom.balance.equals(ZERO_BD)) {
       store.remove('StrategyTokenHolding', holdingFromId)
@@ -78,18 +68,8 @@ export function handleTransfer(event: Transfer): void {
     holdingFrom.save()
     holdingTo.save()
 
-    trackStrategyTokenHoldingData(
-      strategy.id,
-      from,
-      event.block.timestamp,
-      holdingFrom.balance
-    )
-    trackStrategyTokenHoldingData(
-      strategy.id,
-      to,
-      event.block.timestamp,
-      holdingTo.balance
-    )
+    trackStrategyTokenHoldingData(strategy.id, from, event, holdingFrom.balance)
+    trackStrategyTokenHoldingData(strategy.id, to, event, holdingTo.balance)
   }
 
   if (from == ZERO_ADDRESS) {
@@ -108,12 +88,7 @@ export function handleTransfer(event: Transfer): void {
     holdingTo.balance = holdingTo.balance.plus(toBigDecimal(transferAmount))
     holdingTo.save()
 
-    trackStrategyTokenHoldingData(
-      strategy.id,
-      to,
-      event.block.timestamp,
-      holdingTo.balance
-    )
+    trackStrategyTokenHoldingData(strategy.id, to, event, holdingTo.balance)
   }
 
   if (to == ZERO_ADDRESS) {
@@ -135,12 +110,7 @@ export function handleTransfer(event: Transfer): void {
     }
     holdingFrom.save()
 
-    trackStrategyTokenHoldingData(
-      strategy.id,
-      from,
-      event.block.timestamp,
-      holdingFrom.balance
-    )
+    trackStrategyTokenHoldingData(strategy.id, from, event, holdingFrom.balance)
   }
 }
 
