@@ -9,50 +9,26 @@ services:
       - .:/app
       - node_modules:/app/node_modules
     depends_on:
-      graph-node:
-        condition: service_started
+      - graph-node
     environment:
-      ENSONET_URL: http://ensonet:3000
+      ENSONET_URL: ${ENSONET_URL}
       GRAPH_ADMIN_URL: http://graph-node:8020
       IPFS_URL: http://ipfs:5001
-
-  ensonet:
-    image: ensoassociation/ensonet
-    ports:
-      - 3000:3000
-    environment:
-      - PORT=3000
-      - INFURA_API_KEY=${INFURA_API_KEY}
-      - MNEMONIC=${MNEMONIC}
-      - ARCHIVE_NODE=${ARCHIVE_NODE}
-      - LOG=quiet
-    secrets:
-      - ssh_key
-    healthcheck:
-      test: "wget -q localhost:3000/api/deployments -O - | grep v1-core"
-      interval: "10s"
-      timeout: "15s"
-      start_period: "3m"
-      retries: 24
 
   graph-node:
     image: graphprotocol/graph-node:v0.24.0
     ports:
       - '8000:8000'
     depends_on:
-      ipfs:
-        condition: service_started
-      postgres:
-        condition: service_started
-      ensonet:
-        condition: service_healthy
+      - ipfs
+      - postgres
     environment:
       postgres_host: postgres
       postgres_user: graph-node
       postgres_pass: let-me-in
       postgres_db: graph-node      
       ipfs: 'ipfs:5001'
-      ethereum: 'mainnet:http://ensonet:3000'
+      ethereum: 'mainnet:${ENSONET_URL}'
       GRAPH_LOG: info
       GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: 1
       GRAPH_ETHEREUM_CLEANUP_BLOCKS: 1
@@ -66,7 +42,3 @@ services:
       POSTGRES_USER: graph-node
       POSTGRES_PASSWORD: let-me-in
       POSTGRES_DB: graph-node
-
-secrets:
-  ssh_key:
-    file: ~/.ssh/ensonet
