@@ -18,6 +18,9 @@ export function ensureManagerChanges(address: string): ManagerChanges {
     managerChanges.tvl1d = ZERO_BD
     managerChanges.tvl1w = ZERO_BD
     managerChanges.tvl1m = ZERO_BD
+    managerChanges.averagePrice1d = ZERO_BD
+    managerChanges.averagePrice1w = ZERO_BD
+    managerChanges.averagePrice1m = ZERO_BD
     managerChanges.tvlInception = ZERO_BD
     managerChanges.holders1d = 0
     managerChanges.save()
@@ -49,19 +52,30 @@ export function trackManagerChanges(manager: Manager, timestamp: BigInt): void {
   let prevDayData = ManagerDayData.load(prevDayDataId) as ManagerDayData
   if (prevDayData !== null) {
     managerChanges.holders1d = manager.holdersCount - prevDayData.holdersCount
-
+    managerChanges.averagePrice1d = calcPc(
+      manager.totalPrice,
+      prevDayData.totalPriceLastTracked
+    )
     managerChanges.tvl1d = calcPc(manager.tvl, prevDayData.tvlLastTracked)
   }
 
   // 1w
   let prevWeekDayData = ManagerDayData.load(weekDayDatId) as ManagerDayData
   if (prevWeekDayData !== null) {
+    managerChanges.averagePrice1w = calcPc(
+      manager.totalPrice,
+      prevDayData.totalPriceLastTracked
+    )
     managerChanges.tvl1w = calcPc(manager.tvl, prevWeekDayData.tvlLastTracked)
   }
 
   // 1m
   let prevMonthDayData = ManagerDayData.load(monthDayDatId) as ManagerDayData
   if (prevMonthDayData !== null) {
+    managerChanges.averagePrice1m = calcPc(
+      manager.totalPrice,
+      prevDayData.totalPriceLastTracked
+    )
     managerChanges.tvl1m = calcPc(manager.tvl, prevMonthDayData.tvlLastTracked)
   }
 

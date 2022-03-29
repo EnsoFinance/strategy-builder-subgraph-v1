@@ -6,46 +6,12 @@ https://thegraph.com/explorer/subgraph/milonite/kenzo
 Current _remote_ ✨ EnsoNet ✨ Subgraph:
 http://subgraph.dev.enso.finance/subgraphs/name/ensofinance/enso-v1
 
-## Setup and deploy on _local_ ✨ EnsoNet ✨
+## Setup and deploy on ✨ EnsoNet ✨
 
-1. Start [✨ EnsoNet ✨](https://github.com/EnsoFinance/ensonet) (run inside cloned directory):
-   _wait for v1-core deployment to finish_ & **use `MODE=dev`!**
-    ```bash
-    yarn
-    yarn start
-    ```
+* **local** ✨ EnsoNet ✨ -> `MODE=dev`
+* **remote** ✨ EnsoNet ✨ -> `MODE=prod`
 
-2. Run local subgraph node
-
-    ```bash
-    docker-compose up
-    ```
-
-3. Prepare manifest and mappings with local ✨ EnsoNet ✨ addresses
-
-    ```bash
-    yarn prepare ensonet
-    ```
-
-4. Build subgraph
-
-    ```bash
-    yarn build:graph
-    ```
-
-5. Deploy subgraph
-
-    ```bash
-    yarn deploy:local
-    ```
-
-6. Seed subgraph (run inside ✨ EnsoNet ✨ directory)
-
-    ```bash
-    export $(grep -v '^#' .env | xargs)
-    cd repos/v1-core
-    yarn fill-ui
-    ```
+✅ `yarn start` ✅
 
 ## Setup and deploy on kovan
 

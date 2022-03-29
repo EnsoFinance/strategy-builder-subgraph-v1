@@ -1,4 +1,4 @@
-import { Address, log, BigInt } from '@graphprotocol/graph-ts'
+import { Address, log, BigInt, BigDecimal } from '@graphprotocol/graph-ts'
 import { StrategyDayData, ManagerDayData } from '../../generated/schema'
 import { getTotalEstimates } from '../helpers/prices'
 import { useFactory } from './Factory'
@@ -76,6 +76,8 @@ export function trackDayData(strategyId: string, timestamp: BigInt): void {
 
   let manager = useManager(strategy.manager)
   manager.tvl = manager.tvl.minus(strategy.tvl).plus(latestTvl)
+  manager.totalPrice = ZERO_BD
+  manager.strategiesAveragePrice = ZERO_BD
   manager.save()
 
   strategy.totalSupply = totalSupply
@@ -88,6 +90,7 @@ export function trackDayData(strategyId: string, timestamp: BigInt): void {
   let managerDayData = ensureManagerDayData(managerDayDataId)
   managerDayData.tvlLastTracked = manager.tvl
   managerDayData.manager = manager.id
+  managerDayData.totalPriceLastTracked = manager.totalPrice
   managerDayData.timestamp = dayOpenTime
   managerDayData.holdersCount = manager.holdersCount
 

@@ -1,7 +1,6 @@
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { Manager, ManagerDayData, ManagerTrends } from '../../generated/schema'
-import { createDayDataId, useManagerDayData } from './DayData'
-import { ZERO_BD, ONE, HUNDRED, THOUSAND } from '../helpers/constants'
+import { Manager, ManagerTrends } from '../../generated/schema'
+import { ZERO_BD, ONE, THOUSAND } from '../helpers/constants'
 import { arrayUnique } from '../helpers/utils'
 import { useStrategy, getStrategyTokens, isStrategy } from './Strategy'
 import { ensureCommonItem } from './CommonItem'
@@ -42,6 +41,8 @@ export function ensureManager(address: Address, timestamp: BigInt): Manager {
   manager.createdAtTimestamp = timestamp
   manager.holdersCount = 0
   manager.tvl = ZERO_BD
+  manager.totalPrice = ZERO_BD
+  manager.strategiesAveragePrice = ZERO_BD
   manager.commonItems = []
 
   ensureManagerChanges(address.toHex())
