@@ -11,9 +11,9 @@
     "start": "./scripts/run.sh",
     "prepare": "./scripts/build-manifest.sh",
     "build:graph": "graph codegen && graph build",
-    "deploy:local": "graph remove --node $GRAPH_ADMIN_URL ensofinance/enso-v1 && graph create --node $GRAPH_ADMIN_URL ensofinance/enso-v1 && graph deploy --node $GRAPH_ADMIN_URL --ipfs $IPFS_URL ensofinance/enso-v1",
-    "deploy:remote": "graph remove --node http://$DOCKHERO_HOST:8020 ensofinance/enso-v1 && graph create --node http://$DOCKHERO_HOST:8020 ensofinance/enso-v1 && graph deploy --node http://$DOCKHERO_HOST:8020 --ipfs http://$DOCKHERO_HOST:5001 ensofinance/enso-v1",
-    "deploy:kovan": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ ensofinance/enso-v1"
+    "deploy:local": "graph remove --node $GRAPH_ADMIN_URL ensofinance/enso-v5 && graph create --node $GRAPH_ADMIN_URL ensofinance/enso-v5 && graph deploy --node $GRAPH_ADMIN_URL --ipfs $IPFS_URL ensofinance/enso-v5",
+    "deploy:remote": "graph remove --node http://subgraph.dev.enso.finance:8020 ensofinance/enso-v5 && graph create --node http://subgraph.dev.enso.finance:8020 ensofinance/enso-v5 && graph deploy --node http://subgraph.dev.enso.finance:8020 --ipfs http://subgraph.dev.enso.finance:5001 ensofinance/enso-v5",
+    "deploy:kovan": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ ensofinance/enso-v5"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "0.20.1",

@@ -23,6 +23,8 @@ type Manager @entity {
   strategies: [Strategy!]!
   createdAtTimestamp: BigInt!
   tvl: BigDecimal!
+  totalPrice: BigDecimal! # aux entity
+  strategiesAveragePrice: BigDecimal! # aux entity
   holdersCount: Int!
   commonItems: [CommonItem!]!
   managerDaysData: [ManagerDayData!]! @derivedFrom(field: "manager")
@@ -166,6 +168,9 @@ type ManagerChanges @entity {
   tvl1d: BigDecimal!
   tvl1w: BigDecimal!
   tvl1m: BigDecimal!
+  averagePrice1d: BigDecimal!
+  averagePrice1w: BigDecimal!
+  averagePrice1m: BigDecimal!
   tvlInception: BigDecimal!
   holders1d: Int!
 }
@@ -176,6 +181,7 @@ type ManagerDayData @entity {
   manager: Manager!
   timestamp: BigInt!
   tvlLastTracked: BigDecimal!
+  totalPriceLastTracked: BigDecimal!
   holdersCount: Int!
 }
 
