@@ -18,10 +18,11 @@ export function ensureManagerChanges(address: string): ManagerChanges {
     managerChanges.tvl1d = ZERO_BD
     managerChanges.tvl1w = ZERO_BD
     managerChanges.tvl1m = ZERO_BD
+    managerChanges.tvlInception = ZERO_BD
     managerChanges.averagePrice1d = ZERO_BD
     managerChanges.averagePrice1w = ZERO_BD
     managerChanges.averagePrice1m = ZERO_BD
-    managerChanges.tvlInception = ZERO_BD
+    managerChanges.averagePriceInception = ZERO_BD
     managerChanges.holders1d = 0
     managerChanges.save()
   }
@@ -85,7 +86,14 @@ export function trackManagerChanges(manager: Manager, timestamp: BigInt): void {
     incpeptionDayDatId
   ) as ManagerDayData
   if (inceptionDayData !== null) {
-    managerChanges.tvl1m = calcPc(manager.tvl, inceptionDayData.tvlLastTracked)
+    managerChanges.tvlInception = calcPc(
+      manager.tvl,
+      inceptionDayData.tvlLastTracked
+    )
+    managerChanges.averagePriceInception = calcPc(
+      manager.totalPrice,
+      prevDayData.totalPriceLastTracked
+    )
   }
 
   managerChanges.save()

@@ -168,10 +168,11 @@ type ManagerChanges @entity {
   tvl1d: BigDecimal!
   tvl1w: BigDecimal!
   tvl1m: BigDecimal!
+  tvlInception: BigDecimal!
   averagePrice1d: BigDecimal!
   averagePrice1w: BigDecimal!
   averagePrice1m: BigDecimal!
-  tvlInception: BigDecimal!
+  averagePriceInception: BigDecimal!
   holders1d: Int!
 }
 
