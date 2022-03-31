@@ -41,6 +41,7 @@ export function createStrategy(
   strategy.price = ZERO_BD
   strategy.holdersCount = 0
   strategy.totalSupply = ZERO_BD
+  strategy.locked = false
   strategy.createdAtBlockNumber = event.block.number
 
   let strategyTrends = new StrategyTrends(strategyId + '/trends')

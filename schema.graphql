@@ -38,7 +38,8 @@ type Strategy @entity {
   manager: Manager!
   name: String!
   symbol: String!
-  state: StrategyState
+  state: StrategyState!
+  stateHistory: StrategyStateChange!
   createdAtTimestamp: BigInt!
   tvl: BigDecimal!
   price: BigDecimal!
@@ -47,6 +48,8 @@ type Strategy @entity {
   items: [StrategyItemHolding!]!
   lastRestructure: BigInt!
   totalSupply: BigDecimal!
+  locked: Boolean!
+  lastStateChange: TimelockCategory!
   tokenHolders: [StrategyTokenHolding]! @derivedFrom(field: "strategy")
   strategyDaysData: [StrategyDayData!]! @derivedFrom(field: "strategy")
   strategyChanges: [StrategyChanges!]! @derivedFrom(field: "strategy")
@@ -54,6 +57,7 @@ type Strategy @entity {
   restructures: [Restructure]! @derivedFrom(field: "strategy")
   trends: StrategyTrends! @derivedFrom(field: "strategy")
 }
+
 
 type StrategyTrends @entity {
   id: ID!
@@ -186,23 +190,12 @@ type ManagerDayData @entity {
   holdersCount: Int!
 }
 
-type Rebalance @entity {
+type lastTimelock @entity {
   id: ID!
   txHash: String!
+  type: TimelockCategory!
   strategy: Strategy!
   timestamp: BigInt!
-  before: [StrategyItemHolding!]!
-  after: [StrategyItemHolding!]!
-}
-
-type Restructure @entity {
-  id: ID!
-  txHash: String!
-  status: RestructureStatus!
-  strategy: Strategy!
-  timestamp: BigInt!
-  before: [StrategyItemHolding!]!
-  after: [StrategyItemHolding!]!
 }
 
 type Cron @entity {
@@ -262,3 +255,87 @@ enum Category {
   YEARN_V1
   YEARN_V2
 }
+
+enum TimelockCategory {
+  RESTRUCTURE,
+  THRESHOLD,
+  REBALANCE_SLIPPAGE,
+  RESTRUCTURE_SLIPPAGE,
+  TIMELOCK,
+  PERFORMANCE
+}
+}
+
+
+type StrategyStateHistory @entity {
+  id: ID!
+  strategy: Strategy!
+  timelockHistory: [TimelockChange!]! @derivedFrom(field: "strategy")
+  thresholdHistory: [ThresholdChange!]! @derivedFrom(field: "strategy")
+  rebalanceHistory: [Rebalance]! @derivedFrom(field: "strategy")
+  restructureHistory: [Restructure]! @derivedFrom(field: "strategy")
+  performanceHistory: [PerformanceChange]! @derivedFrom(field: "strategy")
+  restructureSlippageHistory: [RestructureSlippageChange]! @derivedFrom(field: "strategy")
+}
+
+type TimelockChange @entity{
+  id: ID!
+  strategy: Strategy!
+  before: BigInt!
+  after: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  txHash: String!
+}
+
+type ThresholdChange @entity{
+  id: ID!
+  strategy: Strategy!
+  before: BigInt!
+  after: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  txHash: String!
+}
+
+type PerformanceChange @entity{
+  id: ID!
+  strategy: Strategy!
+  before: BigInt!
+  after: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  txHash: String!
+}
+
+type RebalanceThresholdChange @entity{
+  id: ID!
+  strategy: Strategy!
+  before: BigInt!
+  after: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  txHash: String!
+}
+
+type Rebalance @entity {
+  id: ID!
+  strategy: Strategy!
+  before: [StrategyItemHolding!]!
+  after: [StrategyItemHolding!]!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  txHash: String!
+}
+
+type Restructure @entity {
+  id: ID!
+  status: RestructureStatus!
+  strategy: Strategy!
+  before: [StrategyItemHolding!]!
+  after: [StrategyItemHolding!]!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  txHash: String!
+}
+
