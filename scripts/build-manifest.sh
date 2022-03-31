@@ -31,8 +31,8 @@ if [[ "$NETWORK" == "ensonet" ]]; then
         until curl -sS $ENSONET_URL/api/deployments | grep "v1-core"
         do
             echo "Waiting for v1-core deployment on ensonet..."
-            sleep 10
             BLOCKS_TO_SYNC="0"
+            sleep 10
         done
 
         ENSONET_DEPLOYMENTS=$(curl $ENSONET_URL/api/deployments)
