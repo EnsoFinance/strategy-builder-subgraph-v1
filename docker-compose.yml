@@ -23,7 +23,7 @@ services:
     environment:
       PORT: 3000
       INFURA_API_KEY: ${INFURA_API_KEY}
-      MNEMONIC: ${MNEMONIC}
+      MNEMONIC: "${MNEMONIC}"
       ARCHIVE_NODE: ${ARCHIVE_NODE}
       LOG: quiet
     secrets:
