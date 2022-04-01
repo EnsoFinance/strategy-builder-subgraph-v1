@@ -1,5 +1,5 @@
 import { Address, BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
-import { Manager, ManagerTrends } from '../../generated/schema'
+import { Manager } from '../../generated/schema'
 import { ZERO_BD, ONE, THOUSAND } from '../helpers/constants'
 import { arrayUnique } from '../helpers/utils'
 import { useStrategy, getStrategyTokens, isStrategy } from './Strategy'
@@ -13,20 +13,6 @@ export function useManager(id: string): Manager {
   }
 
   return manager
-}
-
-export function ensureManagerTrend(id: string): void {
-  let managerTrends = ManagerTrends.load(id) as ManagerTrends
-  if (managerTrends) {
-    return
-  }
-  managerTrends = new ManagerTrends(id + '/trends')
-  managerTrends.manager = id
-  managerTrends.trend1d = ZERO_BD
-  managerTrends.trend7d = ZERO_BD
-  managerTrends.trend30d = ZERO_BD
-  managerTrends.trendAll = ZERO_BD
-  managerTrends.save()
 }
 
 export function ensureManager(address: Address, timestamp: BigInt): Manager {
