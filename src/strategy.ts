@@ -23,6 +23,7 @@ import { ZERO_ADDRESS } from './addresses'
 import { ensureClaimedPerfFees } from './entities/ClaimedPerfFee'
 import { removeElement } from './helpers/utils'
 import { trackStrategyTokenHoldingData } from './entities/StrategyTokenHoldingData'
+import { StrategyTokenHolding } from '../generated/schema'
 
 export function handleWithdraw(event: Withdraw): void {
   trackItemsQuantitiesChange(event.address, event.block.timestamp)
@@ -79,7 +80,23 @@ export function handleTransfer(event: Transfer): void {
 
     if (holdingTo.balance.equals(ZERO_BD)) {
       let manager = useManager(strategy.manager)
-      manager.holdersCount = manager.holdersCount + 1
+
+      let strategies = manager.strategies
+
+      let isInvested: boolean = false
+      for (let i = 0; i < strategies.length; ++i) {
+        let strategyTokenHolding = StrategyTokenHolding.load(
+          strategy.id + holdingTo.investor
+        ) as StrategyTokenHolding
+        if (!strategyTokenHolding == null) {
+          isInvested = true
+        }
+      }
+
+      if (!isInvested) {
+        manager.holdersCount = manager.holdersCount + 1
+      }
+
       strategy.holdersCount = strategy.holdersCount + 1
 
       manager.save()
