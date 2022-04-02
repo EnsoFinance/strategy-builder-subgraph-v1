@@ -1,13 +1,8 @@
 import { Address, log, BigInt } from '@graphprotocol/graph-ts'
-import {
-  Strategy,
-  StrategyDayData,
-  StrategyTrends
-} from '../../generated/schema'
-import { useStrategyDayData, createDayDataId } from './DayData'
+import { Strategy } from '../../generated/schema'
 import { NewStrategy } from '../../generated/StrategyProxyFactory/StrategyProxyFactory'
 import { useItemHolding } from './StrategyItemHolding'
-import { ZERO_BD, ONE, HUNDRED } from '../helpers/constants'
+import { ZERO_BD } from '../helpers/constants'
 import { useFactory } from './Factory'
 import { createStrategyState } from './StrategyState'
 import { toBigDecimal } from '../helpers/prices'
@@ -42,14 +37,6 @@ export function createStrategy(
   strategy.holdersCount = 0
   strategy.totalSupply = ZERO_BD
   strategy.createdAtBlockNumber = event.block.number
-
-  let strategyTrends = new StrategyTrends(strategyId + '/trends')
-  strategyTrends.strategy = strategyId
-  strategyTrends.trend1d = ZERO_BD
-  strategyTrends.trend7d = ZERO_BD
-  strategyTrends.trend30d = ZERO_BD
-  strategyTrends.trendAll = ZERO_BD
-  strategyTrends.save()
 
   ensureStrategyChanges(strategyId)
 

@@ -29,7 +29,6 @@ type Manager @entity {
   commonItems: [CommonItem!]!
   managerDaysData: [ManagerDayData!]! @derivedFrom(field: "manager")
   managerChanges: [ManagerChanges!]! @derivedFrom(field: "manager")
-  managerTrends: [ManagerTrends!]! @derivedFrom(field: "manager")
   claimedPerfFee: [ClaimedPerfFee!]! @derivedFrom(field: "manager")
 }
 
@@ -52,25 +51,6 @@ type Strategy @entity {
   strategyChanges: [StrategyChanges!]! @derivedFrom(field: "strategy")
   rebalances: [Rebalance]! @derivedFrom(field: "strategy")
   restructures: [Restructure]! @derivedFrom(field: "strategy")
-  trends: StrategyTrends! @derivedFrom(field: "strategy")
-}
-
-type StrategyTrends @entity {
-  id: ID!
-  strategy: Strategy!
-  trend1d: BigDecimal!
-  trend7d: BigDecimal!
-  trend30d: BigDecimal!
-  trendAll: BigDecimal!
-}
-
-type ManagerTrends @entity {
-  id: ID!
-  manager: Manager!
-  trend1d: BigDecimal!
-  trend7d: BigDecimal!
-  trend30d: BigDecimal!
-  trendAll: BigDecimal!
 }
 
 type StrategyState @entity {

@@ -1,10 +1,6 @@
 import { NewStrategy } from '../generated/StrategyProxyFactory/StrategyProxyFactory'
 import { Strategy as StrategyTemplate } from '../generated/templates'
-import {
-  ensureManager,
-  ensureManagerTrend,
-  getCommonItems
-} from './entities/Manager'
+import { ensureManager, getCommonItems } from './entities/Manager'
 import { trackAllDayData, trackDayData } from './entities/DayData'
 import { ensureFactory } from './entities/Factory'
 import { createStrategy } from './entities/Strategy'
@@ -44,8 +40,6 @@ export function handleNewStrategy(event: NewStrategy): void {
 
   manager.commonItems = getCommonItems(manager)
   manager.save()
-
-  ensureManagerTrend(manager.id)
 
   trackDayData(strategy.id, timestamp)
   trackAllDayData(timestamp)
