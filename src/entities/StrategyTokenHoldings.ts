@@ -34,3 +34,19 @@ export function ensureStrategyTokenHolding(
 
   return holding
 }
+
+export function getIsInvested(
+  strategies: Array<string>,
+  investor: string
+): boolean {
+  for (let i = 0; i < strategies.length; ++i) {
+    let strategyTokenHolding = StrategyTokenHolding.load(
+      strategies[i] + investor
+    ) as StrategyTokenHolding
+    if (!strategyTokenHolding == null) {
+      return true
+    }
+  }
+
+  return false
+}

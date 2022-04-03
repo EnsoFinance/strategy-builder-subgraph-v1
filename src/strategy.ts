@@ -1,4 +1,4 @@
-import { store } from '@graphprotocol/graph-ts'
+import { Address, store } from '@graphprotocol/graph-ts'
 import {
   Withdraw,
   Transfer,
@@ -15,6 +15,7 @@ import { trackItemsQuantitiesChange } from './entities/StrategyItemHolding'
 import {
   createStrategyTokenHoldingId,
   ensureStrategyTokenHolding,
+  getIsInvested,
   useStrategyTokenHolding
 } from './entities/StrategyTokenHoldings'
 import { ZERO_BD, ZERO_BI } from './helpers/constants'
@@ -23,7 +24,6 @@ import { ZERO_ADDRESS } from './addresses'
 import { ensureClaimedPerfFees } from './entities/ClaimedPerfFee'
 import { removeElement } from './helpers/utils'
 import { trackStrategyTokenHoldingData } from './entities/StrategyTokenHoldingData'
-import { StrategyTokenHolding } from '../generated/schema'
 
 export function handleWithdraw(event: Withdraw): void {
   trackItemsQuantitiesChange(event.address, event.block.timestamp)
@@ -44,9 +44,17 @@ export function handleTransfer(event: Transfer): void {
     let holdingFrom = useStrategyTokenHolding(holdingFromId)
     let holdingTo = ensureStrategyTokenHolding(strategy.id, to)
     let manager = useManager(strategy.manager)
+    let otherStrategies = removeElement(
+      manager.strategies,
+      Address.fromString(strategy.id)
+    )
+    let isInvested = getIsInvested(otherStrategies, holdingTo.investor)
 
     if (holdingTo.balance.equals(ZERO_BD)) {
-      manager.holdersCount = manager.holdersCount + 1
+      if (!isInvested) {
+        manager.holdersCount = manager.holdersCount + 1
+      }
+
       strategy.holdersCount = strategy.holdersCount + 1
       manager.save()
       strategy.save()
@@ -62,7 +70,9 @@ export function handleTransfer(event: Transfer): void {
 
     if (holdingFrom.balance.equals(ZERO_BD)) {
       store.remove('StrategyTokenHolding', holdingFromId)
-      manager.holdersCount = manager.holdersCount - 1
+      if (!isInvested) {
+        manager.holdersCount = manager.holdersCount - 1
+      }
       strategy.holdersCount = strategy.holdersCount - 1
     }
 
@@ -81,17 +91,12 @@ export function handleTransfer(event: Transfer): void {
     if (holdingTo.balance.equals(ZERO_BD)) {
       let manager = useManager(strategy.manager)
 
-      let strategies = manager.strategies
+      let otherStrategies = removeElement(
+        manager.strategies,
+        Address.fromString(strategy.id)
+      )
 
-      let isInvested: boolean = false
-      for (let i = 0; i < strategies.length; ++i) {
-        let strategyTokenHolding = StrategyTokenHolding.load(
-          strategy.id + holdingTo.investor
-        ) as StrategyTokenHolding
-        if (!strategyTokenHolding == null) {
-          isInvested = true
-        }
-      }
+      let isInvested = getIsInvested(otherStrategies, holdingTo.investor)
 
       if (!isInvested) {
         manager.holdersCount = manager.holdersCount + 1
@@ -120,7 +125,16 @@ export function handleTransfer(event: Transfer): void {
     if (holdingFrom.balance.equals(ZERO_BD)) {
       store.remove('StrategyTokenHolding', holdingFromId)
       let manager = useManager(strategy.manager)
-      manager.holdersCount = manager.holdersCount - 1
+      let otherStrategies = removeElement(
+        manager.strategies,
+        Address.fromString(strategy.id)
+      )
+
+      let isInvested = getIsInvested(otherStrategies, holdingFrom.investor)
+
+      if (!isInvested) {
+        manager.holdersCount = manager.holdersCount - 1
+      }
       strategy.holdersCount = strategy.holdersCount - 1
       manager.save()
       strategy.save()
