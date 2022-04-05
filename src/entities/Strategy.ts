@@ -1,11 +1,12 @@
 import { Address, log, BigInt } from '@graphprotocol/graph-ts'
-import { Strategy, StrategyDayData, StrategyTrends } from '../../generated/schema'
-import { useStrategyDayData, createDayDataId } from './DayData'
+import { Strategy } from '../../generated/schema'
 import { NewStrategy } from '../../generated/StrategyProxyFactory/StrategyProxyFactory'
 import { useItemHolding } from './StrategyItemHolding'
-import { ZERO, ONE, HUNDRED, ZERO_BI } from '../helpers/constants'
+import { ZERO_BD } from '../helpers/constants'
 import { useFactory } from './Factory'
 import { createStrategyState } from './StrategyState'
+import { toBigDecimal } from '../helpers/prices'
+import { ensureStrategyChanges } from './StrategyChanges'
 
 export function useStrategy(id: string): Strategy {
   let strategy = Strategy.load(id) as Strategy
@@ -16,7 +17,10 @@ export function useStrategy(id: string): Strategy {
   return strategy
 }
 
-export function createStrategy(strategyAddress: Address, event: NewStrategy): Strategy {
+export function createStrategy(
+  strategyAddress: Address,
+  event: NewStrategy
+): Strategy {
   let strategyId = strategyAddress.toHex()
 
   createStrategyState(strategyAddress)
@@ -26,98 +30,17 @@ export function createStrategy(strategyAddress: Address, event: NewStrategy): St
   strategy.name = event.params.name
   strategy.state = strategyId
   strategy.symbol = event.params.symbol
-  strategy.startTime = event.block.timestamp
+  strategy.createdAtTimestamp = event.block.timestamp
   strategy.lastRestructure = event.block.timestamp
-  strategy.tvl = ZERO
-  strategy.tvlChange = ZERO
-  strategy.tvl24hChange = ZERO
-  strategy.nav = ZERO
-  strategy.navChange = ZERO
-  strategy.nav24hChange = ZERO
+  strategy.tvl = ZERO_BD
+  strategy.price = ZERO_BD
   strategy.holdersCount = 0
-  strategy.holders24hDiff = 0
-  strategy.totalSupply = ZERO_BI
+  strategy.totalSupply = ZERO_BD
   strategy.createdAtBlockNumber = event.block.number
 
-  let strategyTrends = new StrategyTrends(strategyId + '/trends')
-  strategyTrends.strategy = strategyId
-  strategyTrends.trend1d = ZERO
-  strategyTrends.trend7d = ZERO
-  strategyTrends.trend30d = ZERO
-  strategyTrends.trendAll = ZERO
-  strategyTrends.save()
+  ensureStrategyChanges(strategyId)
 
   return strategy
-}
-
-export function trackTvlChange(strategy: Strategy, previousDayOpenTime: BigInt): void {
-  // track TVL since inception
-
-  let creationTimestamp = strategy.startTime
-  let strategyDayDataId = createDayDataId(strategy.id, creationTimestamp)
-  let strategyDayData = useStrategyDayData(strategyDayDataId)
-  let initialValue = strategyDayData.tvlLastTracked
-  let currentValue = strategy.tvl
-  let netProfit = currentValue.minus(initialValue)
-
-  if (initialValue.equals(ZERO)) {
-    initialValue = ONE
-  }
-
-  let tvlChange = netProfit.div(initialValue).times(HUNDRED)
-  strategy.tvlChange = tvlChange
-
-  // track TVL 24h change
-  if (previousDayOpenTime >= creationTimestamp) {
-    let strategyDayDataId = createDayDataId(strategy.id, previousDayOpenTime)
-    let strategyDayData = StrategyDayData.load(strategyDayDataId) as StrategyDayData
-    if (strategyDayData !== null) {
-      let previousValue = strategyDayData.tvlLastTracked
-      let netProfit = currentValue.minus(previousValue)
-
-      if (previousValue.equals(ZERO)) {
-        previousValue = ONE
-      }
-
-      strategy.tvl24hChange = netProfit.div(previousValue).times(HUNDRED)
-    }
-  }
-
-  strategy.save()
-}
-
-export function trackNavChange(strategy: Strategy, previousDayOpenTime: BigInt): void {
-  // track nav change since inception
-  let creationTimestamp = strategy.startTime
-  let strategyDayDataId = createDayDataId(strategy.id, creationTimestamp)
-  let strategyDayData = useStrategyDayData(strategyDayDataId)
-  let initialValue = strategyDayData.navLastTracked
-  let currentValue = strategy.nav
-  let netNav = currentValue.minus(initialValue)
-
-  if (initialValue.equals(ZERO)) {
-    initialValue = ONE
-  }
-
-  strategy.navChange = netNav.div(initialValue).times(HUNDRED)
-
-  // track nav 24h nav change
-  if (previousDayOpenTime >= creationTimestamp) {
-    let strategyDayDataId = createDayDataId(strategy.id, previousDayOpenTime)
-    let strategyDayData = StrategyDayData.load(strategyDayDataId) as StrategyDayData
-    if (strategyDayData !== null) {
-      let previousValue = strategyDayData.navLastTracked
-      let netNav = currentValue.minus(previousValue)
-
-      if (previousValue.equals(ZERO)) {
-        previousValue = ONE
-      }
-
-      strategy.nav24hChange = netNav.div(previousValue).times(HUNDRED)
-    }
-  }
-
-  strategy.save()
 }
 
 export function getStrategyTokens(strategy: Strategy): Address[] {
@@ -132,13 +55,21 @@ export function getStrategyTokens(strategy: Strategy): Address[] {
   return items.map<Address>((token) => Address.fromString(token))
 }
 
-export function mintStrategyTokens(strategy: Strategy, transferAmount: BigInt): void {
-  strategy.totalSupply = strategy.totalSupply.plus(transferAmount)
+export function mintStrategyTokens(
+  strategy: Strategy,
+  transferAmount: BigInt
+): void {
+  strategy.totalSupply = strategy.totalSupply.plus(toBigDecimal(transferAmount))
   strategy.save()
 }
 
-export function burnStrategyTokens(strategy: Strategy, transferAmount: BigInt): void {
-  strategy.totalSupply = strategy.totalSupply.minus(transferAmount)
+export function burnStrategyTokens(
+  strategy: Strategy,
+  transferAmount: BigInt
+): void {
+  strategy.totalSupply = strategy.totalSupply.minus(
+    toBigDecimal(transferAmount)
+  )
   strategy.save()
 }
 

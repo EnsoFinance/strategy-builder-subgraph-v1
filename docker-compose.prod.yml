@@ -30,8 +30,8 @@ services:
       ipfs: 'ipfs:5001'
       ethereum: 'mainnet:${ENSONET_URL}'
       GRAPH_LOG: info
-      GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: 1
-      GRAPH_ETHEREUM_CLEANUP_BLOCKS: 1
+      GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: "true"
+      GRAPH_ETHEREUM_MAX_BLOCK_RANGE_SIZE: 10
 
   ipfs:
     image: ipfs/go-ipfs:v0.4.23

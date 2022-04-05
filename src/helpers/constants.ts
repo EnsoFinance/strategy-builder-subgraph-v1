@@ -1,6 +1,6 @@
 import { Address, BigDecimal, BigInt } from '@graphprotocol/graph-ts'
 
-export let ZERO = BigDecimal.fromString('0')
+export let ZERO_BD = BigDecimal.fromString('0')
 export let ZERO_BI = BigInt.fromString('0')
 export let ONE = BigDecimal.fromString('1')
 export let HUNDRED = BigDecimal.fromString('100')

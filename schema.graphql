@@ -21,18 +21,14 @@ type Manager @entity {
   id: ID!
   strategiesCount: Int!
   strategies: [Strategy!]!
-  startTime: BigInt!
+  createdAtTimestamp: BigInt!
   tvl: BigDecimal!
-  totalNav: BigDecimal!
-  strategiesAverageNav: BigDecimal!
-  strategiesAverageNavChange: BigDecimal!
-  tvlChange: BigDecimal!
-  tvl24hChange: BigDecimal!
+  totalPrice: BigDecimal! # aux entity
+  strategiesAveragePrice: BigDecimal! # aux entity
   holdersCount: Int!
-  holders24hDiff: Int!
   commonItems: [CommonItem!]!
   managerDaysData: [ManagerDayData!]! @derivedFrom(field: "manager")
-  managerTrends: [ManagerTrends!]! @derivedFrom(field: "manager")
+  managerChanges: [ManagerChanges!]! @derivedFrom(field: "manager")
   claimedPerfFee: [ClaimedPerfFee!]! @derivedFrom(field: "manager")
 }
 
@@ -42,42 +38,19 @@ type Strategy @entity {
   name: String!
   symbol: String!
   state: StrategyState
-  startTime: BigInt!
-  nav: BigDecimal!
+  createdAtTimestamp: BigInt!
   tvl: BigDecimal!
-  tvlChange: BigDecimal!
-  tvl24hChange: BigDecimal!
-  navChange: BigDecimal!
-  nav24hChange: BigDecimal!
+  price: BigDecimal!
   holdersCount: Int!
-  holders24hDiff: Int!
   createdAtBlockNumber: BigInt!
   items: [StrategyItemHolding!]!
   lastRestructure: BigInt!
-  totalSupply: BigInt!
+  totalSupply: BigDecimal!
   tokenHolders: [StrategyTokenHolding]! @derivedFrom(field: "strategy")
   strategyDaysData: [StrategyDayData!]! @derivedFrom(field: "strategy")
+  strategyChanges: [StrategyChanges!]! @derivedFrom(field: "strategy")
   rebalances: [Rebalance]! @derivedFrom(field: "strategy")
   restructures: [Restructure]! @derivedFrom(field: "strategy")
-  trends: StrategyTrends! @derivedFrom(field: "strategy")
-}
-
-type StrategyTrends @entity {
-  id: ID!
-  strategy: Strategy!
-  trend1d: BigDecimal!
-  trend7d: BigDecimal!
-  trend30d: BigDecimal!
-  trendAll: BigDecimal!
-}
-
-type ManagerTrends @entity {
-  id: ID!
-  manager: Manager!
-  trend1d: BigDecimal!
-  trend7d: BigDecimal!
-  trend30d: BigDecimal!
-  trendAll: BigDecimal!
 }
 
 type StrategyState @entity {
@@ -97,6 +70,16 @@ type StrategyTokenHolding @entity {
   investor: String!
   strategy: Strategy!
   balance: BigDecimal!
+}
+
+type StrategyTokenHoldingData @entity {
+  id: ID!
+  investor: String!
+  strategy: Strategy!
+  balance: BigDecimal!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  txHash: String!
 }
 
 type StrategyItemHolding @entity {
@@ -141,8 +124,36 @@ type StrategyDayData @entity {
   strategy: Strategy!
   timestamp: BigInt!
   tvlLastTracked: BigDecimal!
-  navLastTracked: BigDecimal!
+  priceLastTracked: BigDecimal!
   holdersCount: Int!
+}
+
+type StrategyChanges @entity {
+  id: ID!
+  strategy: Strategy!
+  tvl1d: BigDecimal!
+  tvl1w: BigDecimal!
+  tvl1m: BigDecimal!
+  tvlInception: BigDecimal!
+  price1d: BigDecimal!
+  price1w: BigDecimal!
+  price1m: BigDecimal!
+  priceInception: BigDecimal!
+  holders1d: Int!
+}
+
+type ManagerChanges @entity {
+  id: ID!
+  manager: Manager!
+  tvl1d: BigDecimal!
+  tvl1w: BigDecimal!
+  tvl1m: BigDecimal!
+  tvlInception: BigDecimal!
+  averagePrice1d: BigDecimal!
+  averagePrice1w: BigDecimal!
+  averagePrice1m: BigDecimal!
+  averagePriceInception: BigDecimal!
+  holders1d: Int!
 }
 
 type ManagerDayData @entity {
@@ -151,29 +162,7 @@ type ManagerDayData @entity {
   manager: Manager!
   timestamp: BigInt!
   tvlLastTracked: BigDecimal!
-  totalNavLastTracked: BigDecimal!
-  strategiesAverageNav: BigDecimal!
-  holdersCount: Int!
-}
-
-type StrategyHourData @entity {
-  # strategy address + timestamp
-  id: ID!
-  strategy: Strategy!
-  timestamp: BigInt!
-  tvlLastTracked: BigDecimal!
-  navLastTracked: BigDecimal!
-  holdersCount: Int!
-}
-
-type ManagerHourData @entity {
-  # strategy address + timestamp
-  id: ID!
-  manager: Manager!
-  timestamp: BigInt!
-  tvlLastTracked: BigDecimal!
-  totalNavLastTracked: BigDecimal!
-  strategiesAverageNav: BigDecimal!
+  totalPriceLastTracked: BigDecimal!
   holdersCount: Int!
 }
 
@@ -196,25 +185,29 @@ type Restructure @entity {
   after: [StrategyItemHolding!]!
 }
 
-type Tournament @entity {
-  id: ID!
-  startTime: BigInt!
-  endTime: BigInt!
-  strategiesCount: Int!
-  strategiesData: [TournamentStrategyData]! @derivedFrom(field: "tournament")
-}
-
-type TournamentStrategyData @entity {
-  id: ID! #strategy/torunamentId
-  manager: Manager!
-  strategy: Strategy!
-  roi: BigDecimal!
-  tournament: Tournament!
-}
-
 type Cron @entity {
   id: ID!
   cron: BigInt!
+}
+
+type DepositEvent @entity {
+  id: ID!
+  strategy: Strategy!
+  user: String!
+  amount: BigDecimal!
+  value: BigDecimal!
+  timestamp: BigInt!
+  txHash: String!
+}
+
+type WithdrawEvent @entity {
+  id: ID!
+  strategy: Strategy!
+  user: String!
+  amount: BigDecimal!
+  value: BigDecimal!
+  timestamp: BigInt!
+  txHash: String!
 }
 
 enum RestructureStatus {
