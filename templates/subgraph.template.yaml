@@ -48,8 +48,6 @@ dataSources:
       abis:
         - name: AggregatorV3
           file: ./abis/AggregatorV3.json
-        - name: UniswapFactory
-          file: ./abis/IUniswapV2Factory.json
         - name: StrategyController
           file: ./abis/StrategyController.json
         - name: ERC20
