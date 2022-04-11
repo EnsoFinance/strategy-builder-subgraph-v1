@@ -19,7 +19,7 @@ jobs:
       - name: Run Enso Subgraph
         env:
           MODE: prod
-          ENSONET_URL: http://testnet.enso.finance
+          ENSONET_URL: https://testnet.enso.finance
         uses: appleboy/ssh-action@master
         with:
           envs: MODE,ENSONET_URL
