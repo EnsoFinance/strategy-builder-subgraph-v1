@@ -12,6 +12,7 @@ services:
       graph-node:
         condition: service_started
     environment:
+      MODE: dev
       ENSONET_URL: http://ensonet:3000
       GRAPH_ADMIN_URL: http://graph-node:8020
       IPFS_URL: http://ipfs:5001
