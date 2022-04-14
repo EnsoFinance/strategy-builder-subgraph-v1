@@ -11,6 +11,7 @@ services:
     depends_on:
       - graph-node
     environment:
+      MODE: prod
       ENSONET_URL: ${ENSONET_URL}
       GRAPH_ADMIN_URL: http://graph-node:8020
       IPFS_URL: http://ipfs:5001
