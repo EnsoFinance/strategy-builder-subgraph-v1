@@ -20,6 +20,7 @@ import { useStrategyState } from './entities/StrategyState'
 import { TimelockCategory } from './helpers/constants'
 import { trackWithdrawEvent } from './entities/WithdrawEvent'
 import { trackDepositEvent } from './entities/DepositEvent'
+import { removeUsdDecimals } from './helpers/tokens'
 
 export function handleDeposit(event: Deposit): void {
   trackItemsQuantitiesChange(event.params.strategy, event.block.timestamp)
@@ -48,7 +49,8 @@ export function handleRebalance(event: Balanced): void {
 
   rebalance.after = strategy.items
 
-  strategy.tvl = convertToUsd(toBigDecimal(event.params.totalAfter))
+  let tvlInUsd = convertToUsd(toBigDecimal(event.params.totalAfter))
+  strategy.tvl = removeUsdDecimals(tvlInUsd)
 
   strategy.save()
   rebalance.save()
