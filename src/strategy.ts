@@ -1,4 +1,4 @@
-import { Address, store } from '@graphprotocol/graph-ts'
+import { Address, log, store } from '@graphprotocol/graph-ts'
 import {
   Withdraw,
   Transfer,
@@ -44,11 +44,16 @@ export function handleTransfer(event: Transfer): void {
     let holdingFrom = useStrategyTokenHolding(holdingFromId)
     let holdingTo = ensureStrategyTokenHolding(strategy.id, to)
     let manager = useManager(strategy.manager)
-    let otherStrategies = removeElement(
-      manager.strategies,
-      Address.fromString(strategy.id)
-    )
-    let isInvested = getIsInvested(otherStrategies, holdingTo.investor)
+
+    let isInvested = false
+
+    if (manager.strategies.length > 1) {
+      let otherStrategies = removeElement(
+        manager.strategies,
+        Address.fromString(strategy.id)
+      )
+      isInvested = getIsInvested(otherStrategies, holdingTo.investor)
+    }
 
     if (holdingTo.balance.equals(ZERO_BD)) {
       if (!isInvested) {
@@ -91,12 +96,15 @@ export function handleTransfer(event: Transfer): void {
     if (holdingTo.balance.equals(ZERO_BD)) {
       let manager = useManager(strategy.manager)
 
-      let otherStrategies = removeElement(
-        manager.strategies,
-        Address.fromString(strategy.id)
-      )
+      let isInvested = false
 
-      let isInvested = getIsInvested(otherStrategies, holdingTo.investor)
+      if (manager.strategies.length > 1) {
+        let otherStrategies = removeElement(
+          manager.strategies,
+          Address.fromString(strategy.id)
+        )
+        isInvested = getIsInvested(otherStrategies, holdingTo.investor)
+      }
 
       if (!isInvested) {
         manager.holdersCount = manager.holdersCount + 1
