@@ -1,6 +1,9 @@
 name: Deploy Enso Subgraph
 
-on: [push]
+on:
+  push:
+    branches:
+      - 'main'
 
 jobs:
   deploy:
