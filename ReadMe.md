@@ -10,8 +10,8 @@ http://subgraph.dev.enso.finance/subgraphs/name/ensofinance/enso-v1
 
 ❗️ Link your github ssh key to `~/.ssh/ensonet` (or use the service account's key) ❗️
 
-* **local** ✨ EnsoNet ✨ -> `MODE=dev`
-* **remote** ✨ EnsoNet ✨ -> `MODE=prod`
+- **local** ✨ EnsoNet ✨ -> `MODE=dev`
+- **remote** ✨ EnsoNet ✨ -> `MODE=prod`
 
 ✅ `yarn start` ✅
 
@@ -26,24 +26,34 @@ http://subgraph.dev.enso.finance/subgraphs/name/ensofinance/enso-v1
 
 1. Authenticate
 
-    ```bash
-    graph auth <TOKEN>
-    ```
+   ```bash
+   graph auth <TOKEN>
+   ```
 
 2. Prepare manifest and mappings with kovan addresses
 
-    ```bash
-    yarn prepare kovan
-    ```
+   ```bash
+   yarn prepare kovan
+   ```
 
 3. Build subgraph
 
-    ```bash
-    yarn build:graph
-    ```
+   ```bash
+   yarn build:graph
+   ```
 
 4. Deploy subgraph
 
+   ```bash
+   yarn deploy:kovan
+   ```
+
+### Get Subgraph Logs
+
     ```bash
-    yarn deploy:kovan
-    ```
+
+curl --location --request POST 'https://thegraph.com/hosted-service/subgraph/graphql' --data-raw '{"query":"{ indexingStatusForCurrentVersion(subgraphName: \"ensofinance/enso-v1\") { subgraph fatalError { message } nonFatalErrors {message } } }"}' | jq
+
+```
+
+```
