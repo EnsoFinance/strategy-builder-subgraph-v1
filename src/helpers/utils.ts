@@ -15,7 +15,9 @@ export function addTimestamp(array: BigInt[], element: BigInt): BigInt[] {
 
 export function removeElement(array: string[], element: Address): string[] {
   let newArray = array
-  newArray.filter((e) => e !== element.toHexString())
+  let index = newArray.indexOf(element.toHexString())
+  newArray.splice(index, 1)
+
   return newArray
 }
 
