@@ -23,19 +23,18 @@ if [[ "$NETWORK" == "local" ]]; then
 fi
 
 if [[ "$NETWORK" == "ensonet" ]]; then
-    [[ "$MODE" == "prod" ]] && BLOCKS_TO_SYNC="10000" || BLOCKS_TO_SYNC="100"
     REMOTE_BLOCK=$(curl -sS -X POST -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","method":"eth_blockNumber","id":1}' $ENSONET_URL | node_modules/node-jq/bin/jq ".result" | tr -d '"')
+    [[ "$MODE" == "prod" ]] && BLOCK_NR="14571456" || BLOCK_NR=$(($REMOTE_BLOCK-100))
     if [[ $(curl -sSI $ENSONET_URL/api/deployments | head -n 1| cut -d$' ' -f2) == 200 ]]
     then
         until curl -sS $ENSONET_URL/api/deployments | grep "v1-core"
         do
             echo "Waiting for v1-core deployment on ensonet..."
-            BLOCKS_TO_SYNC="0"
             sleep 10
         done
 
         ENSONET_DEPLOYMENTS=$(curl $ENSONET_URL/api/deployments)
-        echo $ENSONET_DEPLOYMENTS | node_modules/node-jq/bin/jq '."v1-core"  + {"network":"mainnet","ChainlinkFeedRegistry":"0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf","blockNumber":'$(($REMOTE_BLOCK-$BLOCKS_TO_SYNC))'}' | node_modules/.bin/mustache  - templates/subgraph.template.yaml > subgraph.yaml 
+        echo $ENSONET_DEPLOYMENTS | node_modules/node-jq/bin/jq '."v1-core"  + {"network":"mainnet","ChainlinkFeedRegistry":"0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf","blockNumber":'$BLOCK_NR'}' | node_modules/.bin/mustache  - templates/subgraph.template.yaml > subgraph.yaml 
         echo $ENSONET_DEPLOYMENTS | node_modules/node-jq/bin/jq '."v1-core"  + {"ChainlinkFeedRegistry":"0x47Fb2585D2C56Fe188D0E6ec628a38b74fCeeeDf"}' | node_modules/.bin/mustache  - templates/addresses.ts > src/addresses.ts
     else
         echo "$ENSONET_URL deployments is not up!"
