@@ -30,6 +30,7 @@ export function ensureManager(address: Address, timestamp: BigInt): Manager {
   manager.totalPrice = ZERO_BD
   manager.strategiesAveragePrice = ZERO_BD
   manager.commonItems = []
+  manager.holders = []
 
   ensureManagerChanges(address.toHex())
 
