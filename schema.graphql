@@ -27,7 +27,6 @@ type Manager @entity {
   strategiesAveragePrice: BigDecimal! # aux entity
   holdersCount: Int!
   commonItems: [CommonItem!]!
-  holders: [String!]!
   managerDaysData: [ManagerDayData!]! @derivedFrom(field: "manager")
   managerChanges: [ManagerChanges!]! @derivedFrom(field: "manager")
   claimedPerfFee: [ClaimedPerfFee!]! @derivedFrom(field: "manager")
