@@ -1,12 +1,12 @@
 import { Address, log, BigInt, BigDecimal } from '@graphprotocol/graph-ts'
 import { StrategyDayData, ManagerDayData } from '../../generated/schema'
-import { getTotalEstimates } from '../helpers/prices'
+import { convertToUsd, getAllEstimates, toBigDecimal } from '../helpers/prices'
 import { useFactory } from './Factory'
 import { useStrategy } from './Strategy'
 import { trackStrategyChanges } from './StrategyChanges'
 import { useManager } from './Manager'
 import { getDayOpenTime } from '../helpers/times'
-import { getTotalSupply } from '../helpers/tokens'
+import { getTotalSupply, removeUsdDecimals } from '../helpers/tokens'
 import { ZERO_BD } from '../helpers/constants'
 import { trackManagerChanges } from './ManagerChanges'
 
@@ -55,19 +55,33 @@ export function trackAllDayData(timestamp: BigInt): void {
   let factory = useFactory()
   let strategies = factory.allStrategies
 
+  let strategiesAdd: Array<Address> = []
+
+  for (let i = 0; i < factory.strategiesCount; ++i) {
+    let stratAdd = Address.fromString(strategies[i])
+    strategiesAdd.push(stratAdd)
+  }
+
+  let latestTvls = getAllEstimates(strategiesAdd)
+
   for (let i = 0; i < strategies.length; ++i) {
-    trackDayData(strategies[i], timestamp)
+    let assetPrice = toBigDecimal(latestTvls[i])
+    let latestTvlInUsd = convertToUsd(assetPrice)
+    trackDayData(strategies[i], timestamp, removeUsdDecimals(latestTvlInUsd))
   }
 }
 
-export function trackDayData(strategyId: string, timestamp: BigInt): void {
+export function trackDayData(
+  strategyId: string,
+  timestamp: BigInt,
+  latestTvl: BigDecimal
+): void {
   let strategy = useStrategy(strategyId)
   let dayOpenTime = getDayOpenTime(timestamp)
 
   // Update strategy and manager to latest values
   let totalSupply = getTotalSupply(Address.fromString(strategy.id)) //TO DO use total supply calculated from transfers
 
-  let latestTvl = getTotalEstimates(Address.fromString(strategyId))
   let latestPrice = ZERO_BD
 
   if (!totalSupply.equals(ZERO_BD)) {

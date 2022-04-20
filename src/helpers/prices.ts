@@ -38,6 +38,19 @@ export function getTotalEstimates(strategyAddress: Address): BigDecimal {
   return removeUsdDecimals(totalInUsd)
 }
 
+export function getAllEstimates(strategyAddress: Address[]): BigInt[] {
+  let contract = Oracle.bind(Address.fromString(ORACLE_ADDRESS))
+
+  let balanceCall = contract.try_estimateStrategies(strategyAddress)
+  if (balanceCall.reverted) {
+    log.critical('estimateStrategies() reverted for {}', [])
+  }
+
+  let total = balanceCall.value
+
+  return total
+}
+
 export function getEthUsdAggregator(): Address {
   let feedRegistry = FeedRegistry.bind(
     Address.fromString(CHAINLINK_FEED_REGISTRY)
