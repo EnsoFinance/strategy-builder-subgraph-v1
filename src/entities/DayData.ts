@@ -3,12 +3,12 @@ import { StrategyDayData, ManagerDayData } from '../../generated/schema'
 import { convertToUsd, getAllEstimates, toBigDecimal } from '../helpers/prices'
 import { useFactory } from './Factory'
 import { useStrategy } from './Strategy'
-import { trackStrategyChanges } from './StrategyChanges'
+import { trackStrategyChange } from './StrategyChange'
 import { useManager } from './Manager'
 import { getDayOpenTime } from '../helpers/times'
 import { getTotalSupply, removeUsdDecimals } from '../helpers/tokens'
 import { ZERO_BD } from '../helpers/constants'
-import { trackManagerChanges } from './ManagerChanges'
+import { trackManagerChanges } from './ManagerChange'
 
 export function createDayDataId(identifier: string, timestamp: BigInt): string {
   let dayStartTimestamp = getDayOpenTime(timestamp)
@@ -127,6 +127,6 @@ export function trackDayData(
   strategyDayData.holdersCount = strategy.holdersCount
   strategyDayData.save()
 
-  trackStrategyChanges(strategy, timestamp)
+  trackStrategyChange(strategy, timestamp)
   trackManagerChanges(manager, timestamp)
 }

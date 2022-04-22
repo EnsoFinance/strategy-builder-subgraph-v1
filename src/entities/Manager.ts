@@ -4,7 +4,7 @@ import { ZERO_BD, ONE, THOUSAND } from '../helpers/constants'
 import { arrayUnique } from '../helpers/utils'
 import { useStrategy, getStrategyTokens, isStrategy } from './Strategy'
 import { ensureCommonItem } from './CommonItem'
-import { ensureManagerChanges } from './ManagerChanges'
+import { ensureManagerChanges } from './ManagerChange'
 
 export function useManager(id: string): Manager {
   let manager = Manager.load(id) as Manager
