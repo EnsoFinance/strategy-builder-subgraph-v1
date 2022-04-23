@@ -1,4 +1,4 @@
-import { log } from '@graphprotocol/graph-ts'
+import { log, BigInt } from '@graphprotocol/graph-ts'
 import { StrategyTokenHolding } from '../../generated/schema'
 import { ZERO_BD } from '../helpers/constants'
 
@@ -33,4 +33,21 @@ export function ensureStrategyTokenHolding(
   holding.balance = ZERO_BD
 
   return holding
+}
+
+export function getIsInvested(
+  strategies: Array<string>,
+  investor: string
+): boolean {
+  for (let i = 0; i < strategies.length; ++i) {
+    let strategyTokenHolding = StrategyTokenHolding.load(
+      createStrategyTokenHoldingId(strategies[i], investor)
+    ) as StrategyTokenHolding
+
+    if (strategyTokenHolding != null) {
+      return true
+    }
+  }
+
+  return false
 }
