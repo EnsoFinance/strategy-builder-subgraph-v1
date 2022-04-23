@@ -98,9 +98,13 @@ export function trackStrategyChange(
     incpeptionDayDatId
   ) as StrategyDayData
   if (inceptionDayData !== null) {
-    strategyChange.tvl1w = calcPc(strategy.tvl, inceptionDayData.tvlLastTracked)
+    log.warning('inception', [])
+    strategyChange.tvlInception = calcPc(
+      strategy.tvl,
+      inceptionDayData.tvlLastTracked
+    )
 
-    strategyChange.price1w = calcPc(
+    strategyChange.priceInception = calcPc(
       strategy.price,
       inceptionDayData.priceLastTracked
     )
