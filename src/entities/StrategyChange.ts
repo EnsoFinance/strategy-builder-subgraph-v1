@@ -98,7 +98,6 @@ export function trackStrategyChange(
     incpeptionDayDatId
   ) as StrategyDayData
   if (inceptionDayData !== null) {
-    log.warning('inception', [])
     strategyChange.tvlInception = calcPc(
       strategy.tvl,
       inceptionDayData.tvlLastTracked

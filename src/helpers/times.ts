@@ -20,7 +20,6 @@ export function get30dOpenTime(timestamp: BigInt): BigInt {
 
 export function getPrevDayOpenTime(timestamp: BigInt): BigInt {
   let prevDayTimestamp = timestamp.minus(day)
-  log.warning(' timestamp is {}', [timestamp.minus(day).toString()])
   return getDayOpenTime(prevDayTimestamp)
 }
 
