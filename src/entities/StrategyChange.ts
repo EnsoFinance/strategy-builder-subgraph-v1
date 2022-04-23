@@ -1,7 +1,7 @@
 import { log, BigInt } from '@graphprotocol/graph-ts'
 import {
   Strategy,
-  StrategyChanges,
+  StrategyChange,
   StrategyDayData
 } from '../../generated/schema'
 import { ZERO_BD } from '../helpers/constants'
@@ -14,10 +14,10 @@ import {
 import { calcPc } from '../helpers/utils'
 import { createDayDataId } from './DayData'
 
-export function ensureStrategyChanges(address: string): StrategyChanges {
-  let strategyChange = StrategyChanges.load(address) as StrategyChanges
+export function ensureStrategyChange(address: string): StrategyChange {
+  let strategyChange = StrategyChange.load(address) as StrategyChange
   if (strategyChange == null) {
-    strategyChange = new StrategyChanges(address)
+    strategyChange = new StrategyChange(address)
     strategyChange.strategy = address
     strategyChange.tvl1d = ZERO_BD
     strategyChange.tvl1w = ZERO_BD
@@ -34,8 +34,8 @@ export function ensureStrategyChanges(address: string): StrategyChanges {
   return strategyChange
 }
 
-export function useStrategyChanges(id: string): StrategyChanges {
-  let strategyChange = StrategyChanges.load(id) as StrategyChanges
+export function useStrategyChange(id: string): StrategyChange {
+  let strategyChange = StrategyChange.load(id) as StrategyChange
   if (strategyChange == null) {
     log.critical('StrategyChange {} does not exist', [id])
   }
@@ -43,12 +43,11 @@ export function useStrategyChanges(id: string): StrategyChanges {
   return strategyChange
 }
 
-export function trackStrategyChanges(
+export function trackStrategyChange(
   strategy: Strategy,
   timestamp: BigInt
 ): void {
-  let strategyChanges = ensureStrategyChanges(strategy.id)
-
+  let strategyChange = ensureStrategyChange(strategy.id)
   let prevDayDataId = createDayDataId(
     strategy.id,
     getPrevDayOpenTime(timestamp)
@@ -62,10 +61,11 @@ export function trackStrategyChanges(
 
   //1d
   let prevDayData = StrategyDayData.load(prevDayDataId) as StrategyDayData
+
   if (prevDayData !== null) {
-    strategyChanges.holders1d = strategy.holdersCount - prevDayData.holdersCount
-    strategyChanges.tvl1d = calcPc(strategy.tvl, prevDayData.tvlLastTracked)
-    strategyChanges.price1d = calcPc(
+    strategyChange.holders1d = strategy.holdersCount - prevDayData.holdersCount
+    strategyChange.tvl1d = calcPc(strategy.tvl, prevDayData.tvlLastTracked)
+    strategyChange.price1d = calcPc(
       strategy.price,
       prevDayData.priceLastTracked
     )
@@ -74,9 +74,9 @@ export function trackStrategyChanges(
   //1w
   let prevWeekDayData = StrategyDayData.load(weekDayDatId) as StrategyDayData
   if (prevWeekDayData !== null) {
-    strategyChanges.tvl1w = calcPc(strategy.tvl, prevWeekDayData.tvlLastTracked)
+    strategyChange.tvl1w = calcPc(strategy.tvl, prevWeekDayData.tvlLastTracked)
 
-    strategyChanges.price1w = calcPc(
+    strategyChange.price1w = calcPc(
       strategy.price,
       prevWeekDayData.priceLastTracked
     )
@@ -85,12 +85,9 @@ export function trackStrategyChanges(
   //1m
   let prevMonthDayData = StrategyDayData.load(monthDayDatId) as StrategyDayData
   if (prevMonthDayData !== null) {
-    strategyChanges.tvl1m = calcPc(
-      strategy.tvl,
-      prevMonthDayData.tvlLastTracked
-    )
+    strategyChange.tvl1m = calcPc(strategy.tvl, prevMonthDayData.tvlLastTracked)
 
-    strategyChanges.price1m = calcPc(
+    strategyChange.price1m = calcPc(
       strategy.price,
       prevMonthDayData.priceLastTracked
     )
@@ -101,16 +98,16 @@ export function trackStrategyChanges(
     incpeptionDayDatId
   ) as StrategyDayData
   if (inceptionDayData !== null) {
-    strategyChanges.tvl1w = calcPc(
+    strategyChange.tvlInception = calcPc(
       strategy.tvl,
       inceptionDayData.tvlLastTracked
     )
 
-    strategyChanges.price1w = calcPc(
+    strategyChange.priceInception = calcPc(
       strategy.price,
       inceptionDayData.priceLastTracked
     )
   }
 
-  strategyChanges.save()
+  strategyChange.save()
 }

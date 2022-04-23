@@ -6,7 +6,7 @@ import { ZERO_BD } from '../helpers/constants'
 import { useFactory } from './Factory'
 import { createStrategyState } from './StrategyState'
 import { toBigDecimal } from '../helpers/prices'
-import { ensureStrategyChanges } from './StrategyChanges'
+import { ensureStrategyChange } from './StrategyChange'
 
 export function useStrategy(id: string): Strategy {
   let strategy = Strategy.load(id) as Strategy
@@ -38,7 +38,7 @@ export function createStrategy(
   strategy.totalSupply = ZERO_BD
   strategy.createdAtBlockNumber = event.block.number
 
-  ensureStrategyChanges(strategyId)
+  ensureStrategyChange(strategyId)
 
   return strategy
 }

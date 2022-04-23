@@ -1,4 +1,4 @@
-import { BigInt } from '@graphprotocol/graph-ts'
+import { BigInt, log } from '@graphprotocol/graph-ts'
 
 let hour = BigInt.fromI32(3600)
 let day = BigInt.fromI32(86400)
@@ -18,10 +18,9 @@ export function get30dOpenTime(timestamp: BigInt): BigInt {
   return getDayOpenTime(timestamp.minus(month))
 }
 
-export function getPrevDayOpenTime(nextOpenTime: BigInt): BigInt {
-  let interval = day
-  let timestamp = nextOpenTime.minus(BigInt.fromString('1'))
-  return getOpenTime(timestamp, interval)
+export function getPrevDayOpenTime(timestamp: BigInt): BigInt {
+  let prevDayTimestamp = timestamp.minus(day)
+  return getDayOpenTime(prevDayTimestamp)
 }
 
 export function getHourOpenTime(timestamp: BigInt): BigInt {

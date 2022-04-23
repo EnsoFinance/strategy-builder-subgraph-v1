@@ -28,7 +28,7 @@ type Manager @entity {
   holdersCount: Int!
   commonItems: [CommonItem!]!
   managerDaysData: [ManagerDayData!]! @derivedFrom(field: "manager")
-  managerChanges: [ManagerChanges!]! @derivedFrom(field: "manager")
+  managerChange: [ManagerChange!]! @derivedFrom(field: "manager")
   claimedPerfFee: [ClaimedPerfFee!]! @derivedFrom(field: "manager")
 }
 
@@ -48,7 +48,7 @@ type Strategy @entity {
   totalSupply: BigDecimal!
   tokenHolders: [StrategyTokenHolding]! @derivedFrom(field: "strategy")
   strategyDaysData: [StrategyDayData!]! @derivedFrom(field: "strategy")
-  strategyChanges: [StrategyChanges!]! @derivedFrom(field: "strategy")
+  strategyChange: [StrategyChange!]! @derivedFrom(field: "strategy")
   rebalances: [Rebalance]! @derivedFrom(field: "strategy")
   restructures: [Restructure]! @derivedFrom(field: "strategy")
 }
@@ -128,7 +128,7 @@ type StrategyDayData @entity {
   holdersCount: Int!
 }
 
-type StrategyChanges @entity {
+type StrategyChange @entity {
   id: ID!
   strategy: Strategy!
   tvl1d: BigDecimal!
@@ -142,7 +142,7 @@ type StrategyChanges @entity {
   holders1d: Int!
 }
 
-type ManagerChanges @entity {
+type ManagerChange @entity {
   id: ID!
   manager: Manager!
   tvl1d: BigDecimal!
