@@ -32,6 +32,8 @@ dataSources:
       eventHandlers:
         - event: NewStrategy(address,address,string,string,(address,int256,(address[],address[],bytes))[])
           handler: handleNewStrategy
+        - event: Update(address,string)
+          handler: handleUpdate
       file: ./src/factory.ts
 
   - kind: ethereum/contract
@@ -119,6 +121,37 @@ dataSources:
       file: ./src/feedRegistry.ts
 
 templates:
+  - kind: ethereum/contract
+    name: StrategyProxyFactory
+    network: '{{network}}'
+    source:
+      abi: StrategyProxyFactory
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/factory.ts
+      entities: []
+      abis:
+        - name: StrategyProxyFactory
+          file: ./abis/StrategyProxyFactory.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: ERC20SymbolBytes
+          file: ./abis/ERC20SymbolBytes.json
+        - name: ERC20NameBytes
+          file: ./abis/ERC20NameBytes.json
+        - name: AggregatorV3
+          file: ./abis/AggregatorV3.json
+        - name: FeedRegistry
+          file: ./abis/FeedRegistry.json
+        - name: EnsoOracle
+          file: ./abis/EnsoOracle.json
+      eventHandlers:
+        - event: NewStrategy(address,address,string,string,(address,int256,(address[],address[],bytes))[])
+          handler: handleNewStrategy
+        - event: Update(address,string)
+          handler: handleUpdate
   - kind: ethereum/contract
     name: Strategy
     network: '{{network}}'

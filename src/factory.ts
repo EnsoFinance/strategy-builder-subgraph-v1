@@ -1,8 +1,14 @@
-import { NewStrategy } from '../generated/StrategyProxyFactory/StrategyProxyFactory'
-import { Strategy as StrategyTemplate } from '../generated/templates'
+import {
+  NewStrategy,
+  Update
+} from '../generated/StrategyProxyFactory/StrategyProxyFactory'
+import {
+  Strategy as StrategyTemplate,
+  StrategyProxyFactory as StrategyProxyFactoryTemplate
+} from '../generated/templates'
 import { ensureManager, getCommonItems } from './entities/Manager'
 import { trackAllDayData } from './entities/DayData'
-import { ensureFactory } from './entities/Factory'
+import { ensureFactory, useFactory } from './entities/Factory'
 import { createStrategy } from './entities/Strategy'
 import { createItemsHolding } from './entities/StrategyItemHolding'
 import { getTotalEstimates } from './helpers/prices'
@@ -44,4 +50,17 @@ export function handleNewStrategy(event: NewStrategy): void {
   trackAllDayData(timestamp)
 
   StrategyTemplate.create(strategyAddress)
+}
+
+export function handleUpdate(event: Update): void {
+  let factory = useFactory()
+
+  let newImplementation = event.params.newImplementation
+  let newVersion = event.params.version
+
+  factory.address = newImplementation.toString()
+  factory.version = newVersion
+  StrategyProxyFactoryTemplate.create(newImplementation)
+
+  factory.save()
 }

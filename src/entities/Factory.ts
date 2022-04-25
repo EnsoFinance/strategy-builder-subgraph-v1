@@ -5,7 +5,7 @@ import { getEthUsdAggregator } from '../helpers/prices'
 import { ensureEthUsdFeed } from './EthUsdFeed'
 
 export function useFactory(): Platform {
-  let factory = Platform.load(FACTORY_ADDRESS) as Platform
+  let factory = Platform.load('SINGLETON') as Platform
 
   if (factory == null) {
     log.critical('Factory does not exist', [])
@@ -15,7 +15,7 @@ export function useFactory(): Platform {
 }
 
 export function isFactory(): boolean {
-  let factory = Platform.load(FACTORY_ADDRESS) as Platform
+  let factory = Platform.load('SINGLETON') as Platform
 
   if (factory == null) {
     return false
@@ -25,7 +25,7 @@ export function isFactory(): boolean {
 }
 
 export function ensureFactory(): Platform {
-  let factory = Platform.load(FACTORY_ADDRESS) as Platform
+  let factory = Platform.load('SINGLETON') as Platform
 
   if (factory) {
     return factory
@@ -34,7 +34,9 @@ export function ensureFactory(): Platform {
   let ethUsdAggregator = getEthUsdAggregator().toHexString()
   ensureEthUsdFeed(ethUsdAggregator)
 
-  factory = new Platform(FACTORY_ADDRESS)
+  factory = new Platform('SINGLETON')
+  factory.address = FACTORY_ADDRESS
+  factory.version = '1.0.0'
   factory.strategiesCount = 0
   factory.managersCount = 0
   factory.allManagers = []
