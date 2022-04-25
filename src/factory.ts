@@ -14,8 +14,7 @@ import { createStrategy } from './entities/Strategy'
 import { createItemsHolding } from './entities/StrategyItemHolding'
 import { getTotalEstimates } from './helpers/prices'
 import { addElement } from './helpers/utils'
-import { ensureEnsoOracle } from './entities/EnsoOracle'
-import { log } from '@graphprotocol/graph-ts'
+import { EnsoOracle } from '../generated/schema'
 
 export function handleNewStrategy(event: NewStrategy): void {
   let timestamp = event.block.timestamp
@@ -56,8 +55,6 @@ export function handleNewStrategy(event: NewStrategy): void {
 }
 
 export function handleUpdate(event: Update): void {
-  log.warning('First triggered at block {}', [event.block.number.toString()])
-
   let newImplementation = event.params.newImplementation
   let newVersion = event.params.version
 
@@ -71,7 +68,16 @@ export function handleUpdate(event: Update): void {
 }
 
 export function handleNewOracle(event: NewOracle): void {
-  let oracle = ensureEnsoOracle(event.params.newOracle)
+  let oracle = EnsoOracle.load('SINGLETON') as EnsoOracle
+
+  if (oracle == null) {
+    oracle = new EnsoOracle('SINGLETON')
+    oracle.address = event.params.newOracle.toHexString()
+    oracle.save()
+
+    return
+  }
+
   oracle.address = event.params.newOracle.toHexString()
   oracle.save()
 }
