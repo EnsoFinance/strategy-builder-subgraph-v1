@@ -154,6 +154,8 @@ templates:
           handler: handleNewStrategy
         - event: Update(address,string)
           handler: handleUpdate
+        - event: NewOracle(address)
+          handler: handleNewOracle
   - kind: ethereum/contract
     name: Strategy
     network: '{{network}}'
