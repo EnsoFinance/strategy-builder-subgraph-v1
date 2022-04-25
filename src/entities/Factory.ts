@@ -1,6 +1,5 @@
-import { log } from '@graphprotocol/graph-ts'
+import { Address, log } from '@graphprotocol/graph-ts'
 import { Platform } from '../../generated/schema'
-import { FACTORY_ADDRESS } from '../addresses'
 import { getEthUsdAggregator } from '../helpers/prices'
 import { ensureEthUsdFeed } from './EthUsdFeed'
 
@@ -24,7 +23,10 @@ export function isFactory(): boolean {
   return true
 }
 
-export function ensureFactory(): Platform {
+export function ensureFactory(
+  newImplementation: Address,
+  newVersion: string
+): Platform {
   let factory = Platform.load('SINGLETON') as Platform
 
   if (factory) {
@@ -35,8 +37,8 @@ export function ensureFactory(): Platform {
   ensureEthUsdFeed(ethUsdAggregator)
 
   factory = new Platform('SINGLETON')
-  factory.address = FACTORY_ADDRESS
-  factory.version = '1.0.0'
+  factory.address = newImplementation.toHexString()
+  factory.version = newVersion
   factory.strategiesCount = 0
   factory.managersCount = 0
   factory.allManagers = []

@@ -224,6 +224,11 @@ type ClaimedPerfFee @entity {
   amount: BigDecimal!
 }
 
+type EnsoOracle @entity {
+  id: ID!
+  address: String!
+}
+
 enum Category {
   DEFAULT_ORACLE
   CHAINLINK_ORACLE

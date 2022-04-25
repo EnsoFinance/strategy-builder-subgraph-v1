@@ -1,6 +1,7 @@
 import {
   NewStrategy,
-  Update
+  Update,
+  NewOracle
 } from '../generated/StrategyProxyFactory/StrategyProxyFactory'
 import {
   Strategy as StrategyTemplate,
@@ -13,13 +14,15 @@ import { createStrategy } from './entities/Strategy'
 import { createItemsHolding } from './entities/StrategyItemHolding'
 import { getTotalEstimates } from './helpers/prices'
 import { addElement } from './helpers/utils'
+import { ensureEnsoOracle } from './entities/EnsoOracle'
+import { log } from '@graphprotocol/graph-ts'
 
 export function handleNewStrategy(event: NewStrategy): void {
   let timestamp = event.block.timestamp
   let managerAddress = event.params.manager
   let strategyAddress = event.params.strategy
 
-  let factory = ensureFactory()
+  let factory = useFactory()
   factory.strategiesCount = factory.strategiesCount + 1
   factory.allStrategies = addElement(factory.allStrategies, strategyAddress)
   if (!factory.allManagers.includes(managerAddress.toHexString())) {
@@ -53,14 +56,22 @@ export function handleNewStrategy(event: NewStrategy): void {
 }
 
 export function handleUpdate(event: Update): void {
-  let factory = useFactory()
+  log.warning('First triggered at block {}', [event.block.number.toString()])
 
   let newImplementation = event.params.newImplementation
   let newVersion = event.params.version
 
-  factory.address = newImplementation.toString()
+  let factory = ensureFactory(newImplementation, newVersion)
+
+  factory.address = newImplementation.toHexString()
   factory.version = newVersion
   StrategyProxyFactoryTemplate.create(newImplementation)
 
   factory.save()
+}
+
+export function handleNewOracle(event: NewOracle): void {
+  let oracle = ensureEnsoOracle(event.params.newOracle)
+  oracle.address = event.params.newOracle.toHexString()
+  oracle.save()
 }

@@ -34,6 +34,8 @@ dataSources:
           handler: handleNewStrategy
         - event: Update(address,string)
           handler: handleUpdate
+        - event: NewOracle(address)
+          handler: handleNewOracle
       file: ./src/factory.ts
 
   - kind: ethereum/contract
