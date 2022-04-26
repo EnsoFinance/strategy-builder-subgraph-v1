@@ -1,19 +1,27 @@
-import { NewStrategy } from '../generated/StrategyProxyFactory/StrategyProxyFactory'
-import { Strategy as StrategyTemplate } from '../generated/templates'
+import {
+  NewStrategy,
+  Update,
+  NewOracle
+} from '../generated/StrategyProxyFactory/StrategyProxyFactory'
+import {
+  Strategy as StrategyTemplate,
+  StrategyProxyFactory as StrategyProxyFactoryTemplate
+} from '../generated/templates'
 import { ensureManager, getCommonItems } from './entities/Manager'
 import { trackAllDayData } from './entities/DayData'
-import { ensureFactory } from './entities/Factory'
+import { ensureFactory, useFactory } from './entities/Factory'
 import { createStrategy } from './entities/Strategy'
 import { createItemsHolding } from './entities/StrategyItemHolding'
 import { getTotalEstimates } from './helpers/prices'
 import { addElement } from './helpers/utils'
+import { EnsoOracle } from '../generated/schema'
 
 export function handleNewStrategy(event: NewStrategy): void {
   let timestamp = event.block.timestamp
   let managerAddress = event.params.manager
   let strategyAddress = event.params.strategy
 
-  let factory = ensureFactory()
+  let factory = useFactory()
   factory.strategiesCount = factory.strategiesCount + 1
   factory.allStrategies = addElement(factory.allStrategies, strategyAddress)
   if (!factory.allManagers.includes(managerAddress.toHexString())) {
@@ -44,4 +52,32 @@ export function handleNewStrategy(event: NewStrategy): void {
   trackAllDayData(timestamp)
 
   StrategyTemplate.create(strategyAddress)
+}
+
+export function handleUpdate(event: Update): void {
+  let newImplementation = event.params.newImplementation
+  let newVersion = event.params.version
+
+  let factory = ensureFactory(newImplementation, newVersion)
+
+  factory.address = newImplementation.toHexString()
+  factory.version = newVersion
+  StrategyProxyFactoryTemplate.create(newImplementation)
+
+  factory.save()
+}
+
+export function handleNewOracle(event: NewOracle): void {
+  let oracle = EnsoOracle.load('SINGLETON') as EnsoOracle
+
+  if (oracle == null) {
+    oracle = new EnsoOracle('SINGLETON')
+    oracle.address = event.params.newOracle.toHexString()
+    oracle.save()
+
+    return
+  }
+
+  oracle.address = event.params.newOracle.toHexString()
+  oracle.save()
 }

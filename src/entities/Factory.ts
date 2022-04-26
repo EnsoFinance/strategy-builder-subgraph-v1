@@ -1,11 +1,10 @@
-import { log } from '@graphprotocol/graph-ts'
+import { Address, log } from '@graphprotocol/graph-ts'
 import { Platform } from '../../generated/schema'
-import { FACTORY_ADDRESS } from '../addresses'
 import { getEthUsdAggregator } from '../helpers/prices'
 import { ensureEthUsdFeed } from './EthUsdFeed'
 
 export function useFactory(): Platform {
-  let factory = Platform.load(FACTORY_ADDRESS) as Platform
+  let factory = Platform.load('SINGLETON') as Platform
 
   if (factory == null) {
     log.critical('Factory does not exist', [])
@@ -15,7 +14,7 @@ export function useFactory(): Platform {
 }
 
 export function isFactory(): boolean {
-  let factory = Platform.load(FACTORY_ADDRESS) as Platform
+  let factory = Platform.load('SINGLETON') as Platform
 
   if (factory == null) {
     return false
@@ -24,8 +23,11 @@ export function isFactory(): boolean {
   return true
 }
 
-export function ensureFactory(): Platform {
-  let factory = Platform.load(FACTORY_ADDRESS) as Platform
+export function ensureFactory(
+  newImplementation: Address,
+  newVersion: string
+): Platform {
+  let factory = Platform.load('SINGLETON') as Platform
 
   if (factory) {
     return factory
@@ -34,7 +36,9 @@ export function ensureFactory(): Platform {
   let ethUsdAggregator = getEthUsdAggregator().toHexString()
   ensureEthUsdFeed(ethUsdAggregator)
 
-  factory = new Platform(FACTORY_ADDRESS)
+  factory = new Platform('SINGLETON')
+  factory.address = newImplementation.toHexString()
+  factory.version = newVersion
   factory.strategiesCount = 0
   factory.managersCount = 0
   factory.allManagers = []

@@ -10,6 +10,8 @@ type _Schema_
 
 type Platform @entity {
   id: ID!
+  address: String! # ProxyFactory address
+  version: String!
   strategiesCount: Int!
   managersCount: Int!
   allManagers: [String!]!
@@ -220,6 +222,11 @@ type ClaimedPerfFee @entity {
   manager: Manager!
   strategy: Strategy!
   amount: BigDecimal!
+}
+
+type EnsoOracle @entity {
+  id: ID!
+  address: String!
 }
 
 enum Category {
