@@ -212,6 +212,15 @@ type WithdrawEvent @entity {
   txHash: String!
 }
 
+type UpdateManagerEvent @entity {
+  id: ID!
+  strategy: Strategy!
+  oldManager: Manager!
+  newManager: Manager!
+  timestamp: BigInt!
+  txHash: String!
+}
+
 enum RestructureStatus {
   STARTED
   FINALIZED

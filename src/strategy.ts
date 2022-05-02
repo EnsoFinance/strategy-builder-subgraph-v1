@@ -1,4 +1,5 @@
 import { Address, store } from '@graphprotocol/graph-ts'
+import { UpdateManagerEvent } from '../generated/schema'
 import {
   Withdraw,
   Transfer,
@@ -175,4 +176,17 @@ export function handlUpdateManager(event: UpdateManager): void {
 
   strategy.manager = event.params.manager.toHexString()
   strategy.save()
+
+  let changeMangerEvent = new UpdateManagerEvent(
+    event.transaction.hash.toHexString() +
+      '/' +
+      event.transaction.index.toString()
+  )
+
+  changeMangerEvent.strategy = strategy.id
+  changeMangerEvent.oldManager = oldManager.id
+  changeMangerEvent.newManager = event.params.manager.toHexString()
+  changeMangerEvent.txHash = event.transaction.hash.toHexString()
+  changeMangerEvent.timestamp = event.block.timestamp
+  changeMangerEvent.save()
 }
