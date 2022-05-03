@@ -185,6 +185,9 @@ templates:
           handler: handleWithdraw
         - event: PerformanceFee(indexed address,uint256)
           handler: handlePerformanceFee
+      callHandlers:
+        - function: updateTradeData(address,data)
+          handler: handleUpdateTradeData
   - name: AggregatorV3
     kind: ethereum/contract
     network: '{{network}}'

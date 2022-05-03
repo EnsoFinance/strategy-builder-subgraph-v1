@@ -1,5 +1,7 @@
-import { Address, store } from '@graphprotocol/graph-ts'
+import { Address, log, store } from '@graphprotocol/graph-ts'
 import { UpdateManagerEvent } from '../generated/schema'
+import { UpdateTradeDataCall } from '../generated/templates/Strategy/Strategy'
+
 import {
   Withdraw,
   Transfer,
@@ -12,7 +14,10 @@ import {
   mintStrategyTokens,
   useStrategy
 } from './entities/Strategy'
-import { trackItemsQuantitiesChange } from './entities/StrategyItemHolding'
+import {
+  trackItemsQuantitiesChange,
+  useItemHolding
+} from './entities/StrategyItemHolding'
 import {
   createStrategyTokenHoldingId,
   ensureStrategyTokenHolding,
@@ -189,4 +194,12 @@ export function handlUpdateManager(event: UpdateManager): void {
   changeMangerEvent.txHash = event.transaction.hash.toHexString()
   changeMangerEvent.timestamp = event.block.timestamp
   changeMangerEvent.save()
+}
+
+export function handleUpdateTradeData(call: UpdateTradeDataCall): void {
+  log.warning('handleUpdateTradeData', [])
+  let strategy = useStrategy(call.transaction.from.toHexString())
+
+  let item = call.inputs.item
+  let adapters = call.inputs.data.adapters
 }
