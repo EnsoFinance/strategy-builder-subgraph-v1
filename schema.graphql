@@ -221,6 +221,14 @@ type UpdateManagerEvent @entity {
   txHash: String!
 }
 
+type UpdateTradeDataEvent @entity {
+  id: ID!
+  strategy: Strategy!
+  newAdapters: [Bytes!]!
+  newPath: [Bytes!]!
+  txHash: String!
+}
+
 enum RestructureStatus {
   STARTED
   FINALIZED
