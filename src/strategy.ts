@@ -1,4 +1,4 @@
-import { Address, log, store } from '@graphprotocol/graph-ts'
+import { Address, log, store, Bytes } from '@graphprotocol/graph-ts'
 import { UpdateManagerEvent } from '../generated/schema'
 import { UpdateTradeDataCall } from '../generated/templates/Strategy/Strategy'
 
@@ -201,5 +201,10 @@ export function handleUpdateTradeData(call: UpdateTradeDataCall): void {
   let strategy = useStrategy(call.transaction.from.toHexString())
 
   let item = call.inputs.item
-  let adapters = call.inputs.data.adapters
+  let adapters = call.inputs.data.adapters as Bytes[]
+  let path = call.inputs.data.path as Bytes[]
+  let itemHolding = useItemHolding(item.toHexString() + strategy.id)
+  itemHolding.adapters = adapters
+  itemHolding.path = path
+  itemHolding.save()
 }
