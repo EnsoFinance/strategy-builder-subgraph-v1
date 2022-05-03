@@ -224,6 +224,7 @@ type UpdateManagerEvent @entity {
 type UpdateTradeDataEvent @entity {
   id: ID!
   strategy: Strategy!
+  item: String!
   newAdapters: [Bytes!]!
   newPath: [Bytes!]!
   txHash: String!

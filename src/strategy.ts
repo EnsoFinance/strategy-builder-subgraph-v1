@@ -215,6 +215,7 @@ export function handleUpdateTradeData(call: UpdateTradeDataCall): void {
       call.transaction.index.toString()
   )
   updateTradeDataEvent.strategy = strategyId
+  updateTradeDataEvent.item = item.toHexString()
   updateTradeDataEvent.newAdapters = adapters
   updateTradeDataEvent.newPath = path
   updateTradeDataEvent.txHash = call.transaction.hash.toHexString()
