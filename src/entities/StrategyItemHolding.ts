@@ -6,7 +6,7 @@ import { ensureToken } from './Tokens'
 import { getTokenBalance } from '../helpers/tokens'
 import { isStrategy, useStrategy } from './Strategy'
 
-export function createHoldingId(token: string, strategy: string): string {
+export function createHoldingId(strategy: string, token: string): string {
   return strategy + '/' + token
 }
 
@@ -94,7 +94,7 @@ export function createItem(
   let newBalance = getTokenBalance(itemAddress, Address.fromString(strategyId))
 
   let newItemHolding = new StrategyItemHolding(
-    createHoldingId(token.id, strategyId)
+    createHoldingId(strategyId, token.id)
   )
 
   if (isStrategy(itemAddress)) {

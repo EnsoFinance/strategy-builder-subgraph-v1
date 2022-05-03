@@ -14,6 +14,7 @@ import {
   useStrategy
 } from './entities/Strategy'
 import {
+  createHoldingId,
   trackItemsQuantitiesChange,
   useItemHolding
 } from './entities/StrategyItemHolding'
@@ -196,11 +197,13 @@ export function handlUpdateManager(event: UpdateManager): void {
 }
 
 export function handleUpdateTradeData(call: UpdateTradeDataCall): void {
-  let strategy = useStrategy(call.transaction.from.toHexString())
+  let strategyId = call.transaction.from.toHexString()
   let item = call.inputs.item
   let adapters = call.inputs.data.adapters as Bytes[]
   let path = call.inputs.data.path as Bytes[]
-  let itemHolding = useItemHolding(item.toHexString() + strategy.id)
+
+  let itemHoldingId = createHoldingId(strategyId, item.toHexString())
+  let itemHolding = useItemHolding(itemHoldingId)
 
   itemHolding.adapters = adapters
   itemHolding.path = path
@@ -211,7 +214,7 @@ export function handleUpdateTradeData(call: UpdateTradeDataCall): void {
       '/' +
       call.transaction.index.toString()
   )
-  updateTradeDataEvent.strategy = strategy.id
+  updateTradeDataEvent.strategy = strategyId
   updateTradeDataEvent.newAdapters = adapters
   updateTradeDataEvent.newPath = path
   updateTradeDataEvent.txHash = call.transaction.hash.toHexString()
