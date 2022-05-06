@@ -65,8 +65,6 @@ export function handleRestructure(event: NewStructure): void {
   let strategy = useStrategy(strategyId)
 
   if (event.params.finalized == true) {
-    let strategy = useStrategy(strategyId)
-
     let lastRestructure = strategy.lastRestructure
     let restructureId =
       strategy.id + '/restructure/' + lastRestructure.toString()
@@ -102,7 +100,6 @@ export function handleRestructure(event: NewStructure): void {
     strategy.lastRestructure = timestamp
     strategy.save()
   }
-  strategy.save()
 
   let manager = useManager(strategy.manager)
   manager.commonItems = getCommonItems(manager)
