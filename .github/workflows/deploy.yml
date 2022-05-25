@@ -16,7 +16,7 @@ jobs:
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          REMOTE_HOST: '18.220.98.192'
+          REMOTE_HOST: '3.136.83.61'
           REMOTE_USER: 'ubuntu'
           TARGET: '/home/ubuntu/enso-subgraph'
       - name: Run Enso Subgraph
@@ -26,7 +26,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           envs: MODE,ENSONET_URL
-          host: '18.220.98.192'
+          host: '3.136.83.61'
           username: 'ubuntu'
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
