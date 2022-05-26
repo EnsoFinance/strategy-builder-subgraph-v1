@@ -24,7 +24,7 @@ fi
 
 if [[ "$NETWORK" == "ensonet" ]]; then
     REMOTE_BLOCK=$(curl -sS -X POST -H 'Content-Type: application/json' -d '{"jsonrpc":"2.0","method":"eth_blockNumber","id":1}' $ENSONET_URL | node_modules/node-jq/bin/jq ".result" | tr -d '"')
-    [[ "$MODE" == "prod" ]] && BLOCK_NR="14571456" || BLOCK_NR=$(($REMOTE_BLOCK-100))
+    [[ "$MODE" == "prod" ]] && BLOCK_NR="14220000" || BLOCK_NR=$(($REMOTE_BLOCK-100))
     if [[ $(curl -sSI $ENSONET_URL/api/deployments | head -n 1| cut -d$' ' -f2) == 200 ]]
     then
         until curl -sS $ENSONET_URL/api/deployments | grep "v1-core"
