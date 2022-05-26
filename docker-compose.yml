@@ -37,7 +37,7 @@ services:
       retries: 24
 
   graph-node:
-    image: graphprotocol/graph-node:v0.25.2
+    image: graphprotocol/graph-node:v0.26.0
     ports:
       - '8000:8000'
       - '8020:8020'
@@ -57,7 +57,6 @@ services:
       ethereum: 'mainnet:http://ensonet:3000'
       GRAPH_LOG: info
       GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: "true"
-      GRAPH_ETHEREUM_MAX_BLOCK_RANGE_SIZE: 10
       GRAPH_ETHEREUM_CLEANUP_BLOCKS: "true"
 
   ipfs:

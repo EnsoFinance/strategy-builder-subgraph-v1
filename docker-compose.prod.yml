@@ -17,7 +17,7 @@ services:
       IPFS_URL: http://ipfs:5001
 
   graph-node:
-    image: graphprotocol/graph-node:v0.24.0
+    image: graphprotocol/graph-node:v0.26.0
     ports:
       - '8000:8000'
     depends_on:
