@@ -1,6 +1,5 @@
-import { Address, store, Bytes } from '@graphprotocol/graph-ts'
-import { UpdateManagerEvent, UpdateTradeDataEvent } from '../generated/schema'
-import { UpdateTradeDataCall } from '../generated/templates/Strategy/Strategy'
+import { Address, store } from '@graphprotocol/graph-ts'
+import { UpdateManagerEvent } from '../generated/schema'
 import {
   Withdraw,
   Transfer,
@@ -13,11 +12,7 @@ import {
   mintStrategyTokens,
   useStrategy
 } from './entities/Strategy'
-import {
-  createHoldingId,
-  trackItemsQuantitiesChange,
-  useItemHolding
-} from './entities/StrategyItemHolding'
+import { trackItemsQuantitiesChange } from './entities/StrategyItemHolding'
 import {
   createStrategyTokenHoldingId,
   ensureStrategyTokenHolding,
@@ -194,30 +189,4 @@ export function handlUpdateManager(event: UpdateManager): void {
   changeMangerEvent.txHash = event.transaction.hash.toHexString()
   changeMangerEvent.timestamp = event.block.timestamp
   changeMangerEvent.save()
-}
-
-export function handleUpdateTradeData(call: UpdateTradeDataCall): void {
-  let strategyId = call.transaction.from.toHexString()
-  let item = call.inputs.item
-  let adapters = call.inputs.data.adapters as Bytes[]
-  let path = call.inputs.data.path as Bytes[]
-
-  let itemHoldingId = createHoldingId(strategyId, item.toHexString())
-  let itemHolding = useItemHolding(itemHoldingId)
-
-  itemHolding.adapters = adapters
-  itemHolding.path = path
-  itemHolding.save()
-
-  let updateTradeDataEvent = new UpdateTradeDataEvent(
-    call.transaction.hash.toHexString() +
-      '/' +
-      call.transaction.index.toString()
-  )
-  updateTradeDataEvent.strategy = strategyId
-  updateTradeDataEvent.item = item.toHexString()
-  updateTradeDataEvent.newAdapters = adapters
-  updateTradeDataEvent.newPath = path
-  updateTradeDataEvent.txHash = call.transaction.hash.toHexString()
-  updateTradeDataEvent.save()
 }
