@@ -32,6 +32,7 @@ export function createStrategy(
   strategy.symbol = event.params.symbol
   strategy.createdAtTimestamp = event.block.timestamp
   strategy.lastRestructure = event.block.timestamp
+  strategy.locked = false
   strategy.tvl = ZERO_BD
   strategy.price = ZERO_BD
   strategy.holdersCount = 0

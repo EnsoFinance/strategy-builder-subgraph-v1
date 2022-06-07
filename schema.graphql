@@ -39,7 +39,7 @@ type Strategy @entity {
   manager: Manager!
   name: String!
   symbol: String!
-  state: StrategyState
+  state: StrategyState!
   createdAtTimestamp: BigInt!
   tvl: BigDecimal!
   price: BigDecimal!
@@ -48,6 +48,8 @@ type Strategy @entity {
   items: [StrategyItemHolding!]!
   lastRestructure: BigInt!
   totalSupply: BigDecimal!
+  locked: Boolean!
+  lastStateChange: TimelockCategory
   tokenHolders: [StrategyTokenHolding]! @derivedFrom(field: "strategy")
   strategyDaysData: [StrategyDayData!]! @derivedFrom(field: "strategy")
   strategyChange: [StrategyChange!]! @derivedFrom(field: "strategy")
@@ -283,4 +285,13 @@ enum Category {
   UNISWAP_V3_LP
   YEARN_V1
   YEARN_V2
+}
+
+enum TimelockCategory {
+  RESTRUCTURE
+  THRESHOLD
+  REBALANCE_SLIPPAGE
+  RESTRUCTURE_SLIPPAGE
+  TIMELOCK
+  PERFORMANCE
 }

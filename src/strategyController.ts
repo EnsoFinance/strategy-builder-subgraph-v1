@@ -70,6 +70,7 @@ export function handleRestructure(event: NewStructure): void {
       strategy.id + '/restructure/' + lastRestructure.toString()
     let restructure = useRestructure(restructureId)
     strategy.items = restructure.after
+    strategy.locked = false
     strategy.save()
 
     restructure.status = 'FINALIZED'
@@ -98,6 +99,8 @@ export function handleRestructure(event: NewStructure): void {
     restructure.save()
 
     strategy.lastRestructure = timestamp
+    strategy.locked = true
+    strategy.lastStateChange = 'RESTRUCTURE'
     strategy.save()
   }
 
@@ -108,6 +111,9 @@ export function handleRestructure(event: NewStructure): void {
 
 export function handleNewValue(event: NewValue): void {
   if (event.params.finalized == false) {
+    let strategy = useStrategy(event.params.strategy.toHexString())
+    strategy.locked = true
+    strategy.save()
     return
   }
 
@@ -131,6 +137,10 @@ export function handleNewValue(event: NewValue): void {
     strategyState.fee = newValue
   }
   strategyState.save()
+
+  let strategy = useStrategy(event.params.strategy.toHexString())
+  strategy.locked = false
+  strategy.save()
 }
 
 export function handleStrategyOpen(event: StrategyOpen): void {
