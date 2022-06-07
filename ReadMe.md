@@ -50,10 +50,6 @@ http://subgraph.dev.enso.finance/subgraphs/name/ensofinance/enso-v1
 
 ### Get Subgraph Logs
 
-    ```bash
-
-curl --location --request POST 'https://thegraph.com/hosted-service/subgraph/graphql' --data-raw '{"query":"{ indexingStatusForCurrentVersion(subgraphName: \"ensofinance/enso-v1\") { subgraph fatalError { message } nonFatalErrors {message } } }"}' | jq
-
-```
-
-```
+   ```bash
+    curl --location --request POST 'https://thegraph.com/hosted-service/subgraph/graphql' --data-raw '{"query":"{indexingStatusForCurrentVersion(subgraphName: \"ensofinance/enso-v1\") { subgraph fatalError { message } nonFatalErrors {message } } }"}' | jq
+   ```
