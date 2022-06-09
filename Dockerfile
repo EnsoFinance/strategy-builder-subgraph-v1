@@ -10,4 +10,4 @@ COPY . .
 # Download dependencies
 RUN yarn --frozen-lockfile
 
-CMD ["sh", "-c", "yarn prepare ensonet && yarn build:graph && yarn deploy:local"]
+CMD ["sh", "-c", "yarn prepare mainnet && yarn build:graph && yarn deploy:local"]
