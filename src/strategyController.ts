@@ -198,7 +198,7 @@ export function handleNewValue(event: NewValue): void {
     event.params.strategy.toHexString() +
     '/stateChange/' +
     strategyState.lastStateChangeTimestamp.toString()
-  let stateChange = new StateChange(stateChangeId)
+  let stateChange = StateChange.load(stateChangeId)
   if (stateChange == null) {
     log.warning('strategyChange is null', [])
   }
