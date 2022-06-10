@@ -1,9 +1,14 @@
-import { Address, log } from '@graphprotocol/graph-ts'
+import { Address, log, BigInt } from '@graphprotocol/graph-ts'
 import { StrategyState } from '../../generated/schema'
 import { ZERO_BI } from '../helpers/constants'
 
-export function createStrategyState(address: Address): StrategyState {
+export function createStrategyState(
+  address: Address,
+  timestamp: BigInt
+): StrategyState {
   let strategyState = new StrategyState(address.toHex())
+  strategyState.lastStateChangeTimestamp = timestamp
+  strategyState.locked = false
   strategyState.restructure = ZERO_BI
   strategyState.rebalanceSlippage = ZERO_BI
   strategyState.restructureSlippage = ZERO_BI
