@@ -176,6 +176,7 @@ type ManagerDayData @entity {
 type StateChange @entity {
   id: ID!
   stateChange: TimelockCategory!
+  status: StateChangeStatus!
   before: BigInt!
   after: BigInt!
   timestamp: BigInt!

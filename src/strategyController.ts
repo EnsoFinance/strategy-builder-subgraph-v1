@@ -158,6 +158,7 @@ export function handleNewValue(event: NewValue): void {
     }
 
     stateChange.after = event.params.newValue
+    stateChange.status = 'STARTED'
     stateChange.timestamp = event.block.timestamp
     stateChange.txHash = event.transaction.hash.toHexString()
     stateChange.blockNumber = event.block.number
@@ -192,6 +193,15 @@ export function handleNewValue(event: NewValue): void {
 
   strategyState.locked = false
   strategyState.save()
+
+  let stateChangeId =
+    event.params.strategy.toHexString() +
+    '/stateChange/' +
+    strategyState.lastStateChangeTimestamp.toString()
+  let stateChange = new StateChange(stateChangeId)
+  if (stateChange == null) {
+    log.warning('strategyChange is null', [])
+  }
 }
 
 export function handleStrategyOpen(event: StrategyOpen): void {
