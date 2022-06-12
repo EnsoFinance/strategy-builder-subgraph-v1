@@ -199,8 +199,9 @@ export function handleNewValue(event: NewValue): void {
     '/stateChange/' +
     strategyState.lastStateChangeTimestamp.toString()
   let stateChange = StateChange.load(stateChangeId)
-  if (stateChange == null) {
-    log.warning('strategyChange is null', [])
+  if (stateChange != null) {
+    stateChange.status = 'FINALIZED'
+    stateChange.save()
   }
 }
 
