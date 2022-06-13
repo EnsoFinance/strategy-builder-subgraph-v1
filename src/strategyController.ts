@@ -139,7 +139,7 @@ export function handleNewValue(event: NewValue): void {
       event.block.timestamp.toString()
     let stateChange = new StateChange(stateChangeId)
 
-    stateChange.stateChange = timelockCategories[category as u8]
+    stateChange.stateChangeCategory = timelockCategories[category as u8]
 
     if (category == TimelockCategory.REBALANCE_SLIPPAGE) {
       stateChange.before = strategyState.rebalanceSlippage
