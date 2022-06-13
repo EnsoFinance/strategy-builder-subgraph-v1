@@ -70,6 +70,7 @@ type StrategyState @entity {
   rebalanceSlippage: BigInt!
   restructureSlippage: BigInt!
   timelock: BigInt!
+  stateChanges: [StateChange]! @derivedFrom(field: "strategyState")
 }
 
 type StrategyTokenHolding @entity {
@@ -175,6 +176,7 @@ type ManagerDayData @entity {
 
 type StateChange @entity {
   id: ID!
+  strategyState: StrategyState!
   stateChangeCategory: TimelockCategory!
   status: StateChangeStatus!
   before: BigInt!

@@ -138,6 +138,7 @@ export function handleNewValue(event: NewValue): void {
       '/stateChange/' +
       event.block.timestamp.toString()
     let stateChange = new StateChange(stateChangeId)
+    stateChange.strategyState = strategyState.id
 
     stateChange.stateChangeCategory = timelockCategories[category as u8]
 
