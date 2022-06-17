@@ -24,7 +24,7 @@ spec:
           - name: GRAPH_ADMIN_URL
             value: http://graph-node.graph-node:8020
           - name: IPFS_URL
-            value: http://ipfs-cluster.ipfs:5001
+            value: http://ipfs.ipfs:5001
         name: deploy-enso-subgraph
       imagePullSecrets:
         - name: regcred
