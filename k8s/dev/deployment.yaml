@@ -16,6 +16,15 @@ spec:
     spec:
       containers:
       - image: ensoassociation/deploy-enso-subgraph
+        env:
+          - name: MODE
+            value: dev
+          - name: ENSONET_URL
+            value: http://ensonet.ensonet:3000
+          - name: GRAPH_ADMIN_URL
+            value: http://graph-node.graph-node:8020
+          - name: IPFS_URL
+            value: http://ipfs-cluster.ipfs:5001
         name: deploy-enso-subgraph
       imagePullSecrets:
         - name: regcred
