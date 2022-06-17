@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: enso-subgraph
+  name: enso-subgraph
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: enso-subgraph
+  template:
+    metadata:
+      labels:
+        app: enso-subgraph
+    spec:
+      containers:
+      - image: ensoassociation/deploy-enso-subgraph
+        name: deploy-enso-subgraph
+      imagePullSecrets:
+        - name: regcred
