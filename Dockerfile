@@ -7,6 +7,14 @@ RUN apk add libsecret-dev bash git curl
 WORKDIR /app
 COPY . .
 
+ARG PUID=1000
+ARG PGID=1000
+RUN adduser -H -u ${PUID} -g ${PGID} -D enso-subgraph
+RUN mkdir -p /home/enso-subgraph
+RUN chown -R enso-subgraph:enso-subgraph /home/enso-subgraph
+
+USER enso-subgraph
+
 # Download dependencies
 RUN yarn --frozen-lockfile
 
