@@ -1,7 +1,7 @@
 import { Address, BigInt, Bytes, log } from '@graphprotocol/graph-ts'
 import { StrategyItemHolding } from '../../generated/schema'
 import { NewStrategyItemsStruct } from '../../generated/StrategyProxyFactory/StrategyProxyFactory'
-import { trackAllDayData } from './DayData'
+import { trackDayData } from './DayData'
 import { ensureToken } from './Tokens'
 import { getTokenBalance } from '../helpers/tokens'
 import { isStrategy, useStrategy } from './Strategy'
@@ -42,7 +42,7 @@ export function trackItemsQuantitiesChange(
   let strategy = useStrategy(strategyAddress.toHexString())
 
   trackStrategyItems(strategy.items, strategyAddress)
-  trackAllDayData(timestamp)
+  trackDayData(strategy.id, timestamp)
 }
 
 export function createRebalancedItemsHolding(
