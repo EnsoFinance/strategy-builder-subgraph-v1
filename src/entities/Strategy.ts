@@ -23,7 +23,7 @@ export function createStrategy(
 ): Strategy {
   let strategyId = strategyAddress.toHex()
 
-  createStrategyState(strategyAddress)
+  createStrategyState(strategyAddress, event.block.timestamp)
 
   let strategy = new Strategy(strategyId)
   strategy.manager = event.params.manager.toHex()

@@ -23,6 +23,16 @@ export enum TimelockCategory {
   PERFORMANCE
 }
 
+export let timelockCategories = new Array<string>()
+timelockCategories = [
+  'RESTRUCTURE',
+  'THRESHOLD',
+  'REBALANCE_SLIPPAGE',
+  'RESTRUCTURE_SLIPPAGE',
+  'TIMELOCK',
+  'PERFORMANCE'
+]
+
 export let tokenCategories = new Array<string>()
 tokenCategories = [
   'DEFAULT_ORACLE',

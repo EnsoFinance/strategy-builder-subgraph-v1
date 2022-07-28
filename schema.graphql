@@ -46,10 +46,10 @@ type Strategy @entity {
   holdersCount: Int!
   createdAtBlockNumber: BigInt!
   items: [StrategyItemHolding!]!
-  lastRestructure: BigInt!
   totalSupply: BigDecimal!
   locked: Boolean!
   lastStateChange: TimelockCategory
+  lastRestructure: BigInt!
   tokenHolders: [StrategyTokenHolding]! @derivedFrom(field: "strategy")
   strategyDaysData: [StrategyDayData!]! @derivedFrom(field: "strategy")
   strategyChange: [StrategyChange!]! @derivedFrom(field: "strategy")
@@ -59,6 +59,9 @@ type Strategy @entity {
 
 type StrategyState @entity {
   id: ID!
+  locked: Boolean!
+  lastStateChange: TimelockCategory
+  lastStateChangeTimestamp: BigInt!
   restructure: BigInt!
   threshold: BigInt!
   social: Boolean!
@@ -67,6 +70,7 @@ type StrategyState @entity {
   rebalanceSlippage: BigInt!
   restructureSlippage: BigInt!
   timelock: BigInt!
+  stateChanges: [StateChange]! @derivedFrom(field: "strategyState")
 }
 
 type StrategyTokenHolding @entity {
@@ -170,6 +174,18 @@ type ManagerDayData @entity {
   holdersCount: Int!
 }
 
+type StateChange @entity {
+  id: ID!
+  strategyState: StrategyState!
+  stateChangeCategory: TimelockCategory!
+  status: StateChangeStatus!
+  before: BigInt!
+  after: BigInt!
+  timestamp: BigInt!
+  blockNumber: BigInt!
+  txHash: String!
+}
+
 type Rebalance @entity {
   id: ID!
   txHash: String!
@@ -182,7 +198,7 @@ type Rebalance @entity {
 type Restructure @entity {
   id: ID!
   txHash: String!
-  status: RestructureStatus!
+  status: StateChangeStatus!
   strategy: Strategy!
   timestamp: BigInt!
   before: [StrategyItemHolding!]!
@@ -232,11 +248,6 @@ type UpdateTradeDataEvent @entity {
   txHash: String!
 }
 
-enum RestructureStatus {
-  STARTED
-  FINALIZED
-}
-
 type ClaimedPerfFee @entity {
   id: ID!
   manager: Manager!
@@ -247,6 +258,11 @@ type ClaimedPerfFee @entity {
 type EnsoOracle @entity {
   id: ID!
   address: String!
+}
+
+enum StateChangeStatus {
+  STARTED
+  FINALIZED
 }
 
 enum Category {

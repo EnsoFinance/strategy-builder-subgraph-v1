@@ -1,3 +1,4 @@
+import { Address, BigInt, log } from '@graphprotocol/graph-ts'
 import {
   Deposit,
   Withdraw,
@@ -8,16 +9,15 @@ import {
   StrategySet
 } from '../generated/StrategyController/StrategyController'
 import { NewStrategyItemsStruct } from '../generated/StrategyProxyFactory/StrategyProxyFactory'
-import { Rebalance, Restructure } from '../generated/schema'
+import { Rebalance, Restructure, StateChange } from '../generated/schema'
 import { createItemsHolding } from './entities/StrategyItemHolding'
 import { useStrategy } from './entities/Strategy'
 import { convertToUsd, toBigDecimal } from './helpers/prices'
 import { useRestructure } from './entities/Restructure'
-import { Address } from '@graphprotocol/graph-ts'
 import { trackItemsQuantitiesChange } from './entities/StrategyItemHolding'
 import { getCommonItems, useManager } from './entities/Manager'
 import { useStrategyState } from './entities/StrategyState'
-import { TimelockCategory } from './helpers/constants'
+import { timelockCategories, TimelockCategory } from './helpers/constants'
 import { trackWithdrawEvent } from './entities/WithdrawEvent'
 import { trackDepositEvent } from './entities/DepositEvent'
 import { removeUsdDecimals } from './helpers/tokens'
@@ -63,6 +63,7 @@ export function handleRestructure(event: NewStructure): void {
   let newItems = event.params.items
 
   let strategy = useStrategy(strategyId)
+  let strategyState = useStrategyState(Address.fromString(strategyId))
 
   if (event.params.finalized == true) {
     let lastRestructure = strategy.lastRestructure
@@ -72,6 +73,9 @@ export function handleRestructure(event: NewStructure): void {
     strategy.items = restructure.after
     strategy.locked = false
     strategy.save()
+
+    strategyState.locked = false
+    strategyState.save()
 
     restructure.status = 'FINALIZED'
     restructure.txHash = txhash.toHexString()
@@ -95,13 +99,17 @@ export function handleRestructure(event: NewStructure): void {
     restructure.before = strategy.items
     restructure.after = newItemsState
     restructure.txHash = txhash.toHexString()
-
     restructure.save()
 
     strategy.lastRestructure = timestamp
     strategy.locked = true
     strategy.lastStateChange = 'RESTRUCTURE'
     strategy.save()
+
+    strategyState.lastStateChangeTimestamp = timestamp
+    strategyState.locked = true
+    strategyState.lastStateChange = 'RESTRUCTURE'
+    strategyState.save()
   }
 
   let manager = useManager(strategy.manager)
@@ -110,16 +118,58 @@ export function handleRestructure(event: NewStructure): void {
 }
 
 export function handleNewValue(event: NewValue): void {
+  let category = event.params.category as number
+
   if (event.params.finalized == false) {
     let strategy = useStrategy(event.params.strategy.toHexString())
+    strategy.lastRestructure = event.block.timestamp
+    strategy.lastStateChange = timelockCategories[category as u8]
     strategy.locked = true
     strategy.save()
+
+    let strategyState = useStrategyState(event.params.strategy)
+    strategyState.lastStateChangeTimestamp = event.block.timestamp
+    strategyState.lastStateChange = timelockCategories[category as u8]
+    strategyState.locked = true
+    strategyState.save()
+
+    let stateChangeId =
+      event.params.strategy.toHexString() +
+      '/stateChange/' +
+      event.block.timestamp.toString()
+    let stateChange = new StateChange(stateChangeId)
+    stateChange.strategyState = strategyState.id
+
+    stateChange.stateChangeCategory = timelockCategories[category as u8]
+
+    if (category == TimelockCategory.REBALANCE_SLIPPAGE) {
+      stateChange.before = strategyState.rebalanceSlippage
+    }
+    if (category == TimelockCategory.THRESHOLD) {
+      stateChange.before = strategyState.threshold
+    }
+    if (category == TimelockCategory.RESTRUCTURE_SLIPPAGE) {
+      stateChange.before = strategyState.restructureSlippage
+    }
+    if (category == TimelockCategory.TIMELOCK) {
+      stateChange.before = strategyState.timelock
+    }
+    if (category == TimelockCategory.PERFORMANCE) {
+      stateChange.before = strategyState.fee
+    }
+
+    stateChange.after = event.params.newValue
+    stateChange.status = 'STARTED'
+    stateChange.timestamp = event.block.timestamp
+    stateChange.txHash = event.transaction.hash.toHexString()
+    stateChange.blockNumber = event.block.number
+    stateChange.save()
+
     return
   }
 
   let strategyState = useStrategyState(event.params.strategy)
   let newValue = event.params.newValue
-  let category = event.params.category as number
 
   if (category == TimelockCategory.THRESHOLD) {
     strategyState.threshold = newValue
@@ -141,6 +191,19 @@ export function handleNewValue(event: NewValue): void {
   let strategy = useStrategy(event.params.strategy.toHexString())
   strategy.locked = false
   strategy.save()
+
+  strategyState.locked = false
+  strategyState.save()
+
+  let stateChangeId =
+    event.params.strategy.toHexString() +
+    '/stateChange/' +
+    strategyState.lastStateChangeTimestamp.toString()
+  let stateChange = StateChange.load(stateChangeId)
+  if (stateChange != null) {
+    stateChange.status = 'FINALIZED'
+    stateChange.save()
+  }
 }
 
 export function handleStrategyOpen(event: StrategyOpen): void {
