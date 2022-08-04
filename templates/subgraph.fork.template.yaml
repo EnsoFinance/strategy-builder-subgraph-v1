@@ -1,0 +1,214 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+graft:
+  base: QmWoxkNnBLHUd1x67TAR6b8KonizzZxYWU442dDK65NKCP
+  block: 15260776
+dataSources:
+  - kind: ethereum/contract
+    name: StrategyProxyFactory
+    network: '{{network}}'
+    source:
+      address: '{{StrategyProxyFactory}}'
+      abi: StrategyProxyFactory
+      startBlock: {{blockNumber}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: StrategyProxyFactory
+          file: ./abis/StrategyProxyFactory.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: ERC20SymbolBytes
+          file: ./abis/ERC20SymbolBytes.json
+        - name: ERC20NameBytes
+          file: ./abis/ERC20NameBytes.json
+        - name: AggregatorV3
+          file: ./abis/AggregatorV3.json
+        - name: FeedRegistry
+          file: ./abis/FeedRegistry.json
+        - name: EnsoOracle
+          file: ./abis/EnsoOracle.json
+      eventHandlers:
+        - event: NewStrategy(address,address,string,string,(address,int256,(address[],address[],bytes))[])
+          handler: handleNewStrategy
+        - event: Update(address,string)
+          handler: handleUpdate
+        - event: NewOracle(address)
+          handler: handleNewOracle
+      file: ./src/factory.ts
+
+  - kind: ethereum/contract
+    name: StrategyController
+    network: '{{network}}'
+    source:
+      address: '{{StrategyController}}'
+      abi: StrategyController
+      startBlock: {{blockNumber}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      abis:
+        - name: AggregatorV3
+          file: ./abis/AggregatorV3.json
+        - name: StrategyController
+          file: ./abis/StrategyController.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: EnsoOracle
+          file: ./abis/EnsoOracle.json
+      eventHandlers:
+        - event: Deposit(indexed address,indexed address,uint256,uint256)
+          handler: handleDeposit
+        - event: Withdraw(indexed address,indexed address,uint256,uint256)
+          handler: handleWithdraw
+        - event: Balanced(indexed address,uint256,uint256)
+          handler: handleRebalance
+        - event: NewStructure(indexed address,(address,int256,(address[],address[],bytes))[],indexed bool)
+          handler: handleRestructure
+        - event: NewValue(indexed address,uint8,uint256,indexed bool)
+          handler: handleNewValue
+        - event: StrategyOpen(indexed address)
+          handler: handleStrategyOpen
+        - event: StrategySet(indexed address)
+          handler: handleStrategySet
+      entities: []
+      file: ./src/strategyController.ts
+
+  - kind: ethereum/contract
+    name: TokenRegistry
+    network: '{{network}}'
+    source:
+      address: '{{TokenRegistry}}'
+      abi: TokenRegistry
+      startBlock: {{blockNumber}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      abis:
+        - name: TokenRegistry
+          file: ./abis/TokenRegistry.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: ERC20SymbolBytes
+          file: ./abis/ERC20SymbolBytes.json
+        - name: ERC20NameBytes
+          file: ./abis/ERC20NameBytes.json
+      eventHandlers:
+        - event: ItemAdded(address,uint256,uint256)
+          handler: handleItemAdded
+      entities: []
+      file: ./src/tokenRegistry.ts
+
+  - kind: ethereum/contract
+    name: FeedRegistry
+    network: '{{network}}'
+    source:
+      address: '{{ChainlinkFeedRegistry}}'
+      abi: FeedRegistry
+      startBlock: {{blockNumber}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      abis:
+        - name: FeedRegistry
+          file: ./abis/FeedRegistry.json
+      eventHandlers:
+        - event: FeedConfirmed(indexed address,indexed address,indexed address,address,uint16,address)
+          handler: handleFeedConfirmed
+      entities: []
+      file: ./src/feedRegistry.ts
+
+templates:
+  - kind: ethereum/contract
+    name: StrategyProxyFactory
+    network: '{{network}}'
+    source:
+      abi: StrategyProxyFactory
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/factory.ts
+      entities: []
+      abis:
+        - name: StrategyProxyFactory
+          file: ./abis/StrategyProxyFactory.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: ERC20SymbolBytes
+          file: ./abis/ERC20SymbolBytes.json
+        - name: ERC20NameBytes
+          file: ./abis/ERC20NameBytes.json
+        - name: AggregatorV3
+          file: ./abis/AggregatorV3.json
+        - name: FeedRegistry
+          file: ./abis/FeedRegistry.json
+        - name: EnsoOracle
+          file: ./abis/EnsoOracle.json
+      eventHandlers:
+        - event: NewStrategy(address,address,string,string,(address,int256,(address[],address[],bytes))[])
+          handler: handleNewStrategy
+        - event: Update(address,string)
+          handler: handleUpdate
+        - event: NewOracle(address)
+          handler: handleNewOracle
+  - kind: ethereum/contract
+    name: Strategy
+    network: '{{network}}'
+    source:
+      abi: Strategy
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/strategy.ts
+      entities: []
+      abis:
+        - name: Strategy
+          file: ./abis/Strategy.json
+        - name: AggregatorV3
+          file: ./abis/AggregatorV3.json
+        - name: StrategyController
+          file: ./abis/StrategyController.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: EnsoOracle
+          file: ./abis/EnsoOracle.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+        - event: Withdraw(indexed address,uint256,uint256[])
+          handler: handleWithdraw
+        - event: PerformanceFee(indexed address,uint256)
+          handler: handlePerformanceFee
+      callHandlers:
+        - function: updateTradeData(address,data)
+          handler: handleUpdateTradeData
+  - name: AggregatorV3
+    kind: ethereum/contract
+    network: '{{network}}'
+    source:
+      abi: AggregatorV3
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities: []
+      file: ./src/chainlinkAggregator.ts
+      abis:
+        - name: AggregatorV3
+          file: ./abis/AggregatorV3.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: EnsoOracle
+          file: ./abis/EnsoOracle.json
+      eventHandlers:
+        - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
+          handler: handleAnswerUpdated

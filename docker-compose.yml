@@ -1,76 +1,39 @@
 version: '3'
-volumes:
-  node_modules:
 services:
-  deploy-subgraph:
-    build: .
-    image: deploy-subgraph
-    volumes:
-      - .:/app
-      - node_modules:/app/node_modules
-    depends_on:
-      graph-node:
-        condition: service_started
-    environment:
-      MODE: dev
-      ENSONET_URL: http://ensonet:3000
-      GRAPH_ADMIN_URL: http://graph-node:8020
-      IPFS_URL: http://ipfs:5001
-
-  ensonet:
-    image: ensoassociation/ensonet
-    ports:
-      - 3000:3000
-    environment:
-      PORT: 3000
-      INFURA_API_KEY: ${INFURA_API_KEY}
-      MNEMONIC: "${MNEMONIC}"
-      ARCHIVE_NODE: ${ARCHIVE_NODE}
-      LOG: quiet
-    secrets:
-      - ssh_key
-    healthcheck:
-      test: "wget -q localhost:3000/api/deployments -O - | grep v1-core"
-      interval: "10s"
-      timeout: "15s"
-      start_period: "4m"
-      retries: 24
-
   graph-node:
-    image: graphprotocol/graph-node:v0.26.0
+    image: graphprotocol/graph-node:v0.24.0
     ports:
       - '8000:8000'
+      - '8001:8001'
       - '8020:8020'
+      - '8030:8030'
+      - '8040:8040'
     depends_on:
-      ipfs:
-        condition: service_started
-      postgres:
-        condition: service_started
-      ensonet:
-        condition: service_healthy
-    environment:   
+      - ipfs
+      - postgres
+    environment:
       postgres_host: postgres
       postgres_user: graph-node
       postgres_pass: let-me-in
       postgres_db: graph-node
-      ipfs: ipfs:5001
-      ethereum: 'mainnet:http://ensonet:3000'
+      ipfs: 'ipfs:5001'
+      ethereum: 'mainnet:https://eth-mainnet.g.alchemy.com/v2/h-E-grjGi_ieE1Vnku4I7ie1XGyC-wq9' 
       GRAPH_LOG: info
       GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: "true"
-      GRAPH_ETHEREUM_CLEANUP_BLOCKS: "true"
-
   ipfs:
-    image: ipfs/go-ipfs:v0.12.1
+    image: ipfs/go-ipfs:v0.4.23
     ports:
       - '5001:5001'
-
+    volumes:
+      - ./data/ipfs:/data/ipfs
   postgres:
     image: postgres
+    ports:
+      - '5432:5432'
+    command: ["postgres", "-cshared_preload_libraries=pg_stat_statements"]
     environment:
       POSTGRES_USER: graph-node
       POSTGRES_PASSWORD: let-me-in
       POSTGRES_DB: graph-node
-
-secrets:
-  ssh_key:
-    file: ~/.ssh/ensonet
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
