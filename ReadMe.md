@@ -1,7 +1,7 @@
 # Enso V1 Subgraph
 
 Current Kovan Subgraph:
-https://thegraph.com/explorer/subgraph/milonite/kenzo
+https://thegraph.com/explorer/subgraph/ensofinance/enso-v1
 
 Current _remote_ ✨ EnsoNet ✨ Subgraph:
 http://subgraph.dev.enso.finance/subgraphs/name/ensofinance/enso-v1
