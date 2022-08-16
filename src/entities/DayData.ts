@@ -6,7 +6,6 @@ import { useStrategy } from './Strategy'
 import { trackStrategyChange } from './StrategyChange'
 import { useManager } from './Manager'
 import { getDayOpenTime } from '../helpers/times'
-import { getTotalSupply } from '../helpers/tokens'
 import { ZERO_BD } from '../helpers/constants'
 import { trackManagerChanges } from './ManagerChange'
 
@@ -65,8 +64,7 @@ export function trackDayData(strategyId: string, timestamp: BigInt): void {
   let dayOpenTime = getDayOpenTime(timestamp)
 
   // Update strategy and manager to latest values
-  let totalSupply = getTotalSupply(Address.fromString(strategy.id)) //TO DO use total supply calculated from transfers
-
+  let totalSupply = strategy.totalSupply
   let latestTvl = getTotalEstimates(Address.fromString(strategyId))
 
   let latestPrice = ZERO_BD
