@@ -37,7 +37,6 @@ export function handleNewStrategy(event: NewStrategy): void {
   let strategyItems = createItemsHolding(items, strategyAddress, timestamp)
 
   let strategyTvl = BigDecimal.fromString('0')
-  //log.warning('here reverted for {}', [])
 
   let strategy = createStrategy(strategyAddress, event)
   strategy.items = strategyItems

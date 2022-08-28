@@ -22,17 +22,12 @@ export function convertToUsd(assetPriceInWeth: BigDecimal): BigDecimal {
 }
 
 export function getTotalEstimates(strategyAddress: Address): BigDecimal {
-  log.warning(' address is() reverted for {}', [])
-
   let oracle = ensureEnsoOracle()
-  log.warning('oracle address is() reverted for {}', [oracle.id])
 
   let contract = Oracle.bind(Address.fromString(oracle.address))
 
   let balanceCall = contract.try_estimateStrategy(strategyAddress)
   if (balanceCall.reverted) {
-    log.warning('estimateStrategies() reverted for {}', [])
-
     return BigDecimal.fromString('0')
   }
 
@@ -50,9 +45,7 @@ export function getAllEstimates(strategyAddress: Address[]): BigInt[] {
 
   let balanceCall = contract.try_estimateStrategies(strategyAddress)
   if (balanceCall.reverted) {
-    log.warning('estimateStrategies() reverted for {}', [])
-
-    log.warning('estimateStrategies() reverted for {}', [])
+    log.critical('estimateStrategies() reverted for {}', [])
   }
 
   let total = balanceCall.value
