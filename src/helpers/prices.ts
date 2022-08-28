@@ -5,7 +5,7 @@ import { CHAINLINK_FEED_REGISTRY } from '../addresses'
 import { BASE_ETH, QUOTE_USD } from './constants'
 import { useEthUsdFeed } from '../entities/EthUsdFeed'
 import { removeUsdDecimals } from './tokens'
-import { useEnsoOracle } from '../entities/EnsoOracle'
+import { ensureEnsoOracle, useEnsoOracle } from '../entities/EnsoOracle'
 
 export function toBigDecimal(quantity: BigInt, decimals: i32 = 18): BigDecimal {
   return quantity.divDecimal(
@@ -22,11 +22,17 @@ export function convertToUsd(assetPriceInWeth: BigDecimal): BigDecimal {
 }
 
 export function getTotalEstimates(strategyAddress: Address): BigDecimal {
-  let oracle = useEnsoOracle()
+  log.warning(' address is() reverted for {}', [])
+
+  let oracle = ensureEnsoOracle()
+  log.warning('oracle address is() reverted for {}', [oracle.id])
+
   let contract = Oracle.bind(Address.fromString(oracle.address))
 
   let balanceCall = contract.try_estimateStrategy(strategyAddress)
   if (balanceCall.reverted) {
+    log.warning('estimateStrategies() reverted for {}', [])
+
     return BigDecimal.fromString('0')
   }
 
@@ -44,7 +50,9 @@ export function getAllEstimates(strategyAddress: Address[]): BigInt[] {
 
   let balanceCall = contract.try_estimateStrategies(strategyAddress)
   if (balanceCall.reverted) {
-    log.critical('estimateStrategies() reverted for {}', [])
+    log.warning('estimateStrategies() reverted for {}', [])
+
+    log.warning('estimateStrategies() reverted for {}', [])
   }
 
   let total = balanceCall.value
@@ -59,7 +67,7 @@ export function getEthUsdAggregator(): Address {
   let latestAggregator = feedRegistry.try_getFeed(BASE_ETH, QUOTE_USD)
 
   if (latestAggregator.reverted) {
-    log.critical('getFeed() reverted for {}', [CHAINLINK_FEED_REGISTRY])
+    log.warning('getFeed() reverted for {}', [CHAINLINK_FEED_REGISTRY])
   }
 
   return latestAggregator.value
@@ -72,7 +80,7 @@ export function getLatestAnswer(): BigDecimal {
   let latestAggregator = feedRegistry.try_latestAnswer(BASE_ETH, QUOTE_USD)
 
   if (latestAggregator.reverted) {
-    log.critical('getFeed() reverted for {}', [CHAINLINK_FEED_REGISTRY])
+    log.warning('getFeed() reverted for {}', [CHAINLINK_FEED_REGISTRY])
   }
 
   return latestAggregator.value.toBigDecimal()

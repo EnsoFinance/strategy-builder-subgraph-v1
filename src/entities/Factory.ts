@@ -23,10 +23,7 @@ export function isFactory(): boolean {
   return true
 }
 
-export function ensureFactory(
-  newImplementation: Address,
-  newVersion: string
-): Platform {
+export function ensureFactory(): Platform {
   let factory = Platform.load('SINGLETON') as Platform
 
   if (factory) {
@@ -37,8 +34,7 @@ export function ensureFactory(
   ensureEthUsdFeed(ethUsdAggregator)
 
   factory = new Platform('SINGLETON')
-  factory.address = newImplementation.toHexString()
-  factory.version = newVersion
+
   factory.strategiesCount = 0
   factory.managersCount = 0
   factory.allManagers = []
