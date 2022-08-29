@@ -19,7 +19,7 @@ export function ensureEnsoOracle(): EnsoOracle {
   }
 
   oracle = new EnsoOracle('SINGLETON')
-  oracle.address = '0x90D56e3aa787142873771A226a35355466Ba19D7'
+  oracle.address = '0xa707cb7839D0303F0cF5080B7F00E922Da4Cf501'
 
   oracle.save()
 

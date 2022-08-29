@@ -36,7 +36,7 @@ export function handleNewStrategy(event: NewStrategy): void {
   let items = event.params.items
   let strategyItems = createItemsHolding(items, strategyAddress, timestamp)
 
-  let strategyTvl = BigDecimal.fromString('0')
+  let strategyTvl = getTotalEstimates(strategyAddress)
 
   let strategy = createStrategy(strategyAddress, event)
   strategy.items = strategyItems
