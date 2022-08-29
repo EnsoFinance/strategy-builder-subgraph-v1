@@ -9,7 +9,12 @@ import {
   StrategySet
 } from '../generated/StrategyController/StrategyController'
 import { NewStrategyItemsStruct } from '../generated/StrategyProxyFactory/StrategyProxyFactory'
-import { Rebalance, Restructure, StateChange } from '../generated/schema'
+import {
+  Rebalance,
+  Restructure,
+  StateChange,
+  Strategy
+} from '../generated/schema'
 import { createItemsHolding } from './entities/StrategyItemHolding'
 import { useStrategy } from './entities/Strategy'
 import { convertToUsd, toBigDecimal } from './helpers/prices'
@@ -23,16 +28,38 @@ import { trackDepositEvent } from './entities/DepositEvent'
 import { removeUsdDecimals } from './helpers/tokens'
 
 export function handleDeposit(event: Deposit): void {
+  let strategy = Strategy.load(event.params.strategy.toHexString()) as Strategy
+
+  if (strategy == null) {
+    return
+  }
+
   trackItemsQuantitiesChange(event.params.strategy, event.block.timestamp)
   trackDepositEvent(event)
 }
 
 export function handleWithdraw(event: Withdraw): void {
+  let strategyTest = Strategy.load(
+    event.params.strategy.toHexString()
+  ) as Strategy
+
+  if (strategyTest == null) {
+    return
+  }
+
   trackItemsQuantitiesChange(event.params.strategy, event.block.timestamp)
   trackWithdrawEvent(event)
 }
 
 export function handleRebalance(event: Balanced): void {
+  let strategyTest = Strategy.load(
+    event.params.strategy.toHexString()
+  ) as Strategy
+
+  if (strategyTest == null) {
+    return
+  }
+
   let timestamp = event.block.timestamp
   let strategy = useStrategy(event.params.strategy.toHexString())
 
@@ -57,6 +84,14 @@ export function handleRebalance(event: Balanced): void {
 }
 
 export function handleRestructure(event: NewStructure): void {
+  let strategyTest = Strategy.load(
+    event.params.strategy.toHexString()
+  ) as Strategy
+
+  if (strategyTest == null) {
+    return
+  }
+
   let txhash = event.transaction.hash
   let timestamp = event.block.timestamp
   let strategyId = event.params.strategy.toHexString()
@@ -118,6 +153,14 @@ export function handleRestructure(event: NewStructure): void {
 }
 
 export function handleNewValue(event: NewValue): void {
+  let strategyTest = Strategy.load(
+    event.params.strategy.toHexString()
+  ) as Strategy
+
+  if (strategyTest == null) {
+    return
+  }
+
   let category = event.params.category as number
 
   if (event.params.finalized == false) {
@@ -207,12 +250,28 @@ export function handleNewValue(event: NewValue): void {
 }
 
 export function handleStrategyOpen(event: StrategyOpen): void {
+  let strategyTest = Strategy.load(
+    event.params.strategy.toHexString()
+  ) as Strategy
+
+  if (strategyTest == null) {
+    return
+  }
+
   let strategyState = useStrategyState(event.params.strategy)
   strategyState.social = true
   strategyState.save()
 }
 
 export function handleStrategySet(event: StrategySet): void {
+  let strategyTest = Strategy.load(
+    event.params.strategy.toHexString()
+  ) as Strategy
+
+  if (strategyTest == null) {
+    return
+  }
+
   let strategyState = useStrategyState(event.params.strategy)
   strategyState.social = true
   strategyState.save()

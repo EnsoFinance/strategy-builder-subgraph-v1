@@ -1,5 +1,5 @@
-import { Address, log } from '@graphprotocol/graph-ts'
-import { Platform } from '../../generated/schema'
+import { Address, log, TypedMap, BigInt, json } from '@graphprotocol/graph-ts'
+import { Platform, Test } from '../../generated/schema'
 import { getEthUsdAggregator } from '../helpers/prices'
 import { ensureEthUsdFeed } from './EthUsdFeed'
 
@@ -23,12 +23,30 @@ export function isFactory(): boolean {
   return true
 }
 
+class TestClass {
+  address: string
+
+  constructor(address: string) {
+    this.address = address
+  }
+}
+
+export function seedFactory(): void {
+  let traits: TestClass[] = [new TestClass('0x8asdhasiodh')]
+
+  for (let i = 0; i < traits.length; ++i) {
+    let test = new Test(traits[0].address)
+    test.save()
+  }
+}
+
 export function ensureFactory(): Platform {
   let factory = Platform.load('SINGLETON') as Platform
 
   if (factory) {
     return factory
   }
+  seedFactory()
 
   let ethUsdAggregator = getEthUsdAggregator().toHexString()
   ensureEthUsdFeed(ethUsdAggregator)
