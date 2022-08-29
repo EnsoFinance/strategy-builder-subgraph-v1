@@ -14,10 +14,6 @@ export function ensureEthUsdFeed(latestAggregator: string): EthUsdFeed {
   ethUsdFeed.latestAnswer = getLatestAnswer()
   ethUsdFeed.save()
 
-  log.warning('EthUsdFeed created with latest answer is {}', [
-    ethUsdFeed.latestAnswer.toString()
-  ])
-
   AggregatorV3Template.create(Address.fromString(latestAggregator))
 
   return ethUsdFeed

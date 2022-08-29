@@ -60,7 +60,7 @@ export function getEthUsdAggregator(): Address {
   let latestAggregator = feedRegistry.try_getFeed(BASE_ETH, QUOTE_USD)
 
   if (latestAggregator.reverted) {
-    log.warning('getFeed() reverted for {}', [CHAINLINK_FEED_REGISTRY])
+    log.critical('getFeed() reverted for {}', [CHAINLINK_FEED_REGISTRY])
   }
 
   return latestAggregator.value
@@ -73,7 +73,7 @@ export function getLatestAnswer(): BigDecimal {
   let latestAggregator = feedRegistry.try_latestAnswer(BASE_ETH, QUOTE_USD)
 
   if (latestAggregator.reverted) {
-    log.warning('getFeed() reverted for {}', [CHAINLINK_FEED_REGISTRY])
+    log.critical('getFeed() reverted for {}', [CHAINLINK_FEED_REGISTRY])
   }
 
   return latestAggregator.value.toBigDecimal()
