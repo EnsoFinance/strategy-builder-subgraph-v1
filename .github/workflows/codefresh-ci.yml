@@ -29,7 +29,7 @@ name: Codefresh CI
 'on':
   pull_request:
     branches:
-      - ${{ github.base_ref }}
+      - main
   push:
     branches:
-      - ${{ github.base_ref }}
+      - main
