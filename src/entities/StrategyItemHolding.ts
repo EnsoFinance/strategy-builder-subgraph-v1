@@ -17,7 +17,7 @@ export function createHoldingId(
 export function useItemHolding(id: string): StrategyItemHolding {
   let itemHolding = StrategyItemHolding.load(id) as StrategyItemHolding
   if (itemHolding == null) {
-    log.critical('StrategyItemHolding {} does not exist', [id])
+    log.warning('StrategyItemHolding {} does not exist', [id])
   }
 
   return itemHolding
@@ -100,15 +100,10 @@ export function createItem(
   let newItemHolding = new StrategyItemHolding(
     createHoldingId(token.id, strategyId, timestamp)
   )
-  log.warning('newItemHolding', [])
 
   if (isStrategy(itemAddress)) {
-    log.warning('isStrategy', [])
-
     newItemHolding.strategy = token.id
-    log.warning('isStrategy after, still is', [])
   }
-  log.warning('is not strategy', [])
 
   newItemHolding.token = token.id
   newItemHolding.balance = newBalance

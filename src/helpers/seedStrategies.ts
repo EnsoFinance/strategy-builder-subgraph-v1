@@ -29,19 +29,14 @@ class SeededStrategy {
     lastStateChange: string,
     lastRestructure: BigInt
   ) {
-    log.warning('ensuring factory... {}', [id])
     let factory = ensureFactory()
-
-    log.warning(' factory ensured! {}', [id])
 
     let items = getStrategyItems(Address.fromString(id))
     let strategyItems: string[] = new Array<string>()
-    log.warning('HERE', [])
 
     for (let i = 0; i < items.length; ++i) {
       let tradeData = getTradeData(Address.fromString(id), items[0])
       let percentage = getPercentage(Address.fromString(id), items[0])
-      log.warning('getPercentage', [])
 
       let strategyItem = createItem(items[0], percentage, id, lastRestructure)
 
@@ -51,7 +46,7 @@ class SeededStrategy {
       strategyItems.push(id)
     }
 
-    /*    let strategy = new Strategy(id)
+    let strategy = new Strategy(id)
     strategy.manager = strategyManager
     strategy.name = name
     strategy.symbol = symbol
@@ -64,22 +59,22 @@ class SeededStrategy {
     strategy.totalSupply = totalSupply
     strategy.state = state
     strategy.items = strategyItems
-    strategy.lastStateChange = lastStateChange
+    strategy.lastStateChange = lastStateChange == '' ? null : lastStateChange
+    strategy.lastRestructure = lastRestructure
     strategy.save()
-
-    log.warning('strategy created()   {}', [])
 
     let manager = ensureManager(
       Address.fromString(strategyManager),
       createdAtTimestamp
     )
+
     manager.tvl = manager.tvl.plus(tvl)
     manager.strategies = addElement(manager.strategies, Address.fromString(id))
     manager.strategiesCount = manager.strategiesCount + 1
     manager.save()
 
     manager.commonItems = getCommonItems(manager)
-    manager.save() */
+    manager.save()
   }
 }
 

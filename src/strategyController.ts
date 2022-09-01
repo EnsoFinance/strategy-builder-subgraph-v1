@@ -28,6 +28,7 @@ import { trackDepositEvent } from './entities/DepositEvent'
 import { removeUsdDecimals } from './helpers/tokens'
 
 export function handleDeposit(event: Deposit): void {
+  return
   let strategy = Strategy.load(event.params.strategy.toHexString()) as Strategy
 
   if (strategy == null) {

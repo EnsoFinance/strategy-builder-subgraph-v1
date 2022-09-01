@@ -76,9 +76,7 @@ export function burnStrategyTokens(
 }
 
 export function isStrategy(strategyAddress: Address): boolean {
-  log.warning('isStrategy inside before ensuring factory', [])
   let factory = ensureFactory()
-  log.warning('isStrategy inside after ensuring factory', [])
 
   if (factory.allStrategies.includes(strategyAddress.toHexString())) {
     return true

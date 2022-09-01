@@ -39,14 +39,9 @@ export function ensureFactory(): Platform {
     return factory
   }
 
-  log.warning('Factory does not exist, creating...', [])
-
   let ethUsdAggregator = getEthUsdAggregator().toHexString()
 
-  log.warning('got eth usd aggreagor {} ', [ethUsdAggregator])
-
   ensureEthUsdFeed(ethUsdAggregator)
-  log.warning('ensured feed ', [])
 
   factory = new Platform('SINGLETON')
 

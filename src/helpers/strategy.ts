@@ -9,6 +9,9 @@ export function getStrategyItems(strategyAddress: Address): Address[] {
 
   let balanceCall = contract.try_items()
   if (balanceCall.reverted) {
+    log.warning('getStrategyItems() reverted for {}', [
+      strategyAddress.toHexString()
+    ])
     log.critical('getStrategyItems() reverted for {}', [
       strategyAddress.toHexString()
     ])
