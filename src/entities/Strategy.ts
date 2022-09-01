@@ -3,7 +3,7 @@ import { Strategy } from '../../generated/schema'
 import { NewStrategy } from '../../generated/StrategyProxyFactory/StrategyProxyFactory'
 import { useItemHolding } from './StrategyItemHolding'
 import { ZERO_BD } from '../helpers/constants'
-import { useFactory } from './Factory'
+import { ensureFactory, useFactory } from './Factory'
 import { createStrategyState } from './StrategyState'
 import { toBigDecimal } from '../helpers/prices'
 import { ensureStrategyChange } from './StrategyChange'
@@ -71,11 +71,14 @@ export function burnStrategyTokens(
   strategy.totalSupply = strategy.totalSupply.minus(
     toBigDecimal(transferAmount)
   )
+
   strategy.save()
 }
 
 export function isStrategy(strategyAddress: Address): boolean {
-  let factory = useFactory()
+  log.warning('isStrategy inside before ensuring factory', [])
+  let factory = ensureFactory()
+  log.warning('isStrategy inside after ensuring factory', [])
 
   if (factory.allStrategies.includes(strategyAddress.toHexString())) {
     return true

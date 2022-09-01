@@ -100,10 +100,16 @@ export function createItem(
   let newItemHolding = new StrategyItemHolding(
     createHoldingId(token.id, strategyId, timestamp)
   )
+  log.warning('newItemHolding', [])
 
   if (isStrategy(itemAddress)) {
+    log.warning('isStrategy', [])
+
     newItemHolding.strategy = token.id
+    log.warning('isStrategy after, still is', [])
   }
+  log.warning('is not strategy', [])
+
   newItemHolding.token = token.id
   newItemHolding.balance = newBalance
   newItemHolding.percentage = percentage

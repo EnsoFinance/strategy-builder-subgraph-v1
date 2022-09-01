@@ -1,6 +1,15 @@
-import { Address, log, TypedMap, BigInt, json } from '@graphprotocol/graph-ts'
-import { Platform, Test } from '../../generated/schema'
+import {
+  Address,
+  log,
+  TypedMap,
+  BigInt,
+  json,
+  BigDecimal
+} from '@graphprotocol/graph-ts'
+import { Platform } from '../../generated/schema'
 import { getEthUsdAggregator } from '../helpers/prices'
+import { strategyStates } from '../helpers/seedStrategyState'
+import { strategies } from '../helpers/seedStrategies'
 import { ensureEthUsdFeed } from './EthUsdFeed'
 
 export function useFactory(): Platform {
@@ -23,33 +32,21 @@ export function isFactory(): boolean {
   return true
 }
 
-class TestClass {
-  address: string
-
-  constructor(address: string) {
-    this.address = address
-  }
-}
-
-export function seedFactory(): void {
-  let traits: TestClass[] = [new TestClass('0x8asdhasiodh')]
-
-  for (let i = 0; i < traits.length; ++i) {
-    let test = new Test(traits[0].address)
-    test.save()
-  }
-}
-
 export function ensureFactory(): Platform {
   let factory = Platform.load('SINGLETON') as Platform
 
   if (factory) {
     return factory
   }
-  seedFactory()
+
+  log.warning('Factory does not exist, creating...', [])
 
   let ethUsdAggregator = getEthUsdAggregator().toHexString()
+
+  log.warning('got eth usd aggreagor {} ', [ethUsdAggregator])
+
   ensureEthUsdFeed(ethUsdAggregator)
+  log.warning('ensured feed ', [])
 
   factory = new Platform('SINGLETON')
 
@@ -60,6 +57,7 @@ export function ensureFactory(): Platform {
   factory.tokens = []
 
   factory.save()
+  log.warning('factory created', [])
 
   return factory
 }

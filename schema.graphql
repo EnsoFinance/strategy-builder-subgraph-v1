@@ -55,10 +55,6 @@ type Strategy @entity {
   restructures: [Restructure]! @derivedFrom(field: "strategy")
 }
 
-type Test @entity {
-  id: ID!
-}
-
 type StrategyState @entity {
   id: ID!
   locked: Boolean!

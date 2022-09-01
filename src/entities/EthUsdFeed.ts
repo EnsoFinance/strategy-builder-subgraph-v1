@@ -14,7 +14,9 @@ export function ensureEthUsdFeed(latestAggregator: string): EthUsdFeed {
   ethUsdFeed.latestAnswer = getLatestAnswer()
   ethUsdFeed.save()
 
+  log.warning('Latest aggregator is : {}', [ethUsdFeed.latestAnswer.toString()])
   AggregatorV3Template.create(Address.fromString(latestAggregator))
+  log.warning('template tracking success', [])
 
   return ethUsdFeed
 }
