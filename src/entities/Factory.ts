@@ -1,5 +1,5 @@
-import { Address, log, TypedMap, BigInt, json } from '@graphprotocol/graph-ts'
-import { Platform, Test } from '../../generated/schema'
+import { log } from '@graphprotocol/graph-ts'
+import { Platform } from '../../generated/schema'
 import { getEthUsdAggregator } from '../helpers/prices'
 import { ensureEthUsdFeed } from './EthUsdFeed'
 
