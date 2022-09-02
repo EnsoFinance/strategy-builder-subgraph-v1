@@ -37,6 +37,7 @@ type Strategy @entity {
   manager: Manager!
   name: String!
   symbol: String!
+  version: String!
   state: StrategyState!
   createdAtTimestamp: BigInt!
   tvl: BigDecimal!
