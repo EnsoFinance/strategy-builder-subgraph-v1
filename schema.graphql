@@ -10,8 +10,6 @@ type _Schema_
 
 type Platform @entity {
   id: ID!
-  address: String! # ProxyFactory address
-  version: String!
   strategiesCount: Int!
   managersCount: Int!
   allManagers: [String!]!
@@ -39,6 +37,7 @@ type Strategy @entity {
   manager: Manager!
   name: String!
   symbol: String!
+  version: String!
   state: StrategyState!
   createdAtTimestamp: BigInt!
   tvl: BigDecimal!

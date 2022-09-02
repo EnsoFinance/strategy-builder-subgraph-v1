@@ -15,13 +15,15 @@ import { createItemsHolding } from './entities/StrategyItemHolding'
 import { getTotalEstimates } from './helpers/prices'
 import { addElement } from './helpers/utils'
 import { EnsoOracle } from '../generated/schema'
+import { BigDecimal, log } from '@graphprotocol/graph-ts'
 
 export function handleNewStrategy(event: NewStrategy): void {
+  let factory = ensureFactory()
+
   let timestamp = event.block.timestamp
   let managerAddress = event.params.manager
   let strategyAddress = event.params.strategy
 
-  let factory = useFactory()
   factory.strategiesCount = factory.strategiesCount + 1
   factory.allStrategies = addElement(factory.allStrategies, strategyAddress)
   if (!factory.allManagers.includes(managerAddress.toHexString())) {
@@ -33,6 +35,7 @@ export function handleNewStrategy(event: NewStrategy): void {
 
   let items = event.params.items
   let strategyItems = createItemsHolding(items, strategyAddress, timestamp)
+
   let strategyTvl = getTotalEstimates(strategyAddress)
 
   let strategy = createStrategy(strategyAddress, event)
@@ -59,10 +62,8 @@ export function handleUpdate(event: Update): void {
   let newImplementation = event.params.newImplementation
   let newVersion = event.params.version
 
-  let factory = ensureFactory(newImplementation, newVersion)
+  let factory = ensureFactory()
 
-  factory.address = newImplementation.toHexString()
-  factory.version = newVersion
   StrategyProxyFactoryTemplate.create(newImplementation)
 
   factory.save()

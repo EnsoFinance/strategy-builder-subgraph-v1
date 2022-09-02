@@ -1,0 +1,42 @@
+version: '3'
+volumes:
+  node_modules:
+services:
+  deploy-subgraph:
+    build: .
+    image: deploy-subgraph
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    depends_on:
+      - graph-node
+    environment:
+      MODE: prod
+      IPFS_URL: http://ipfs:5001
+
+  graph-node:
+    image: graphprotocol/graph-node:v0.26.0
+    ports:
+      - '8000:8000'
+    depends_on:
+      - ipfs
+      - postgres
+    environment:
+      postgres_host: postgres
+      postgres_user: graph-node
+      postgres_pass: let-me-in
+      postgres_db: graph-node      
+      ipfs: 'ipfs:5001'
+      ethereum: 'mainnet:http://host.docker.internal:8545'
+      GRAPH_LOG: info
+      GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: "true"
+
+  ipfs:
+    image: ipfs/go-ipfs:v0.4.23
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: graph-node
+      POSTGRES_PASSWORD: let-me-in
+      POSTGRES_DB: graph-node

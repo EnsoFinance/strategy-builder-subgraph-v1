@@ -5,7 +5,7 @@ import { CHAINLINK_FEED_REGISTRY } from '../addresses'
 import { BASE_ETH, QUOTE_USD } from './constants'
 import { useEthUsdFeed } from '../entities/EthUsdFeed'
 import { removeUsdDecimals } from './tokens'
-import { useEnsoOracle } from '../entities/EnsoOracle'
+import { ensureEnsoOracle, useEnsoOracle } from '../entities/EnsoOracle'
 
 export function toBigDecimal(quantity: BigInt, decimals: i32 = 18): BigDecimal {
   return quantity.divDecimal(
@@ -22,7 +22,8 @@ export function convertToUsd(assetPriceInWeth: BigDecimal): BigDecimal {
 }
 
 export function getTotalEstimates(strategyAddress: Address): BigDecimal {
-  let oracle = useEnsoOracle()
+  let oracle = ensureEnsoOracle()
+
   let contract = Oracle.bind(Address.fromString(oracle.address))
 
   let balanceCall = contract.try_estimateStrategy(strategyAddress)
