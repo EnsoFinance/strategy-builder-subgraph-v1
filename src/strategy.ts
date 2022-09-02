@@ -165,7 +165,7 @@ export function handlePerformanceFee(event: PerformanceFee): void {
   claimedPerfFee.save()
 }
 
-export function handlUpdateManager(event: UpdateManager): void {
+export function handleUpdateManager(event: UpdateManager): void {
   let strategy = useStrategy(event.transaction.from.toHexString())
 
   let oldManager = useManager(strategy.manager)

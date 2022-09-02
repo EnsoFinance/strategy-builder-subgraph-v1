@@ -239,15 +239,6 @@ type UpdateManagerEvent @entity {
   txHash: String!
 }
 
-type UpdateTradeDataEvent @entity {
-  id: ID!
-  strategy: Strategy!
-  item: String!
-  newAdapters: [Bytes!]!
-  newPath: [Bytes!]!
-  txHash: String!
-}
-
 type ClaimedPerfFee @entity {
   id: ID!
   manager: Manager!
