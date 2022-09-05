@@ -1,9 +1,19 @@
 ---
 jobs:
   build:
+    name: build & push ensoassociation/${{ github.event.repository.name }} image
+    outputs:
+      image: ensoassociation/${{ github.event.repository.name }}:${{ steps.short-sha.outputs.sha }}
+      sha: ${{ steps.short-sha.outputs.sha }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          cache: yarn
+          node-version: 16
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v2
       - name: Login to Dockerhub
@@ -11,21 +21,32 @@ jobs:
         with:
           password: ${{ secrets.DOCKER_TOKEN }}
           username: ${{ secrets.DOCKER_USERNAME }}
-      - name: Build and push image
+      - id: short-sha
+        name: Generate short SHA
+        uses: benjlevesque/short-sha@v1.2
+        with:
+          length: 7
+      - id: build-and-push
+        name: Build and push image
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: ensoassociation/${{ github.event.repository.name }}:${{ github.head_ref || github.ref_name }}
-      - name: report image
+          tags: ensoassociation/${{ github.event.repository.name }}:${{ steps.short-sha.outputs.sha }}
+  reports:
+    name: report ${{ needs.build.outputs.image }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report image to Codefresh
         uses: codefresh-io/codefresh-report-image@latest
         with:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           CF_CONTAINER_REGISTRY_INTEGRATION: ensodev-dockerhub
           CF_GITHUB_TOKEN: ${{ secrets.CF_GITHUB_TOKEN }}
           CF_GIT_BRANCH: ${{ github.head_ref || github.ref_name }}
-          CF_IMAGE: ensoassociation/${{ github.event.repository.name }}:${{ github.head_ref || github.ref_name }}
+          CF_IMAGE: ${{ needs.build.outputs.image }}
           CF_RUNTIME_NAME: codefresh-hosted
-name: Codefresh CI
+name: Continuous Integration
 'on':
   pull_request:
     branches:
