@@ -1,5 +1,5 @@
-import { Address, store } from '@graphprotocol/graph-ts'
-import { UpdateManagerEvent } from '../generated/schema'
+import { Address, log, store } from '@graphprotocol/graph-ts'
+import { UpdateManagerEvent, UpdateStrategyEvent } from '../generated/schema'
 import {
   Withdraw,
   Transfer,
@@ -155,7 +155,7 @@ export function handleTransfer(event: Transfer): void {
 }
 
 export function handleUpdateManager(event: UpdateManager): void {
-  let strategy = useStrategy(event.transaction.from.toHexString())
+  let strategy = useStrategy(event.address.toHexString())
 
   let oldManager = useManager(strategy.manager)
   oldManager.strategies = removeElement(
@@ -180,8 +180,14 @@ export function handleUpdateManager(event: UpdateManager): void {
   changeMangerEvent.save()
 }
 
-export function handleUpdateVersion(event: VersionUpdated): void {
-  let strategy = useStrategy(event.transaction.from.toHexString())
-  strategy.version = 'V2'
+export function handleVersionUpdated(event: VersionUpdated): void {
+  let strategy = useStrategy(event.address.toHexString())
+  strategy.version = '2'
   strategy.save()
+
+  let updatedStretegyEvent = new UpdateStrategyEvent(strategy.id)
+  updatedStretegyEvent.strategy = strategy.id
+  updatedStretegyEvent.timestamp = event.block.timestamp
+  updatedStretegyEvent.txHash = event.transaction.hash.toHexString()
+  updatedStretegyEvent.save()
 }

@@ -1,4 +1,4 @@
-import { Address, BigInt, log } from '@graphprotocol/graph-ts'
+import { Address, Bytes } from '@graphprotocol/graph-ts'
 import {
   Deposit,
   Withdraw,
@@ -6,12 +6,22 @@ import {
   NewStructure,
   NewValue,
   StrategyOpen,
-  StrategySet
+  StrategySet,
+  UpdateTradeData
 } from '../generated/StrategyController/StrategyController'
 import { NewStrategyItemsStruct } from '../generated/StrategyProxyFactory/StrategyProxyFactory'
-import { Rebalance, Restructure, StateChange } from '../generated/schema'
-import { createItemsHolding } from './entities/StrategyItemHolding'
-import { useStrategy } from './entities/Strategy'
+import {
+  Rebalance,
+  Restructure,
+  StateChange,
+  UpdateTradeDataEvent
+} from '../generated/schema'
+import {
+  createHoldingId,
+  createItemsHolding,
+  useItemHolding
+} from './entities/StrategyItemHolding'
+import { isStrategy, useStrategy } from './entities/Strategy'
 import { convertToUsd, toBigDecimal } from './helpers/prices'
 import { useRestructure } from './entities/Restructure'
 import { trackItemsQuantitiesChange } from './entities/StrategyItemHolding'
@@ -23,6 +33,9 @@ import { trackDepositEvent } from './entities/DepositEvent'
 import { removeUsdDecimals } from './helpers/tokens'
 
 export function handleDeposit(event: Deposit): void {
+  if (!isStrategy(event.params.strategy)) {
+    return
+  }
   trackItemsQuantitiesChange(event.params.strategy, event.block.timestamp)
   trackDepositEvent(event)
 }
@@ -216,4 +229,57 @@ export function handleStrategySet(event: StrategySet): void {
   let strategyState = useStrategyState(event.params.strategy)
   strategyState.social = true
   strategyState.save()
+}
+
+export function handleUpdateTradeData(event: UpdateTradeData): void {
+  if (event.params.finalized == false) {
+    let strategy = useStrategy(event.params.strategy.toHexString())
+    strategy.lastStateChange = 'TRADE_DATA'
+    strategy.locked = true
+    strategy.save()
+
+    let strategyState = useStrategyState(event.params.strategy)
+    strategyState.lastStateChangeTimestamp = event.block.timestamp
+    strategyState.lastStateChange = 'TRADE_DATA'
+    strategyState.locked = true
+    strategyState.save()
+  }
+
+  if (event.params.finalized == true) {
+    let strategyId = event.params.strategy.toHexString()
+    let strategy = useStrategy(strategyId)
+    strategy.locked = false
+    strategy.save()
+
+    let strategyState = useStrategyState(event.params.strategy)
+    strategyState.locked = false
+    strategyState.save()
+
+    let item = event.params.item
+    let adapters = event.params.data.adapters as Bytes[]
+    let path = event.params.data.path as Bytes[]
+
+    let itemHoldingId = createHoldingId(
+      strategyId,
+      item.toHexString(),
+      strategy.lastRestructure
+    )
+    let itemHolding = useItemHolding(itemHoldingId)
+    itemHolding.adapters = adapters
+    itemHolding.path = path
+    itemHolding.save()
+
+    let updateTradeDataEvent = new UpdateTradeDataEvent(
+      event.transaction.hash.toHexString() +
+        '/' +
+        event.transaction.index.toString()
+    )
+    updateTradeDataEvent.strategy = strategyId
+    updateTradeDataEvent.item = item.toHexString()
+    updateTradeDataEvent.newAdapters = adapters
+    updateTradeDataEvent.newPath = path
+    updateTradeDataEvent.timestamp = event.block.timestamp
+    updateTradeDataEvent.txHash = event.transaction.hash.toHexString()
+    updateTradeDataEvent.save()
+  }
 }

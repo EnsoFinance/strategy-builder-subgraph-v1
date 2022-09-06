@@ -20,7 +20,8 @@ export enum TimelockCategory {
   REBALANCE_SLIPPAGE,
   RESTRUCTURE_SLIPPAGE,
   TIMELOCK,
-  PERFORMANCE
+  PERFORMANCE,
+  TRADE_DATA
 }
 
 export let timelockCategories = new Array<string>()
@@ -30,7 +31,8 @@ timelockCategories = [
   'REBALANCE_SLIPPAGE',
   'RESTRUCTURE_SLIPPAGE',
   'TIMELOCK',
-  'PERFORMANCE'
+  'PERFORMANCE',
+  'TRADE_DATA'
 ]
 
 export let tokenCategories = new Array<string>()

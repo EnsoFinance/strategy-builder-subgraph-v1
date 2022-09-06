@@ -20,7 +20,8 @@ export function useStrategy(id: string): Strategy {
 
 export function createStrategy(
   strategyAddress: Address,
-  event: NewStrategy
+  event: NewStrategy,
+  version: string
 ): Strategy {
   let strategyId = strategyAddress.toHex()
 
@@ -33,10 +34,7 @@ export function createStrategy(
   strategy.name = event.params.name
   strategy.state = strategyId
   strategy.symbol = event.params.symbol
-  strategy.version =
-    ensoOracle.address == '0xcd341d9199f86d3696ff206689d1b00be4d59f05'
-      ? 'V2'
-      : 'V1'
+  strategy.version = version
   strategy.createdAtTimestamp = event.block.timestamp
   strategy.lastRestructure = event.block.timestamp
   strategy.locked = false
