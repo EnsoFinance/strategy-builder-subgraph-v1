@@ -73,7 +73,7 @@ dataSources:
           handler: handleStrategyOpen
         - event: StrategySet(indexed address)
           handler: handleStrategySet
-        - event: UpdateTradeData()
+        - event: UpdateTradeData(indexed address,indexed address,(address[],address[],bytes),indexed bool)
           handler: handleUpdateTradeData
       entities: []
       file: ./src/strategyController.ts
