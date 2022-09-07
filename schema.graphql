@@ -10,6 +10,7 @@ type _Schema_
 
 type Platform @entity {
   id: ID!
+  version: String!
   strategiesCount: Int!
   managersCount: Int!
   allManagers: [String!]!

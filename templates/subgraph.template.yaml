@@ -139,6 +139,8 @@ templates:
       abis:
         - name: StrategyProxyFactory
           file: ./abis/StrategyProxyFactory.json
+        - name: Strategy
+          file: ./abis/Strategy.json
         - name: ERC20
           file: ./abis/ERC20.json
         - name: ERC20SymbolBytes
@@ -189,10 +191,6 @@ templates:
           handler: handleVersionUpdated
         - event: UpdateManager(address)
           handler: handleUpdateManager
-
-      callHandlers:
-        - function: updateTradeData(address,data)
-          handler: handleUpdateTradeData
   - name: AggregatorV3
     kind: ethereum/contract
     network: '{{network}}'

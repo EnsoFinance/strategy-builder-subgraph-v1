@@ -31,6 +31,9 @@ class SeededStrategy {
   ) {
     let factory = ensureFactory()
 
+    factory.strategiesCount = factory.strategiesCount + 1
+    factory.save()
+
     let items = getStrategyItems(Address.fromString(id))
     let strategyItems: string[] = new Array<string>()
 
@@ -39,17 +42,17 @@ class SeededStrategy {
       let percentage = getPercentage(Address.fromString(id), items[0])
 
       let strategyItem = createItem(items[0], percentage, id, lastRestructure)
-
       strategyItem.adapters = tradeData.adapters as Bytes[]
       strategyItem.path = tradeData.path as Bytes[]
       strategyItem.save()
-      strategyItems.push(id)
+      strategyItems.push(strategyItem.id)
     }
 
     let strategy = new Strategy(id)
     strategy.manager = strategyManager
     strategy.name = name
     strategy.symbol = symbol
+    strategy.version = '1'
     strategy.tvl = tvl
     strategy.price = price
     strategy.createdAtBlockNumber = createdAtBlockNumber

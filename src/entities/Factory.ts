@@ -39,13 +39,12 @@ export function ensureFactory(): Platform {
     return factory
   }
 
-  let ethUsdAggregator = getEthUsdAggregator().toHexString()
-
-  ensureEthUsdFeed(ethUsdAggregator)
+  ensureEthUsdFeed()
 
   factory = new Platform('SINGLETON')
 
   factory.strategiesCount = 0
+  factory.version = '1'
   factory.managersCount = 0
   factory.allManagers = []
   factory.allStrategies = []
