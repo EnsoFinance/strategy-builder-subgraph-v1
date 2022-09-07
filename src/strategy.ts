@@ -3,8 +3,8 @@ import { UpdateManagerEvent } from '../generated/schema'
 import {
   Withdraw,
   Transfer,
-  PerformanceFee,
-  UpdateManager
+  UpdateManager,
+  VersionUpdated
 } from '../generated/templates/Strategy/Strategy'
 import { useManager } from './entities/Manager'
 import {
@@ -22,7 +22,6 @@ import {
 import { ZERO_BD, ZERO_BI } from './helpers/constants'
 import { toBigDecimal } from './helpers/prices'
 import { ZERO_ADDRESS } from './addresses'
-import { ensureClaimedPerfFees } from './entities/ClaimedPerfFee'
 import { removeElement } from './helpers/utils'
 import { trackStrategyTokenHoldingData } from './entities/StrategyTokenHoldingData'
 
@@ -155,17 +154,7 @@ export function handleTransfer(event: Transfer): void {
   }
 }
 
-export function handlePerformanceFee(event: PerformanceFee): void {
-  let amount = event.params.amount.toBigDecimal()
-  let claimedPerfFee = ensureClaimedPerfFees(
-    event.address.toHexString(),
-    event.params.account.toHexString()
-  )
-  claimedPerfFee.amount = claimedPerfFee.amount.plus(amount)
-  claimedPerfFee.save()
-}
-
-export function handlUpdateManager(event: UpdateManager): void {
+export function handleUpdateManager(event: UpdateManager): void {
   let strategy = useStrategy(event.transaction.from.toHexString())
 
   let oldManager = useManager(strategy.manager)
@@ -189,4 +178,10 @@ export function handlUpdateManager(event: UpdateManager): void {
   changeMangerEvent.txHash = event.transaction.hash.toHexString()
   changeMangerEvent.timestamp = event.block.timestamp
   changeMangerEvent.save()
+}
+
+export function handleUpdateVersion(event: VersionUpdated): void {
+  let strategy = useStrategy(event.transaction.from.toHexString())
+  strategy.version = 'V2'
+  strategy.save()
 }

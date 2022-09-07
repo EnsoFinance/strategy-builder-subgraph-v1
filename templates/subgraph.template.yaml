@@ -185,8 +185,11 @@ templates:
           handler: handleTransfer
         - event: Withdraw(indexed address,uint256,uint256[])
           handler: handleWithdraw
-        - event: PerformanceFee(indexed address,uint256)
-          handler: handlePerformanceFee
+        - event: VersionUpdated(indexed string)
+          handler: handleVersionUpdated
+        - event: UpdateManager(address)
+          handler: handleUpdateManager
+
       callHandlers:
         - function: updateTradeData(address,data)
           handler: handleUpdateTradeData
