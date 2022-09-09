@@ -243,6 +243,14 @@ type ClaimedPerfFee @entity {
   amount: BigDecimal!
 }
 
+type ClaimedRewards @entity {
+  id: ID!
+  manager: Manager!
+  strategy: Strategy!
+  adapter: Bytes!
+  tokens: Bytes!
+}
+
 type EnsoOracle @entity {
   id: ID!
   address: String!

@@ -1,10 +1,15 @@
-import { Address, log, store } from '@graphprotocol/graph-ts'
-import { UpdateManagerEvent, UpdateStrategyEvent } from '../generated/schema'
+import { Address, store } from '@graphprotocol/graph-ts'
+import {
+  UpdateManagerEvent,
+  UpdateStrategyEvent,
+  ClaimedRewards
+} from '../generated/schema'
 import {
   Withdraw,
   Transfer,
   UpdateManager,
-  VersionUpdated
+  VersionUpdated,
+  RewardsClaimed
 } from '../generated/templates/Strategy/Strategy'
 import { useManager } from './entities/Manager'
 import {
@@ -190,4 +195,21 @@ export function handleVersionUpdated(event: VersionUpdated): void {
   updatedStretegyEvent.timestamp = event.block.timestamp
   updatedStretegyEvent.txHash = event.transaction.hash.toHexString()
   updatedStretegyEvent.save()
+}
+
+export function handleRewardsClaimed(event: RewardsClaimed): void {
+  let strategy = useStrategy(event.address.toHexString())
+  let manager = strategy.manager
+
+  let adapter = event.params.adapter
+  let tokens = event.params.tokens
+
+  let claimedRewards = new ClaimedRewards(
+    event.transaction.hash.toHex() + '/' + event.logIndex.toString()
+  )
+  claimedRewards.strategy = strategy.id
+  claimedRewards.manager = manager
+  claimedRewards.adapter = adapter
+  claimedRewards.tokens = tokens
+  claimedRewards.save()
 }

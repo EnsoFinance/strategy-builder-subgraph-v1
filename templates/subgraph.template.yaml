@@ -156,6 +156,8 @@ templates:
           handler: handleVersionUpdated
         - event: UpdateManager(address)
           handler: handleUpdateManager
+        - event: RewardsClaimed(indexed address,indexed address[])
+          handler: handleRewardsClaimed
   - name: AggregatorV3
     kind: ethereum/contract
     network: '{{network}}'

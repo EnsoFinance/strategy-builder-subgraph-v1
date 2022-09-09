@@ -1,8 +1,5 @@
 # Enso V1 Subgraph
 
-Current Kovan Subgraph:
-https://thegraph.com/explorer/subgraph/ensofinance/enso-v1
-
 Current _remote_ ✨ EnsoNet ✨ Subgraph:
 http://subgraph.dev.enso.finance/subgraphs/name/ensofinance/enso-v1
 
@@ -22,7 +19,7 @@ http://subgraph.dev.enso.finance/subgraphs/name/ensofinance/enso-v1
 3. run build & compile command: `yarn build:graph`
 4. run deploy command: `yarn deploy:local`
 
-## Setup and deploy on kovan
+## Setup and deploy on mainnet
 
 1. Authenticate
 
@@ -30,10 +27,10 @@ http://subgraph.dev.enso.finance/subgraphs/name/ensofinance/enso-v1
    graph auth <TOKEN>
    ```
 
-2. Prepare manifest and mappings with kovan addresses
+2. Prepare manifest and mappings with mainnet addresses
 
    ```bash
-   yarn prepare kovan
+   yarn prepare mainnet
    ```
 
 3. Build subgraph
@@ -45,11 +42,11 @@ http://subgraph.dev.enso.finance/subgraphs/name/ensofinance/enso-v1
 4. Deploy subgraph
 
    ```bash
-   yarn deploy:kovan
+   yarn deploy:mainnet
    ```
 
 ### Get Subgraph Logs
 
-   ```bash
-    curl --location --request POST 'https://thegraph.com/hosted-service/subgraph/graphql' --data-raw '{"query":"{indexingStatusForCurrentVersion(subgraphName: \"ensofinance/enso-v1\") { subgraph fatalError { message } nonFatalErrors {message } } }"}' | jq
-   ```
+```bash
+ curl --location --request POST 'https://thegraph.com/hosted-service/subgraph/graphql' --data-raw '{"query":"{indexingStatusForCurrentVersion(subgraphName: \"ensofinance/enso-v1\") { subgraph fatalError { message } nonFatalErrors {message } } }"}' | jq
+```
