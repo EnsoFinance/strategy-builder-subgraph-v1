@@ -1,15 +1,6 @@
-type _Schema_
-  @fulltext(
-    name: "strategySearch"
-    language: en
-    algorithm: rank
-    include: [
-      { entity: "Strategy", fields: [{ name: "name" }, { name: "symbol" }] }
-    ]
-  )
-
 type Platform @entity {
   id: ID!
+  version: String!
   strategiesCount: Int!
   managersCount: Int!
   allManagers: [String!]!
@@ -37,6 +28,7 @@ type Strategy @entity {
   manager: Manager!
   name: String!
   symbol: String!
+  version: String!
   state: StrategyState!
   createdAtTimestamp: BigInt!
   tvl: BigDecimal!
@@ -237,12 +229,10 @@ type UpdateManagerEvent @entity {
   txHash: String!
 }
 
-type UpdateTradeDataEvent @entity {
+type UpdateStrategyEvent @entity {
   id: ID!
   strategy: Strategy!
-  item: String!
-  newAdapters: [Bytes!]!
-  newPath: [Bytes!]!
+  timestamp: BigInt!
   txHash: String!
 }
 
@@ -253,9 +243,27 @@ type ClaimedPerfFee @entity {
   amount: BigDecimal!
 }
 
+type ClaimedRewards @entity {
+  id: ID!
+  manager: Manager!
+  strategy: Strategy!
+  adapter: Bytes!
+  tokens: Bytes!
+}
+
 type EnsoOracle @entity {
   id: ID!
   address: String!
+}
+
+type UpdateTradeDataEvent @entity {
+  id: ID!
+  strategy: Strategy!
+  item: String!
+  newAdapters: [Bytes!]!
+  newPath: [Bytes!]!
+  timestamp: BigInt!
+  txHash: String!
 }
 
 enum StateChangeStatus {
@@ -308,4 +316,5 @@ enum TimelockCategory {
   RESTRUCTURE_SLIPPAGE
   TIMELOCK
   PERFORMANCE
+  TRADE_DATA
 }

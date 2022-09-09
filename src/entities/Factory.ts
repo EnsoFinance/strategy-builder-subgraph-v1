@@ -45,6 +45,7 @@ export function ensureFactory(): Platform {
 
   factory = new Platform('SINGLETON')
 
+  factory.version = '1'
   factory.strategiesCount = 0
   factory.managersCount = 0
   factory.allManagers = []

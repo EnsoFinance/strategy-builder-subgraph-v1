@@ -3,19 +3,15 @@ import {
   Update,
   NewOracle
 } from '../generated/StrategyProxyFactory/StrategyProxyFactory'
-import {
-  Strategy as StrategyTemplate,
-  StrategyProxyFactory as StrategyProxyFactoryTemplate
-} from '../generated/templates'
+import { Strategy as StrategyTemplate } from '../generated/templates'
 import { ensureManager, getCommonItems } from './entities/Manager'
 import { trackAllDayData, trackDayData } from './entities/DayData'
-import { ensureFactory, useFactory } from './entities/Factory'
+import { ensureFactory } from './entities/Factory'
 import { createStrategy } from './entities/Strategy'
 import { createItemsHolding } from './entities/StrategyItemHolding'
 import { getTotalEstimates } from './helpers/prices'
 import { addElement } from './helpers/utils'
 import { EnsoOracle } from '../generated/schema'
-import { BigDecimal, log } from '@graphprotocol/graph-ts'
 
 export function handleNewStrategy(event: NewStrategy): void {
   let factory = ensureFactory()
@@ -38,7 +34,7 @@ export function handleNewStrategy(event: NewStrategy): void {
 
   let strategyTvl = getTotalEstimates(strategyAddress)
 
-  let strategy = createStrategy(strategyAddress, event)
+  let strategy = createStrategy(strategyAddress, event, factory.version)
   strategy.items = strategyItems
   strategy.tvl = strategyTvl
   strategy.save()
@@ -59,12 +55,10 @@ export function handleNewStrategy(event: NewStrategy): void {
 }
 
 export function handleUpdate(event: Update): void {
-  let newImplementation = event.params.newImplementation
   let newVersion = event.params.version
 
   let factory = ensureFactory()
-
-  StrategyProxyFactoryTemplate.create(newImplementation)
+  factory.version = newVersion
 
   factory.save()
 }

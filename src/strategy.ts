@@ -1,10 +1,15 @@
 import { Address, store } from '@graphprotocol/graph-ts'
-import { UpdateManagerEvent } from '../generated/schema'
+import {
+  UpdateManagerEvent,
+  UpdateStrategyEvent,
+  ClaimedRewards
+} from '../generated/schema'
 import {
   Withdraw,
   Transfer,
-  PerformanceFee,
-  UpdateManager
+  UpdateManager,
+  VersionUpdated,
+  RewardsClaimed
 } from '../generated/templates/Strategy/Strategy'
 import { useManager } from './entities/Manager'
 import {
@@ -22,7 +27,6 @@ import {
 import { ZERO_BD, ZERO_BI } from './helpers/constants'
 import { toBigDecimal } from './helpers/prices'
 import { ZERO_ADDRESS } from './addresses'
-import { ensureClaimedPerfFees } from './entities/ClaimedPerfFee'
 import { removeElement } from './helpers/utils'
 import { trackStrategyTokenHoldingData } from './entities/StrategyTokenHoldingData'
 
@@ -155,18 +159,8 @@ export function handleTransfer(event: Transfer): void {
   }
 }
 
-export function handlePerformanceFee(event: PerformanceFee): void {
-  let amount = event.params.amount.toBigDecimal()
-  let claimedPerfFee = ensureClaimedPerfFees(
-    event.address.toHexString(),
-    event.params.account.toHexString()
-  )
-  claimedPerfFee.amount = claimedPerfFee.amount.plus(amount)
-  claimedPerfFee.save()
-}
-
-export function handlUpdateManager(event: UpdateManager): void {
-  let strategy = useStrategy(event.transaction.from.toHexString())
+export function handleUpdateManager(event: UpdateManager): void {
+  let strategy = useStrategy(event.address.toHexString())
 
   let oldManager = useManager(strategy.manager)
   oldManager.strategies = removeElement(
@@ -189,4 +183,33 @@ export function handlUpdateManager(event: UpdateManager): void {
   changeMangerEvent.txHash = event.transaction.hash.toHexString()
   changeMangerEvent.timestamp = event.block.timestamp
   changeMangerEvent.save()
+}
+
+export function handleVersionUpdated(event: VersionUpdated): void {
+  let strategy = useStrategy(event.address.toHexString())
+  strategy.version = '2'
+  strategy.save()
+
+  let updatedStretegyEvent = new UpdateStrategyEvent(strategy.id)
+  updatedStretegyEvent.strategy = strategy.id
+  updatedStretegyEvent.timestamp = event.block.timestamp
+  updatedStretegyEvent.txHash = event.transaction.hash.toHexString()
+  updatedStretegyEvent.save()
+}
+
+export function handleRewardsClaimed(event: RewardsClaimed): void {
+  let strategy = useStrategy(event.address.toHexString())
+  let manager = strategy.manager
+
+  let adapter = event.params.adapter
+  let tokens = event.params.tokens
+
+  let claimedRewards = new ClaimedRewards(
+    event.transaction.hash.toHex() + '/' + event.logIndex.toString()
+  )
+  claimedRewards.strategy = strategy.id
+  claimedRewards.manager = manager
+  claimedRewards.adapter = adapter
+  claimedRewards.tokens = tokens
+  claimedRewards.save()
 }

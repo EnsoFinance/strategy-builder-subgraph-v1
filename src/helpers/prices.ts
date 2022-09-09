@@ -28,6 +28,9 @@ export function getTotalEstimates(strategyAddress: Address): BigDecimal {
 
   let balanceCall = contract.try_estimateStrategy(strategyAddress)
   if (balanceCall.reverted) {
+    log.warning("Couldn't get estimate for strategy {}", [
+      strategyAddress.toHexString()
+    ])
     return BigDecimal.fromString('0')
   }
 

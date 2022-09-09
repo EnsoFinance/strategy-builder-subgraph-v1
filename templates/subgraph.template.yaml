@@ -75,6 +75,8 @@ dataSources:
           handler: handleStrategyOpen
         - event: StrategySet(indexed address)
           handler: handleStrategySet
+        - event: UpdateTradeData(indexed address,indexed address,(address[],address[],bytes),indexed bool)
+          handler: handleUpdateTradeData
       entities: []
       file: ./src/strategyController.ts
 
@@ -126,39 +128,6 @@ dataSources:
 
 templates:
   - kind: ethereum/contract
-    name: StrategyProxyFactory
-    network: '{{network}}'
-    source:
-      abi: StrategyProxyFactory
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/factory.ts
-      entities: []
-      abis:
-        - name: StrategyProxyFactory
-          file: ./abis/StrategyProxyFactory.json
-        - name: ERC20
-          file: ./abis/ERC20.json
-        - name: ERC20SymbolBytes
-          file: ./abis/ERC20SymbolBytes.json
-        - name: ERC20NameBytes
-          file: ./abis/ERC20NameBytes.json
-        - name: AggregatorV3
-          file: ./abis/AggregatorV3.json
-        - name: FeedRegistry
-          file: ./abis/FeedRegistry.json
-        - name: EnsoOracle
-          file: ./abis/EnsoOracle.json
-      eventHandlers:
-        - event: NewStrategy(address,address,string,string,(address,int256,(address[],address[],bytes))[])
-          handler: handleNewStrategy
-        - event: Update(address,string)
-          handler: handleUpdate
-        - event: NewOracle(address)
-          handler: handleNewOracle
-  - kind: ethereum/contract
     name: Strategy
     network: '{{network}}'
     source:
@@ -185,11 +154,12 @@ templates:
           handler: handleTransfer
         - event: Withdraw(indexed address,uint256,uint256[])
           handler: handleWithdraw
-        - event: PerformanceFee(indexed address,uint256)
-          handler: handlePerformanceFee
-      callHandlers:
-        - function: updateTradeData(address,data)
-          handler: handleUpdateTradeData
+        - event: VersionUpdated(indexed string)
+          handler: handleVersionUpdated
+        - event: UpdateManager(address)
+          handler: handleUpdateManager
+        - event: RewardsClaimed(indexed address,indexed address[])
+          handler: handleRewardsClaimed
   - name: AggregatorV3
     kind: ethereum/contract
     network: '{{network}}'
