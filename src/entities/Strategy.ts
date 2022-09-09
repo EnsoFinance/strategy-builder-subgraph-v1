@@ -3,7 +3,7 @@ import { Strategy } from '../../generated/schema'
 import { NewStrategy } from '../../generated/StrategyProxyFactory/StrategyProxyFactory'
 import { useItemHolding } from './StrategyItemHolding'
 import { ZERO_BD } from '../helpers/constants'
-import { ensureFactory, useFactory } from './Factory'
+import { ensureFactory } from './Factory'
 import { createStrategyState } from './StrategyState'
 import { toBigDecimal } from '../helpers/prices'
 import { ensureStrategyChange } from './StrategyChange'
@@ -57,6 +57,8 @@ export function getStrategyTokens(strategy: Strategy): Address[] {
 
     return itemHolding.token
   })
+
+  //log.warning('here gringo', [])
 
   return items.map<Address>((token) => Address.fromString(token))
 }

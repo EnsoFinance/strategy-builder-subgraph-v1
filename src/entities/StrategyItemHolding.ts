@@ -100,6 +100,7 @@ export function createItem(
   let newItemHolding = new StrategyItemHolding(
     createHoldingId(token.id, strategyId, timestamp)
   )
+  log.warning('Creating new item holding {}', [newItemHolding.id])
 
   if (isStrategy(itemAddress)) {
     newItemHolding.strategy = token.id
