@@ -1,7 +1,19 @@
-import { BigInt, BigDecimal, log } from '@graphprotocol/graph-ts'
-import { StrategyState, Strategy } from '../../generated/schema'
+import { BigInt } from '@graphprotocol/graph-ts'
+import { StrategyState } from '../../generated/schema'
 
 class SeededStrategyState {
+  id: string
+  locked: boolean
+  lastStateChange: string
+  lastStateChangeTimestamp: BigInt
+  restructure: BigInt
+  threshold: BigInt
+  social: boolean
+  fixed: boolean
+  fee: BigInt
+  rebalanceSlippage: BigInt
+  restructureSlippage: BigInt
+  timelock: BigInt
   constructor(
     id: string,
     locked: boolean,
@@ -16,24 +28,22 @@ class SeededStrategyState {
     restructureSlippage: BigInt,
     timelock: BigInt
   ) {
-    let strategyState = new StrategyState(id)
-    strategyState.lastStateChangeTimestamp = lastStateChangeTimestamp
-    strategyState.locked = locked
-    strategyState.restructure = restructure
-    strategyState.rebalanceSlippage = rebalanceSlippage
-    strategyState.restructureSlippage = restructureSlippage
-    strategyState.threshold = threshold
-    strategyState.timelock = timelock
-    strategyState.fee = fee
-    strategyState.social = social
-    strategyState.fixed = fixed
-    strategyState.lastStateChange =
-      lastStateChange == '' ? null : lastStateChange
-    strategyState.save()
+    this.id = id
+    this.locked = locked
+    this.lastStateChange = lastStateChange
+    this.lastStateChangeTimestamp = lastStateChangeTimestamp
+    this.restructure = restructure
+    this.threshold = threshold
+    this.social = social
+    this.fixed = fixed
+    this.fee = fee
+    this.rebalanceSlippage = rebalanceSlippage
+    this.restructureSlippage = restructureSlippage
+    this.timelock = timelock
   }
 }
 
-export let strategyStates: SeededStrategyState[] = [
+let strategyStates: SeededStrategyState[] = [
   new SeededStrategyState(
     '0x0121d40071e3af63d3584966e65810b601d10621',
     false,
@@ -5047,3 +5057,25 @@ export let strategyStates: SeededStrategyState[] = [
     BigInt.fromString('3600')
   )
 ]
+
+export function seedStrategyStates(): void {
+  for (let i = 0; i < strategyStates.length; ++i) {
+    let strategyState = new StrategyState(strategyStates[i].id)
+    strategyState.lastStateChangeTimestamp =
+      strategyStates[i].lastStateChangeTimestamp
+    strategyState.locked = strategyStates[i].locked
+    strategyState.restructure = strategyStates[i].restructure
+    strategyState.rebalanceSlippage = strategyStates[i].rebalanceSlippage
+    strategyState.restructureSlippage = strategyStates[i].restructureSlippage
+    strategyState.threshold = strategyStates[i].threshold
+    strategyState.timelock = strategyStates[i].timelock
+    strategyState.fee = strategyStates[i].fee
+    strategyState.social = strategyStates[i].social
+    strategyState.fixed = strategyStates[i].fixed
+    strategyState.lastStateChange =
+      strategyStates[i].lastStateChange == ''
+        ? null
+        : strategyStates[i].lastStateChange
+    strategyState.save()
+  }
+}

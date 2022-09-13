@@ -54,11 +54,8 @@ export function getStrategyTokens(strategy: Strategy): Address[] {
 
   let items = itemHolding.map<string>((itemHoldingId) => {
     let itemHolding = useItemHolding(itemHoldingId)
-
     return itemHolding.token
   })
-
-  //log.warning('here gringo', [])
 
   return items.map<Address>((token) => Address.fromString(token))
 }

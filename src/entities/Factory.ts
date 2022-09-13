@@ -1,15 +1,7 @@
-import {
-  Address,
-  log,
-  TypedMap,
-  BigInt,
-  json,
-  BigDecimal
-} from '@graphprotocol/graph-ts'
+import { log } from '@graphprotocol/graph-ts'
 import { Platform } from '../../generated/schema'
-import { getEthUsdAggregator } from '../helpers/prices'
-import { strategyStates } from '../helpers/seedStrategyState'
-import { strategies } from '../helpers/seedStrategies'
+import { seedStrategyStates } from '../helpers/seedStrategyState'
+import { seedStrategies } from '../helpers/seedStrategies'
 import { ensureEthUsdFeed } from './EthUsdFeed'
 
 export function useFactory(): Platform {
@@ -39,20 +31,20 @@ export function ensureFactory(): Platform {
     return factory
   }
 
+  log.warning('Creating factory', [])
   ensureEthUsdFeed()
 
   factory = new Platform('SINGLETON')
-
   factory.version = '1'
   factory.strategiesCount = 0
-  factory.version = '1'
   factory.managersCount = 0
   factory.allManagers = []
   factory.allStrategies = []
-  factory.tokens = []
-
   factory.save()
-  log.warning('factory created', [])
+
+  seedStrategyStates()
+  factory = seedStrategies(factory)
+  factory.save()
 
   return factory
 }

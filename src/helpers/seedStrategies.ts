@@ -5,14 +5,29 @@ import {
   Bytes,
   log
 } from '@graphprotocol/graph-ts'
-import { Strategy } from '../../generated/schema'
-import { ensureFactory } from '../entities/Factory'
+import { Platform, Strategy } from '../../generated/schema'
+import { ensureFactory, useFactory } from '../entities/Factory'
 import { ensureManager, getCommonItems } from '../entities/Manager'
 import { createItem } from '../entities/StrategyItemHolding'
 import { getPercentage, getStrategyItems, getTradeData } from './strategy'
 import { addElement } from './utils'
 
 class SeededStrategy {
+  id: string
+  strategyManager: string
+  name: string
+  symbol: string
+  state: string
+  createdAtTimestamp: BigInt
+  tvl: BigDecimal
+  price: BigDecimal
+  holdersCount: number
+  createdAtBlockNumber: BigInt
+  totalSupply: BigDecimal
+  locked: boolean
+  lastStateChange: string
+  lastRestructure: BigInt
+
   constructor(
     id: string,
     strategyManager: string,
@@ -29,59 +44,24 @@ class SeededStrategy {
     lastStateChange: string,
     lastRestructure: BigInt
   ) {
-    let factory = ensureFactory()
-
-    factory.strategiesCount = factory.strategiesCount + 1
-    factory.save()
-
-    let items = getStrategyItems(Address.fromString(id))
-    let strategyItems: string[] = new Array<string>()
-
-    for (let i = 0; i < items.length; ++i) {
-      let tradeData = getTradeData(Address.fromString(id), items[0])
-      let percentage = getPercentage(Address.fromString(id), items[0])
-
-      let strategyItem = createItem(items[0], percentage, id, lastRestructure)
-      strategyItem.adapters = tradeData.adapters as Bytes[]
-      strategyItem.path = tradeData.path as Bytes[]
-      strategyItem.save()
-      strategyItems.push(strategyItem.id)
-    }
-
-    let strategy = new Strategy(id)
-    strategy.manager = strategyManager
-    strategy.name = name
-    strategy.symbol = symbol
-    strategy.version = '1'
-    strategy.tvl = tvl
-    strategy.price = price
-    strategy.createdAtBlockNumber = createdAtBlockNumber
-    strategy.createdAtTimestamp = createdAtTimestamp
-    strategy.holdersCount = holdersCount as i32
-    strategy.locked = locked
-    strategy.totalSupply = totalSupply
-    strategy.state = state
-    strategy.items = strategyItems
-    strategy.lastStateChange = lastStateChange == '' ? null : lastStateChange
-    strategy.lastRestructure = lastRestructure
-    strategy.save()
-
-    let manager = ensureManager(
-      Address.fromString(strategyManager),
-      createdAtTimestamp
-    )
-
-    manager.tvl = manager.tvl.plus(tvl)
-    manager.strategies = addElement(manager.strategies, Address.fromString(id))
-    manager.strategiesCount = manager.strategiesCount + 1
-    manager.save()
-
-    manager.commonItems = getCommonItems(manager)
-    manager.save()
+    this.id = id
+    this.strategyManager = strategyManager
+    this.name = name
+    this.symbol = symbol
+    this.state = state
+    this.createdAtTimestamp = createdAtTimestamp
+    this.tvl = tvl
+    this.price = price
+    this.holdersCount = holdersCount
+    this.createdAtBlockNumber = createdAtBlockNumber
+    this.totalSupply = totalSupply
+    this.locked = locked
+    this.lastStateChange = lastStateChange
+    this.lastRestructure = lastRestructure
   }
 }
 
-export let strategies: SeededStrategy[] = [
+let strategies: SeededStrategy[] = [
   new SeededStrategy(
     '0x0121d40071e3af63d3584966e65810b601d10621',
     '0xc2b9d0dfdd7b9f74c64c18b5fa0ff9ceebf52cd3',
@@ -5811,3 +5791,82 @@ export let strategies: SeededStrategy[] = [
     BigInt.fromString('1656844690')
   )
 ]
+
+export function seedStrategies(factory: Platform): Platform {
+  let strategiesCount = 0
+  let managersCount = 0
+  let allStrategies = new Array<string>()
+  let allManagers = new Array<string>()
+
+  for (let i = 0; i < strategies.length; ++i) {
+    let id = strategies[i].id
+
+    strategiesCount = strategiesCount + 1
+
+    allStrategies = addElement(allStrategies, Address.fromString(id))
+    if (!allManagers.includes(strategies[i].strategyManager)) {
+      allManagers = addElement(
+        allManagers,
+        Address.fromString(strategies[i].strategyManager)
+      )
+      managersCount = managersCount + 1
+    }
+
+    let items = getStrategyItems(Address.fromString(id))
+    let strategyItems: string[] = new Array<string>()
+
+    for (let i = 0; i < items.length; ++i) {
+      let tradeData = getTradeData(Address.fromString(id), items[0])
+      let percentage = getPercentage(Address.fromString(id), items[0])
+
+      let strategyItem = createItem(
+        items[0],
+        percentage,
+        id,
+        strategies[i].lastRestructure
+      )
+      strategyItem.adapters = tradeData.adapters as Bytes[]
+      strategyItem.path = tradeData.path as Bytes[]
+      strategyItem.save()
+      strategyItems.push(strategyItem.id)
+    }
+
+    let strategy = new Strategy(id)
+    strategy.manager = strategies[i].strategyManager
+    strategy.name = strategies[i].name
+    strategy.symbol = strategies[i].symbol
+    strategy.version = '1'
+    strategy.tvl = strategies[i].tvl
+    strategy.price = strategies[i].price
+    strategy.createdAtBlockNumber = strategies[i].createdAtBlockNumber
+    strategy.createdAtTimestamp = strategies[i].createdAtTimestamp
+    strategy.holdersCount = strategies[i].holdersCount as i32
+    strategy.locked = strategies[i].locked
+    strategy.totalSupply = strategies[i].totalSupply
+    strategy.state = strategies[i].state
+    strategy.items = strategyItems
+    strategy.lastStateChange =
+      strategies[i].lastStateChange == '' ? null : strategies[i].lastStateChange
+    strategy.lastRestructure = strategies[i].lastRestructure
+    strategy.save()
+
+    let manager = ensureManager(
+      Address.fromString(strategies[i].strategyManager),
+      strategies[i].createdAtTimestamp
+    )
+
+    manager.tvl = manager.tvl.plus(strategies[i].tvl)
+    manager.strategies = addElement(manager.strategies, Address.fromString(id))
+    manager.strategiesCount = manager.strategiesCount + 1
+    manager.save()
+
+    manager.commonItems = getCommonItems(manager)
+    manager.save()
+  }
+
+  factory.allStrategies = allStrategies
+  factory.strategiesCount = strategiesCount
+  factory.allManagers = allManagers
+  factory.managersCount = managersCount
+  return factory
+}
