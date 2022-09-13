@@ -1,10 +1,11 @@
 import { Address, log } from '@graphprotocol/graph-ts'
 import { EthUsdFeed } from '../../generated/schema'
-
 import { AggregatorV3 as AggregatorV3Template } from '../../generated/templates'
-import { getLatestAnswer } from '../helpers/prices'
+import { getEthUsdAggregator, getLatestAnswer } from '../helpers/prices'
 
-export function ensureEthUsdFeed(latestAggregator: string): EthUsdFeed {
+export function ensureEthUsdFeed(): EthUsdFeed {
+  let latestAggregator = getEthUsdAggregator().toHexString()
+
   let ethUsdFeed = EthUsdFeed.load('SINGLETON') as EthUsdFeed
   if (ethUsdFeed) {
     return ethUsdFeed

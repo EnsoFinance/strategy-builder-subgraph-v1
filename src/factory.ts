@@ -48,7 +48,6 @@ export function handleNewStrategy(event: NewStrategy): void {
   manager.commonItems = getCommonItems(manager)
   manager.save()
 
-  trackDayData(strategy.id, timestamp)
   trackAllDayData(timestamp)
 
   StrategyTemplate.create(strategyAddress)

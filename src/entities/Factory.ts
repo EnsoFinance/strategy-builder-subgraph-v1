@@ -1,6 +1,7 @@
-import { Address, log } from '@graphprotocol/graph-ts'
+import { log } from '@graphprotocol/graph-ts'
 import { Platform } from '../../generated/schema'
-import { getEthUsdAggregator } from '../helpers/prices'
+import { seedStrategyStates } from '../helpers/seedStrategyState'
+import { seedStrategies } from '../helpers/seedStrategies'
 import { ensureEthUsdFeed } from './EthUsdFeed'
 
 export function useFactory(): Platform {
@@ -30,18 +31,19 @@ export function ensureFactory(): Platform {
     return factory
   }
 
-  let ethUsdAggregator = getEthUsdAggregator().toHexString()
-  ensureEthUsdFeed(ethUsdAggregator)
+  log.warning('Creating factory', [])
+  ensureEthUsdFeed()
 
   factory = new Platform('SINGLETON')
-
   factory.version = '1'
   factory.strategiesCount = 0
   factory.managersCount = 0
   factory.allManagers = []
   factory.allStrategies = []
-  factory.tokens = []
+  factory.save()
 
+  seedStrategyStates()
+  factory = seedStrategies(factory)
   factory.save()
 
   return factory

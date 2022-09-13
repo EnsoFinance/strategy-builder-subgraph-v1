@@ -5,7 +5,6 @@ type Platform @entity {
   managersCount: Int!
   allManagers: [String!]!
   allStrategies: [String!]!
-  tokens: [String!]!
 }
 
 type Manager @entity {

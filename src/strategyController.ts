@@ -41,11 +41,19 @@ export function handleDeposit(event: Deposit): void {
 }
 
 export function handleWithdraw(event: Withdraw): void {
+  if (!isStrategy(event.params.strategy)) {
+    return
+  }
+
   trackItemsQuantitiesChange(event.params.strategy, event.block.timestamp)
   trackWithdrawEvent(event)
 }
 
 export function handleRebalance(event: Balanced): void {
+  if (!isStrategy(event.params.strategy)) {
+    return
+  }
+
   let timestamp = event.block.timestamp
   let strategy = useStrategy(event.params.strategy.toHexString())
 
@@ -70,6 +78,10 @@ export function handleRebalance(event: Balanced): void {
 }
 
 export function handleRestructure(event: NewStructure): void {
+  if (!isStrategy(event.params.strategy)) {
+    return
+  }
+
   let txhash = event.transaction.hash
   let timestamp = event.block.timestamp
   let strategyId = event.params.strategy.toHexString()
@@ -131,6 +143,10 @@ export function handleRestructure(event: NewStructure): void {
 }
 
 export function handleNewValue(event: NewValue): void {
+  if (!isStrategy(event.params.strategy)) {
+    return
+  }
+
   let category = event.params.category as number
 
   if (event.params.finalized == false) {
@@ -220,12 +236,20 @@ export function handleNewValue(event: NewValue): void {
 }
 
 export function handleStrategyOpen(event: StrategyOpen): void {
+  if (!isStrategy(event.params.strategy)) {
+    return
+  }
+
   let strategyState = useStrategyState(event.params.strategy)
   strategyState.social = true
   strategyState.save()
 }
 
 export function handleStrategySet(event: StrategySet): void {
+  if (!isStrategy(event.params.strategy)) {
+    return
+  }
+
   let strategyState = useStrategyState(event.params.strategy)
   strategyState.social = true
   strategyState.save()
