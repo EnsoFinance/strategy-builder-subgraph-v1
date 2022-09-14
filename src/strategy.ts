@@ -9,7 +9,8 @@ import {
   Transfer,
   UpdateManager,
   VersionUpdated,
-  RewardsClaimed
+  RewardsClaimed,
+  ManagementFee
 } from '../generated/templates/Strategy/Strategy'
 import { useManager } from './entities/Manager'
 import {
@@ -29,6 +30,7 @@ import { toBigDecimal } from './helpers/prices'
 import { ZERO_ADDRESS } from './addresses'
 import { removeElement } from './helpers/utils'
 import { trackStrategyTokenHoldingData } from './entities/StrategyTokenHoldingData'
+import { ensureClaimedPerfFees } from './entities/ClaimedPerfFee'
 
 export function handleWithdraw(event: Withdraw): void {
   trackItemsQuantitiesChange(event.address, event.block.timestamp)
@@ -212,4 +214,16 @@ export function handleRewardsClaimed(event: RewardsClaimed): void {
   claimedRewards.adapter = adapter
   claimedRewards.tokens = tokens
   claimedRewards.save()
+}
+
+export function handlePerformanceFee(event: ManagementFee): void {
+  let strategy = useStrategy(event.address.toHexString())
+  let amount = event.params.amount.toBigDecimal()
+
+  let claimedPerfFee = ensureClaimedPerfFees(
+    event.address.toHexString(),
+    strategy.manager
+  )
+  claimedPerfFee.amount = claimedPerfFee.amount.plus(amount)
+  claimedPerfFee.save()
 }

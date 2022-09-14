@@ -158,6 +158,8 @@ templates:
           handler: handleUpdateManager
         - event: RewardsClaimed(indexed address,indexed address[])
           handler: handleRewardsClaimed
+        - event: ManagementFee(uint256)
+          handler: handlePerformanceFee
   - name: AggregatorV3
     kind: ethereum/contract
     network: '{{network}}'
