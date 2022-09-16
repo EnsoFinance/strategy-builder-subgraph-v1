@@ -15,6 +15,9 @@ function ensureCron(): Cron {
 }
 
 export function triggerCron(timestamp: BigInt): void {
+  if (!timestamp.gt(BigInt.fromString('1662118869'))) {
+    return
+  }
   let cron = ensureCron()
 
   if (cron.cron.ge(timestamp)) {

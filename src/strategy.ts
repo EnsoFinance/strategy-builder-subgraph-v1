@@ -10,7 +10,8 @@ import {
   UpdateManager,
   VersionUpdated,
   RewardsClaimed,
-  ManagementFee
+  ManagementFee,
+  RewardsUpdated
 } from '../generated/templates/Strategy/Strategy'
 import { useManager } from './entities/Manager'
 import {
@@ -31,6 +32,7 @@ import { ZERO_ADDRESS } from './addresses'
 import { removeElement } from './helpers/utils'
 import { trackStrategyTokenHoldingData } from './entities/StrategyTokenHoldingData'
 import { ensureClaimedPerfFees } from './entities/ClaimedPerfFee'
+import { ensureStrategyUpdate } from './entities/StrategyUpdate'
 
 export function handleWithdraw(event: Withdraw): void {
   trackItemsQuantitiesChange(event.address, event.block.timestamp)
@@ -188,9 +190,17 @@ export function handleUpdateManager(event: UpdateManager): void {
 }
 
 export function handleVersionUpdated(event: VersionUpdated): void {
+  let strategyUpdate = ensureStrategyUpdate(event.address)
+  strategyUpdate.implementation = true
+  strategyUpdate.save()
+
   let strategy = useStrategy(event.address.toHexString())
-  strategy.version = '2'
-  strategy.save()
+  if (strategy.version == '1') {
+    if (strategyUpdate.adapters && strategyUpdate.rewards) {
+      strategy.version = '2'
+      strategy.save()
+    }
+  }
 
   let updatedStretegyEvent = new UpdateStrategyEvent(strategy.id)
   updatedStretegyEvent.strategy = strategy.id
@@ -226,4 +236,18 @@ export function handlePerformanceFee(event: ManagementFee): void {
   )
   claimedPerfFee.amount = claimedPerfFee.amount.plus(amount)
   claimedPerfFee.save()
+}
+
+export function handleRewardsUpdated(event: RewardsUpdated): void {
+  let strategyUpdate = ensureStrategyUpdate(event.address)
+  strategyUpdate.rewards = true
+  strategyUpdate.save()
+
+  let strategy = useStrategy(event.address.toHexString())
+  if (strategy.version == '1') {
+    if (strategyUpdate.adapters && strategyUpdate.implementation) {
+      strategy.version = '2'
+      strategy.save()
+    }
+  }
 }

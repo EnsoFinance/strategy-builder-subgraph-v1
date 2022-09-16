@@ -1,4 +1,4 @@
-import { Address, log } from '@graphprotocol/graph-ts'
+import { log } from '@graphprotocol/graph-ts'
 import { Platform } from '../../generated/schema'
 import { getEthUsdAggregator } from '../helpers/prices'
 import { ensureEthUsdFeed } from './EthUsdFeed'

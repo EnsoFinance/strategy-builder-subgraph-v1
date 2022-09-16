@@ -1,4 +1,4 @@
-import { log, BigInt } from '@graphprotocol/graph-ts'
+import { log } from '@graphprotocol/graph-ts'
 import { StrategyTokenHolding } from '../../generated/schema'
 import { ZERO_BD } from '../helpers/constants'
 

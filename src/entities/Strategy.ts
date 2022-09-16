@@ -7,7 +7,6 @@ import { useFactory } from './Factory'
 import { createStrategyState } from './StrategyState'
 import { toBigDecimal } from '../helpers/prices'
 import { ensureStrategyChange } from './StrategyChange'
-import { useEnsoOracle } from './EnsoOracle'
 
 export function useStrategy(id: string): Strategy {
   let strategy = Strategy.load(id) as Strategy
@@ -26,8 +25,6 @@ export function createStrategy(
   let strategyId = strategyAddress.toHex()
 
   createStrategyState(strategyAddress, event.block.timestamp)
-
-  let ensoOracle = useEnsoOracle()
 
   let strategy = new Strategy(strategyId)
   strategy.manager = event.params.manager.toHex()

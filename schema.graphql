@@ -40,11 +40,20 @@ type Strategy @entity {
   locked: Boolean!
   lastStateChange: TimelockCategory
   lastRestructure: BigInt!
+  strategyUpdate: [StrategyUpdate!]! @derivedFrom(field: "strategy")
   tokenHolders: [StrategyTokenHolding]! @derivedFrom(field: "strategy")
   strategyDaysData: [StrategyDayData!]! @derivedFrom(field: "strategy")
   strategyChange: [StrategyChange!]! @derivedFrom(field: "strategy")
   rebalances: [Rebalance]! @derivedFrom(field: "strategy")
   restructures: [Restructure]! @derivedFrom(field: "strategy")
+}
+
+type StrategyUpdate @entity {
+  id: ID!
+  strategy: Strategy!
+  implementation: Boolean!
+  adapters: Boolean!
+  rewards: Boolean!
 }
 
 type StrategyState @entity {

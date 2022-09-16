@@ -160,6 +160,8 @@ templates:
           handler: handleRewardsClaimed
         - event: ManagementFee(uint256)
           handler: handlePerformanceFee
+        - event: RewardsUpdated()
+          handler: handleRewardsUpdated
   - name: AggregatorV3
     kind: ethereum/contract
     network: '{{network}}'
