@@ -265,8 +265,8 @@ export function handleUpdateTradeData(event: UpdateTradeData): void {
     let path = event.params.data.path as Bytes[]
 
     let itemHoldingId = createHoldingId(
-      strategyId,
       item.toHexString(),
+      strategyId,
       strategy.lastRestructure
     )
     let itemHolding = useItemHolding(itemHoldingId)
@@ -298,12 +298,12 @@ export function handleUpdateTradeData(event: UpdateTradeData): void {
       }
     }
 
-    let strategyUpdate = ensureStrategyUpdate(event.address)
+    let strategyUpdate = ensureStrategyUpdate(event.params.strategy)
     strategyUpdate.adapters = adaptersUpdated
     strategyUpdate.save()
 
     if (adaptersUpdated) {
-      let strategy = useStrategy(event.address.toHexString())
+      let strategy = useStrategy(event.params.strategy.toHexString())
       if (strategy.version == '1') {
         if (strategyUpdate.rewards && strategyUpdate.implementation) {
           strategy.version = '2'
