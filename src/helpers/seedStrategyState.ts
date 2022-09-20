@@ -43,7 +43,7 @@ class SeededStrategyState {
   }
 }
 
-let strategyStates: SeededStrategyState[] = [
+export let strategyStates: SeededStrategyState[] = [
   new SeededStrategyState(
     '0x0121d40071e3af63d3584966e65810b601d10621',
     false,
@@ -1109,6 +1109,20 @@ let strategyStates: SeededStrategyState[] = [
     BigInt.fromString('3600')
   ),
   new SeededStrategyState(
+    '0x3b295202ab86c2371ea6addcf3e9523cda946dca',
+    false,
+    '',
+    BigInt.fromString('1662364338'),
+    BigInt.fromString('0'),
+    BigInt.fromString('5'),
+    true,
+    false,
+    BigInt.fromString('11'),
+    BigInt.fromString('995'),
+    BigInt.fromString('970'),
+    BigInt.fromString('3600')
+  ),
+  new SeededStrategyState(
     '0x3ce9904cc0304830427ab77cd8ebc5dc4f864aa3',
     false,
     '',
@@ -1748,6 +1762,20 @@ let strategyStates: SeededStrategyState[] = [
     true,
     false,
     BigInt.fromString('100'),
+    BigInt.fromString('995'),
+    BigInt.fromString('970'),
+    BigInt.fromString('3600')
+  ),
+  new SeededStrategyState(
+    '0x584ec0a34c5ab32bfc8b5c3ac84ec3ec1125c397',
+    false,
+    '',
+    BigInt.fromString('1662884877'),
+    BigInt.fromString('0'),
+    BigInt.fromString('5'),
+    true,
+    false,
+    BigInt.fromString('30'),
     BigInt.fromString('995'),
     BigInt.fromString('970'),
     BigInt.fromString('3600')
@@ -2437,6 +2465,20 @@ let strategyStates: SeededStrategyState[] = [
     BigInt.fromString('995'),
     BigInt.fromString('970'),
     BigInt.fromString('3600')
+  ),
+  new SeededStrategyState(
+    '0x7a5be2f872a4567c7fe3bc3dfc81507556dbb90e',
+    false,
+    '',
+    BigInt.fromString('1662129666'),
+    BigInt.fromString('0'),
+    BigInt.fromString('5'),
+    true,
+    false,
+    BigInt.fromString('0'),
+    BigInt.fromString('995'),
+    BigInt.fromString('970'),
+    BigInt.fromString('0')
   ),
   new SeededStrategyState(
     '0x7b5dd414e5e80f12cb29589492451f3aa989a4dd',
@@ -3834,6 +3876,20 @@ let strategyStates: SeededStrategyState[] = [
     true,
     false,
     BigInt.fromString('20'),
+    BigInt.fromString('995'),
+    BigInt.fromString('970'),
+    BigInt.fromString('3600')
+  ),
+  new SeededStrategyState(
+    '0xbf42f02dca878969fcdbc70388068cf2694183fe',
+    false,
+    '',
+    BigInt.fromString('1662279244'),
+    BigInt.fromString('0'),
+    BigInt.fromString('5'),
+    true,
+    false,
+    BigInt.fromString('4'),
     BigInt.fromString('995'),
     BigInt.fromString('970'),
     BigInt.fromString('3600')
