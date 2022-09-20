@@ -1,4 +1,4 @@
-import { Address, Bytes, ethereum } from '@graphprotocol/graph-ts'
+import { Address, Bytes } from '@graphprotocol/graph-ts'
 import {
   Deposit,
   Withdraw,
@@ -27,11 +27,7 @@ import { useRestructure } from './entities/Restructure'
 import { trackItemsQuantitiesChange } from './entities/StrategyItemHolding'
 import { getCommonItems, useManager } from './entities/Manager'
 import { useStrategyState } from './entities/StrategyState'
-import {
-  deprecatedAdapters,
-  timelockCategories,
-  TimelockCategory
-} from './helpers/constants'
+import { timelockCategories, TimelockCategory } from './helpers/constants'
 import { trackWithdrawEvent } from './entities/WithdrawEvent'
 import { trackDepositEvent } from './entities/DepositEvent'
 import { removeUsdDecimals } from './helpers/tokens'
@@ -286,30 +282,5 @@ export function handleUpdateTradeData(event: UpdateTradeData): void {
     updateTradeDataEvent.timestamp = event.block.timestamp
     updateTradeDataEvent.txHash = event.transaction.hash.toHexString()
     updateTradeDataEvent.save()
-
-    let adaptersUpdated = true
-    for (let i = 0; i < adapters.length; i++) {
-      for (let j = 0; j < deprecatedAdapters.length; j++) {
-        if (
-          adapters[i] == (Address.fromString(deprecatedAdapters[j]) as Bytes)
-        ) {
-          adaptersUpdated = false
-        }
-      }
-    }
-
-    let strategyUpdate = ensureStrategyUpdate(event.params.strategy)
-    strategyUpdate.adapters = adaptersUpdated
-    strategyUpdate.save()
-
-    if (adaptersUpdated) {
-      let strategy = useStrategy(event.params.strategy.toHexString())
-      if (strategy.version == '1') {
-        if (strategyUpdate.rewards && strategyUpdate.implementation) {
-          strategy.version = '2'
-          strategy.save()
-        }
-      }
-    }
   }
 }

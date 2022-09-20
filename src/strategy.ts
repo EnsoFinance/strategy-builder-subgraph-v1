@@ -1,4 +1,4 @@
-import { Address, store } from '@graphprotocol/graph-ts'
+import { Address, store, Bytes } from '@graphprotocol/graph-ts'
 import {
   UpdateManagerEvent,
   UpdateStrategyEvent,
@@ -19,7 +19,11 @@ import {
   mintStrategyTokens,
   useStrategy
 } from './entities/Strategy'
-import { trackItemsQuantitiesChange } from './entities/StrategyItemHolding'
+import {
+  createHoldingId,
+  trackItemsQuantitiesChange,
+  useItemHolding
+} from './entities/StrategyItemHolding'
 import {
   createStrategyTokenHoldingId,
   ensureStrategyTokenHolding,
@@ -33,6 +37,7 @@ import { removeElement } from './helpers/utils'
 import { trackStrategyTokenHoldingData } from './entities/StrategyTokenHoldingData'
 import { ensureClaimedPerfFees } from './entities/ClaimedPerfFee'
 import { ensureStrategyUpdate } from './entities/StrategyUpdate'
+import { getAdapters } from './helpers/strategy'
 
 export function handleWithdraw(event: Withdraw): void {
   trackItemsQuantitiesChange(event.address, event.block.timestamp)
@@ -196,7 +201,7 @@ export function handleVersionUpdated(event: VersionUpdated): void {
 
   let strategy = useStrategy(event.address.toHexString())
   if (strategy.version == '1') {
-    if (strategyUpdate.adapters && strategyUpdate.rewards) {
+    if (strategyUpdate.rewards) {
       strategy.version = '2'
       strategy.save()
     }
@@ -245,9 +250,22 @@ export function handleRewardsUpdated(event: RewardsUpdated): void {
 
   let strategy = useStrategy(event.address.toHexString())
   if (strategy.version == '1') {
-    if (strategyUpdate.adapters && strategyUpdate.implementation) {
+    if (strategyUpdate.implementation) {
       strategy.version = '2'
       strategy.save()
     }
+  }
+
+  let items = strategy.items
+
+  for (let i = 0; i < items.length; i++) {
+    let item = useItemHolding(items[i])
+
+    let adapters = getAdapters(
+      Address.fromString(strategy.id),
+      Address.fromString(item.token)
+    )
+    item.adapters = adapters as Bytes[]
+    item.save()
   }
 }
