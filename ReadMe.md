@@ -6,6 +6,10 @@ https://thegraph.com/explorer/subgraph/ensofinance/enso-v1
 Current _remote_ ✨ EnsoNet ✨ Subgraph:
 http://subgraph.dev.enso.finance/subgraphs/name/ensofinance/enso-v1
 
+
+## :warning: Deprecated Codebase :warning:
+This codebase has been deprecated.  Use this code at your own risk, and Enso does not take any responsibility for vulnerabilities or any impact thereafter from learning/utilizing this codebase.
+
 ## Setup and deploy on ✨ EnsoNet ✨
 
 ❗️ Link your github ssh key to `~/.ssh/ensonet` (or use the service account's key) ❗️
